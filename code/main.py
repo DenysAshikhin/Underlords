@@ -5,10 +5,11 @@ import torch.nn as nn
 import win32gui, win32con, ctypes
 from PIL import ImageGrab, Image, ImageDraw
 from datetime import datetime
-from pynput.keyboard import Key, Listener
+from pynput.keyboard import Listener
 from torchvision import transforms
 
-import Model
+from code import Model
+
 
 # look at us now
 def on_release(key):
@@ -62,11 +63,11 @@ def loadOne():
     def listdirs(path):
         return [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-    class_path =  "C:/Users/destr/PycharmProjects/Underlords/Pics"
+    class_path = "./Pics"
     classes = listdirs(class_path)
     print(len(classes))
 
-    image_root = "C:/Users/destr/PycharmProjects/Underlords/WIP"
+    image_root = "./WIP"
     image_list = []
     for file in os.listdir(image_root):
         data.append(data_transform(Image.open(image_root + "/" + file)))
@@ -81,7 +82,7 @@ def loadOne():
     out = net(out) # use model to evaluate
     out = m(out)  # apply softmax
 
-    save_path = "C:/Users/destr/PycharmProjects/Underlords/save/"
+    save_path = "./save/"
 
     value, inspect = torch.max(out, 1)
     cnt = 0

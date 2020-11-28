@@ -1,3 +1,4 @@
+import math
 import os
 
 import numpy as np
@@ -23,13 +24,14 @@ def loadData(batchSize):
     def listdirs(path):
         return [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-    root =  "C:/Users/destr/PycharmProjects/Underlords/Pics"
+    root = "../Pics"
     classes = listdirs(root)
     print(classes)
 
     sets = []
     for transform in transformSet:
         set_iter = datasets.ImageFolder(root=root, transform=transform)
+        # print(set_iter)
         sets.append(set_iter)
     trainSet = torch.utils.data.ConcatDataset(sets)
 
@@ -40,16 +42,15 @@ def loadData(batchSize):
     np.random.seed(1)  # Fixed numpy random seed for reproducible shuffling
     np.random.shuffle(relevantIndices)
     split1 = int(len(relevantIndices) * 0.85)  # split at 85%
-    split2 = int(len(relevantIndices) * 0.95)  # split at 95%
+    split2 = int(len(relevantIndices) * 0.86)  # split at 95%
 
     # split into training and validation indices
-    training, validation = relevantIndices[:split1], relevantIndices[split1:split2]
+    training, validation = relevantIndices[:split1], relevantIndices[split2:]
 
     trainingSampler = SubsetRandomSampler(training)
-
     trainingLoader = torch.utils.data.DataLoader(trainSet, batch_size=batchSize, num_workers=0, sampler=trainingSampler)
-    validationSampler = SubsetRandomSampler(validation)
 
+    validationSampler = SubsetRandomSampler(validation)
     validationLoader = torch.utils.data.DataLoader(trainSet, batch_size=batchSize, num_workers=0,
                                                    sampler=validationSampler)
     return trainingLoader, validationLoader, classes
@@ -58,13 +59,39 @@ def loadData(batchSize):
 class Net(nn.Module):
     def __init__(self, n_chans1=32):
         super().__init__()
+
+        def poolAdjust(originalSize, kernel=3, stride=2, dilation=1):
+            return (math.ceil((originalSize - (dilation * (kernel - 1)) - 1) / stride)) + 1
+
+        def conv2d_size_out(size, kernel_size=3, stride=1, padding=0):
+            return (math.ceil((size + (padding * 2) - (kernel_size - 1) - 1) / stride)) + 1
+
         self.n_chans1 = n_chans1
-        self.conv1 = nn.Conv2d(3, n_chans1, kernel_size=3, padding=1)
+        finalOutput = n_chans1 // 2
+        self.conv1 = nn.Conv2d(3, n_chans1, kernel_size=3, stride=1, padding=1)
         self.conv1_batchnorm = nn.BatchNorm2d(num_features=n_chans1)
-        self.conv2 = nn.Conv2d(n_chans1, n_chans1 // 2, kernel_size=3,
+        self.conv2 = nn.Conv2d(n_chans1, n_chans1 // 2, kernel_size=3, stride=1,
                                padding=1)
-        self.conv2_batchnorm = nn.BatchNorm2d(num_features=n_chans1 // 2)
-        self.fc1 = nn.Linear(31 * 23 * n_chans1 // 2, 32)
+        self.conv2_batchnorm = nn.BatchNorm2d(num_features=finalOutput)
+
+        print(f"We want Width: {31 * 23 * finalOutput}")
+
+        # 94 * 125
+        # width = 94
+        # height = 125
+
+        widthFinal = poolAdjust(conv2d_size_out(poolAdjust(conv2d_size_out(94, padding=1)), padding=1))
+        heightFinal = poolAdjust(conv2d_size_out(poolAdjust(conv2d_size_out(125, padding=1)), padding=1))
+        print(
+            f"We got Width: {widthFinal}")
+        print(
+            f"We got Height: {heightFinal}")
+
+        self.finalSize = widthFinal * heightFinal * finalOutput
+
+        print(f"Final: {self.finalSize}")
+
+        self.fc1 = nn.Linear(31 * 23 * finalOutput, 32)
         self.fc2 = nn.Linear(32, 62)
 
     def forward(self, x):
@@ -72,15 +99,17 @@ class Net(nn.Module):
         out = F.max_pool2d(torch.relu(out), 2)
         out = self.conv2_batchnorm(self.conv2(out))
         out = F.max_pool2d(torch.relu(out), 2)
-        out = out.view(-1, 31 * 23 * self.n_chans1  // 2)
+        out = out.view(-1, self.finalSize)
         out = torch.relu(self.fc1(out))
         out = self.fc2(out)
         return out
 
+
 def calculateF1():
     print()
 
-def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_loader,writer):
+
+def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_loader, writer):
     train_losses = []
     valid_losses = []
     training_accuracy = []
@@ -94,7 +123,15 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
         valid_loss = 0.0
 
         model.train()
+
+        limit = 100
+        i = 0
         for imgs, labels in train_loader:
+            i += 1
+            if limit == i:
+                break
+            # if i % (limit / 10) == 0:
+            # print(f"Mini Step: {i}")
             # move-tensors-to-GPU
             imgs = imgs.to(device)
             labels = labels.to(device)
@@ -112,7 +149,7 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
             total = imgs.shape[0]
             training_accuracy.append((correct / total))
             writer.add_scalar("Loss/train", train_loss, epoch)
-            writer.add_scalar("Accuracy/train", correct/total, epoch)
+            writer.add_scalar("Accuracy/train", correct / total, epoch)
             ##########################
 
             # save the current training information
@@ -135,10 +172,10 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
             prediction = output.max(1, keepdim=True)[1]
             total += imgs.shape[0]
             correct += prediction.eq(labels.view_as(prediction)).sum().item()
-            validation_accuracy.append((correct/total))
+            validation_accuracy.append((correct / total))
 
             writer.add_scalar("Loss/val", valid_loss, epoch)
-            writer.add_scalar("Accuracy/Val", correct/total, epoch)
+            writer.add_scalar("Accuracy/Val", correct / total, epoch)
 
         # calculate-average-losses
         train_loss = train_loss / len(train_loader.sampler)
@@ -150,21 +187,21 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
         epoch_validation_accuracy = sum(validation_accuracy) / len(validation_accuracy)
 
         # print-training/validation-statistics
-        print('Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}  \tTraining Accuracy: {:.6f}  \tValidation Accuracy: {:.6f}'.format(
-            epoch, train_loss, valid_loss,epoch_train_accuracy,epoch_validation_accuracy))
+        print(
+            'Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}  \tTraining Accuracy: {:.6f}  \tValidation Accuracy: {:.6f}'.format(
+                epoch, train_loss, valid_loss, epoch_train_accuracy, epoch_validation_accuracy))
     torch.save(model.state_dict(), "model.pth")
     writer.close()
 
+
 def train():
     model = Net()
-    model = model.cuda()
+    # model = model.cuda()
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=1e-2, momentum=0.9)
     writer = SummaryWriter()
     trainingLoader, validationLoader, classes = loadData(16)
-    training_loop(10,optimizer,model,criterion,trainingLoader,validationLoader,writer)
+    training_loop(15, optimizer, model, criterion, trainingLoader, validationLoader, writer)
 
 
-#train()
-
-
+train()
