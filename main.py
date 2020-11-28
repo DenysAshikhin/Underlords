@@ -10,7 +10,7 @@ from torchvision import transforms
 
 import Model
 
-
+# look at us now
 def on_release(key):
     if str(key) == '\'+\'':
         cropShop(imageGrab())
