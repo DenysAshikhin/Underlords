@@ -128,6 +128,7 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
         i = 0
         for imgs, labels in train_loader:
             i += 1
+
             if limit == i:
                 break
             # if i % (limit / 10) == 0:

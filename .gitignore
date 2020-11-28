@@ -9,6 +9,9 @@
 #WIP
 /save
 /__pycache__
+/code/runs
+
+
 
 # User-specific stuff
 .idea/**/workspace.xml
