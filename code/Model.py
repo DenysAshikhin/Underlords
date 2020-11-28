@@ -129,8 +129,8 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
         for imgs, labels in train_loader:
             i += 1
 
-            if limit == i:
-                break
+            #if limit == i:
+                #break
             # if i % (limit / 10) == 0:
             # print(f"Mini Step: {i}")
             # move-tensors-to-GPU
@@ -203,7 +203,7 @@ def train():
     optimizer = torch.optim.SGD(model.parameters(), lr=1e-3, momentum=0.9)
     writer = SummaryWriter()
     trainingLoader, validationLoader, classes = loadData(32)
-    training_loop(15, optimizer, model, criterion, trainingLoader, validationLoader, writer)
+    training_loop(14, optimizer, model, criterion, trainingLoader, validationLoader, writer)
 
 
 
