@@ -10,7 +10,8 @@
 /save
 /__pycache__
 /code/runs
-
+/runs
+/code/__pycache__
 
 
 # User-specific stuff

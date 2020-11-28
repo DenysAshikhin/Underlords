@@ -24,7 +24,7 @@ def loadData(batchSize):
     def listdirs(path):
         return [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-    root = "../Pics"
+    root = "./Pics"
     classes = listdirs(root)
     print(classes)
 
@@ -197,12 +197,14 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
 
 def train():
     model = Net()
-    # model = model.cuda()
+    if torch.cuda.is_available():
+        model = model.cuda()
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=1e-2, momentum=0.9)
+    optimizer = torch.optim.SGD(model.parameters(), lr=1e-3, momentum=0.9)
     writer = SummaryWriter()
-    trainingLoader, validationLoader, classes = loadData(16)
+    trainingLoader, validationLoader, classes = loadData(32)
     training_loop(15, optimizer, model, criterion, trainingLoader, validationLoader, writer)
 
 
-train()
+
+# train()

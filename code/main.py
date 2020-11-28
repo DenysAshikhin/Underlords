@@ -1,4 +1,5 @@
 import os
+import time
 
 import torch
 import torch.nn as nn
@@ -7,9 +8,7 @@ from PIL import ImageGrab, Image, ImageDraw
 from datetime import datetime
 from pynput.keyboard import Listener
 from torchvision import transforms
-
-from code import Model
-
+import Model
 
 # look at us now
 def on_release(key):
@@ -89,7 +88,14 @@ def loadOne():
     for i, img in enumerate(inspect):
         state = img.item()
         folder_name = classes[state]
-        image_list[cnt].save(save_path+folder_name+"/"+str(datetime.now()).replace(":","")+".jpg")
+        text = str(classes[state])
+        print(text)
+        draw = ImageDraw.Draw(image_list[cnt])
+        draw.text(( 10, 20), text)
+        draw.text((10, 5), str(value[cnt]))
+        image_list[cnt].show()
+        time.sleep(1)
+        # image_list[cnt].save(save_path+folder_name+"/"+str(datetime.now()).replace(":","")+".jpg")
         cnt +=1
 
 def main():
@@ -100,4 +106,4 @@ def main():
 #cropShop(imageGrab())
 #loadOne()
 #main()
-#Model.train()
+Model.train()
