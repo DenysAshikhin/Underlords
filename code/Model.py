@@ -11,6 +11,9 @@ from PIL import Image
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.tensorboard import SummaryWriter
 
+from ray import tune
+from ray.tune.schedulers import ASHAScheduler
+
 
 def loadData(batchSize):
     dataTransform = transforms.Compose([transforms.ToTensor(),
@@ -24,9 +27,14 @@ def loadData(batchSize):
     def listdirs(path):
         return [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-    root = "./Pics"
+    lastSlash = int(os.path.dirname(os.path.realpath(__file__)).rindex('\\'))
+
+    # print(lastSlash)
+
+    root = os.path.dirname(os.path.realpath(__file__))[: lastSlash] + "\\Pics"
+    # print(root)
     classes = listdirs(root)
-    print(classes)
+    # print(classes)
 
     sets = []
     for transform in transformSet:
@@ -57,7 +65,7 @@ def loadData(batchSize):
 
 
 class Net(nn.Module):
-    def __init__(self, n_chans1=32):
+    def __init__(self, n_chans1=32, stride1=1, stride2=1):
         super().__init__()
 
         def poolAdjust(originalSize, kernel=3, stride=2, dilation=1):
@@ -68,28 +76,30 @@ class Net(nn.Module):
 
         self.n_chans1 = n_chans1
         finalOutput = n_chans1 // 2
-        self.conv1 = nn.Conv2d(3, n_chans1, kernel_size=3, stride=1, padding=1)
+        self.conv1 = nn.Conv2d(3, n_chans1, kernel_size=3, stride=stride1, padding=1)
         self.conv1_batchnorm = nn.BatchNorm2d(num_features=n_chans1)
-        self.conv2 = nn.Conv2d(n_chans1, n_chans1 // 2, kernel_size=3, stride=1,
+        self.conv2 = nn.Conv2d(n_chans1, n_chans1 // 2, kernel_size=3, stride=stride2,
                                padding=1)
         self.conv2_batchnorm = nn.BatchNorm2d(num_features=finalOutput)
 
-        print(f"We want Width: {31 * 23 * finalOutput}")
+        # print(f"We want Width: {31 * 23 * finalOutput}")
 
         # 94 * 125
         # width = 94
         # height = 125
 
-        widthFinal = poolAdjust(conv2d_size_out(poolAdjust(conv2d_size_out(94, padding=1)), padding=1))
-        heightFinal = poolAdjust(conv2d_size_out(poolAdjust(conv2d_size_out(125, padding=1)), padding=1))
-        print(
-            f"We got Width: {widthFinal}")
-        print(
-            f"We got Height: {heightFinal}")
+        widthFinal = poolAdjust(
+            conv2d_size_out(poolAdjust(conv2d_size_out(94, padding=1, stride=stride1)), padding=1, stride=stride2))
+        heightFinal = poolAdjust(
+            conv2d_size_out(poolAdjust(conv2d_size_out(125, padding=1, stride=stride1)), padding=1, stride=stride2))
+        # print(
+        #   f"We got Width: {widthFinal}")
+        # print(
+        #  f"We got Height: {heightFinal}")
 
         self.finalSize = widthFinal * heightFinal * finalOutput
 
-        print(f"Final: {self.finalSize}")
+        # print(f"Final: {self.finalSize}")
 
         self.fc1 = nn.Linear(31 * 23 * finalOutput, 32)
         self.fc2 = nn.Linear(32, 62)
@@ -116,95 +126,131 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
     validation_accuracy = []
     device = (torch.device('cuda') if torch.cuda.is_available()
               else torch.device('cpu'))
-    print(f"Training on device {device}.")
+    # print(f"Training on device {device}.")
 
-    for epoch in range(1, num_epochs + 1):
-        train_loss = 0.0
-        valid_loss = 0.0
+    # for epoch in range(1, num_epochs + 1):
+    train_loss = 0.0
+    valid_loss = 0.0
 
-        model.train()
+    model.train()  # turning model back to training (needed after .eval() call
 
-        limit = 100
-        i = 0
-        for imgs, labels in train_loader:
-            i += 1
+    limit = 50
+    i = 0
+    for imgs, labels in train_loader:
+        i += 1
 
-            #if limit == i:
-                #break
-            # if i % (limit / 10) == 0:
-            # print(f"Mini Step: {i}")
-            # move-tensors-to-GPU
-            imgs = imgs.to(device)
-            labels = labels.to(device)
+        if limit == i:
+            break
+        # if i % (limit / 10) == 0:
+        # print(f"Mini Step: {i}")
+        # move-tensors-to-GPU
+        imgs = imgs.to(device)
+        labels = labels.to(device)
 
-            optimizer.zero_grad()
-            output = model(imgs)
-            loss = criterion(output, labels)
-            loss.backward()
-            # perform-a-ingle-optimization-step (parameter-update)
-            optimizer.step()
-            # update-training-loss
-            train_loss += loss.item() * imgs.size(0)
-            prediction = output.max(1, keepdim=True)[1]
-            correct = prediction.eq(labels.view_as(prediction)).sum().item()
-            total = imgs.shape[0]
-            training_accuracy.append((correct / total))
-            writer.add_scalar("Loss/train", train_loss, epoch)
-            writer.add_scalar("Accuracy/train", correct / total, epoch)
-            ##########################
+        optimizer.zero_grad()
+        output = model(imgs)
+        # print(f"lables: {labels} || {labels.size()}")
+        #
+        # print(f"output: {output}")
 
-            # save the current training information
-        # validate-the-model
-        model.eval()
-        total = 0
-        correct = 0
+        loss = criterion(output, labels)
+        loss.backward()
+        # perform-a-ingle-optimization-step (parameter-update)
+        optimizer.step()
+        # update-training-loss
+        train_loss += loss.item() * imgs.size(0)
+        prediction = output.max(1, keepdim=True)[1]
 
-        # print("Training Accuracy: " + str(sum(epoch_test_correct) / len(epoch_test_correct)))
+        # print(f"pred: {prediction}")
+        # print(f"viewAS: {labels.view_as(prediction)}")
+        #
+        # print(f"eq: {prediction.eq(labels.view_as(prediction))}")
+        # print(f"eq: {prediction.eq(labels.view_as(prediction)).sum().item()}")
+        #
+        # print('---------------------------')
 
-        for imgs, labels in valid_loader:
-            imgs = imgs.to(device)
-            labels = labels.to(device)
-            output = model(imgs)
+        correct = prediction.eq(labels.view_as(prediction)).sum().item()
+        total = imgs.shape[0]
+        training_accuracy.append((correct / total))
+        # writer.add_scalar("Loss/train", train_loss, epoch)
+        # writer.add_scalar("Accuracy/train", correct / total, epoch)
+        writer.add_scalar("Loss/train", train_loss, num_epochs)
+        writer.add_scalar("Accuracy/train", correct / total, num_epochs)
+        ##########################
 
-            loss = criterion(output, labels)
+        # save the current training information
+    # validate-the-model
+    model.eval()  # turn off specific layer/parts of the model for validation
+    total = 0
+    correct = 0
 
-            # update-average-validation-loss
-            valid_loss += loss.item() * imgs.size(0)
-            prediction = output.max(1, keepdim=True)[1]
-            total += imgs.shape[0]
-            correct += prediction.eq(labels.view_as(prediction)).sum().item()
-            validation_accuracy.append((correct / total))
+    # print("Training Accuracy: " + str(sum(epoch_test_correct) / len(epoch_test_correct)))
 
-            writer.add_scalar("Loss/val", valid_loss, epoch)
-            writer.add_scalar("Accuracy/Val", correct / total, epoch)
+    for imgs, labels in valid_loader:
+        imgs = imgs.to(device)
+        labels = labels.to(device)
+        output = model(imgs)
 
-        # calculate-average-losses
-        train_loss = train_loss / len(train_loader.sampler)
-        valid_loss = valid_loss / len(valid_loader.sampler)
-        train_losses.append(train_loss)
-        valid_losses.append(valid_loss)
+        loss = criterion(output, labels)
 
-        epoch_train_accuracy = sum(training_accuracy) / len(training_accuracy)
-        epoch_validation_accuracy = sum(validation_accuracy) / len(validation_accuracy)
+        # update-average-validation-loss
+        valid_loss += loss.item() * imgs.size(0)
+        prediction = output.max(1, keepdim=True)[1]
+        total += imgs.shape[0]
+        correct += prediction.eq(labels.view_as(prediction)).sum().item()
+        validation_accuracy.append((correct / total))
 
-        # print-training/validation-statistics
-        print(
-            'Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}  \tTraining Accuracy: {:.6f}  \tValidation Accuracy: {:.6f}'.format(
-                epoch, train_loss, valid_loss, epoch_train_accuracy, epoch_validation_accuracy))
+        # writer.add_scalar("Loss/val", valid_loss, epoch)
+        # writer.add_scalar("Accuracy/Val", correct / total, epoch)
+        writer.add_scalar("Loss/val", valid_loss, num_epochs)
+        writer.add_scalar("Accuracy/Val", correct / total, num_epochs)
+
+    # calculate-average-losses
+    train_loss = train_loss / len(train_loader.sampler)
+    valid_loss = valid_loss / len(valid_loader.sampler)
+    train_losses.append(train_loss)
+    valid_losses.append(valid_loss)
+
+    epoch_train_accuracy = sum(training_accuracy) / len(training_accuracy)
+    epoch_validation_accuracy = sum(validation_accuracy) / len(validation_accuracy)
+
+    # print-training/validation-statistics
+    print(
+        'Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}  \tTraining Accuracy: {:.6f}  \tValidation Accuracy: {:.6f}'.format(
+            num_epochs, train_loss, valid_loss, epoch_train_accuracy, epoch_validation_accuracy))
     torch.save(model.state_dict(), "model.pth")
     writer.close()
+    return epoch_validation_accuracy
 
 
-def train():
-    model = Net()
+def train(config):
+    model = Net(n_chans1=config['finalOutput'], stride1=config['stride1'], stride2=config['stride2'])
     if torch.cuda.is_available():
         model = model.cuda()
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=1e-3, momentum=0.9)
+    optimizer = torch.optim.SGD(model.parameters(), lr=config['lr'], momentum=0.9)
     writer = SummaryWriter()
-    trainingLoader, validationLoader, classes = loadData(32)
-    training_loop(14, optimizer, model, criterion, trainingLoader, validationLoader, writer)
+    trainingLoader, validationLoader, classes = loadData(config['batchSize'])
 
+    # print(f"The epoch! {config['epochs']}")
+    for i in range(10):
+        accuracy = training_loop(i, optimizer, model, criterion, trainingLoader, validationLoader, writer)
+        tune.report(score=accuracy)
+
+
+def tunerTrain():
+    searchSpace = {
+        'lr': tune.uniform(0, 0.9),
+        # 'epochs': tune.grid_search(np.arange(1, 4).tolist()),
+    }
+
+    analysis = tune.run(train, config=searchSpace)
+
+    print(f"Best Config: {analysis.get_all_configs(metric='mode', mode='max')}")
+    df = analysis.results_df
+    logdir = analysis.get_best_logdir("mean_accuracy", mode="max")
+    print(f"dir of best: {logdir}")
 
 
 # train()
+tunerTrain()

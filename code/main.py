@@ -48,7 +48,7 @@ def cropShop(shop):
         crop = shop.crop((294 + i*offset, 70) + (388 + i*offset, 195))
         # draw.rectangle((294 + i*offset, 70) + (388 + i*offset, 195))
         print(str(datetime.now()))
-        crop.save("C:/Users/destr/PycharmProjects/Underlords/WIP/" + str(datetime.now()).replace(":","")+ ".jpg")
+        crop.save("./WIP/" + str(datetime.now()).replace(":","")+ ".jpg")
      # shop.show()
 
 def loadOne():
@@ -89,12 +89,12 @@ def loadOne():
         state = img.item()
         folder_name = classes[state]
         text = str(classes[state])
-        print(text)
-        draw = ImageDraw.Draw(image_list[cnt])
-        draw.text(( 10, 20), text)
-        draw.text((10, 5), str(value[cnt]))
-        image_list[cnt].show()
-        time.sleep(1)
+        # print(text)
+        # draw = ImageDraw.Draw(image_list[cnt])
+        # draw.text(( 10, 20), text)
+        # draw.text((10, 5), str(value[cnt]))
+        # image_list[cnt].show()
+        # time.sleep(1)
         # image_list[cnt].save(save_path+folder_name+"/"+str(datetime.now()).replace(":","")+".jpg")
         cnt +=1
 
@@ -106,4 +106,4 @@ def main():
 #cropShop(imageGrab())
 #loadOne()
 #main()
-Model.train()
+#Model.train()
