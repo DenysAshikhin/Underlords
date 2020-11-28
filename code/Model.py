@@ -9,10 +9,15 @@ import torchvision.datasets as datasets
 import torchvision.transforms as transforms
 from PIL import Image
 from torch.utils.data.sampler import SubsetRandomSampler
+
 from torch.utils.tensorboard import SummaryWriter
+
+import ray
 
 from ray import tune
 from ray.tune.schedulers import ASHAScheduler
+
+ray.init(_memory=4000000000, num_cpus=5)
 
 
 def loadData(batchSize):
@@ -78,7 +83,7 @@ class Net(nn.Module):
         finalOutput = n_chans1 // 2
         self.conv1 = nn.Conv2d(3, n_chans1, kernel_size=3, stride=stride1, padding=1)
         self.conv1_batchnorm = nn.BatchNorm2d(num_features=n_chans1)
-        self.conv2 = nn.Conv2d(n_chans1, n_chans1 // 2, kernel_size=3, stride=stride2,
+        self.conv2 = nn.Conv2d(n_chans1, finalOutput, kernel_size=3, stride=stride2,
                                padding=1)
         self.conv2_batchnorm = nn.BatchNorm2d(num_features=finalOutput)
 
@@ -99,7 +104,7 @@ class Net(nn.Module):
 
         self.finalSize = widthFinal * heightFinal * finalOutput
 
-        # print(f"Final: {self.finalSize}")
+        print(f"Final: {self.finalSize}")
 
         self.fc1 = nn.Linear(31 * 23 * finalOutput, 32)
         self.fc2 = nn.Linear(32, 62)
@@ -108,8 +113,12 @@ class Net(nn.Module):
         out = self.conv1_batchnorm(self.conv1(x))
         out = F.max_pool2d(torch.relu(out), 2)
         out = self.conv2_batchnorm(self.conv2(out))
+        #print(f"pre pool {out.size()}")
         out = F.max_pool2d(torch.relu(out), 2)
+       #print(f"post pool {out.size()}")
         out = out.view(-1, self.finalSize)
+        #print(f"post view: {out.size}")
+        #print(f"finalSize: {self.finalSize}")
         out = torch.relu(self.fc1(out))
         out = self.fc2(out)
         return out
@@ -244,13 +253,13 @@ def tunerTrain():
         'finalOutput': tune.randint(1, 50),
         'stride1': tune.grid_search(np.arange(1, 4).tolist()),
         'stride2': tune.grid_search(np.arange(1, 4).tolist()),
-        'batchSize': tune.randint(2, 256)
+        'batchSize': tune.grid_search([2, 4, 8, 16, 32, 64, 128, 256])
     }
 
-    analysis = tune.run(train, num_samples=30, scheduler=ASHAScheduler(metric='mean_accuracy', mode='max'),
+    analysis = tune.run(train, num_samples=30, scheduler=ASHAScheduler(metric='score', mode='max'),
                         config=searchSpace)
     dfs = analysis.trial_dataframes
-    print(f"Best Config: {analysis.get_all_configs(metric='mode', mode='max')}")
+    print(f"Best Config: {analysis.get_all_configs(metric='score', mode='max')}")
     df = analysis.results_df
     logdir = analysis.get_best_logdir("mean_accuracy", mode="max")
     print(f"dir of best: {logdir}")
