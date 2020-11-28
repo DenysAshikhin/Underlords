@@ -70,14 +70,14 @@ def loadData(batchSize):
 
 
 class Net(nn.Module):
-    def __init__(self, n_chans1=32, stride1=1, stride2=1):
+    def __init__(self, n_chans1=32, stride1=1, stride2=1, finalChannel=32):
         super().__init__()
 
         def poolAdjust(originalSize, kernel=3, stride=2, dilation=1):
             return (math.ceil((originalSize - (dilation * (kernel - 1)) - 1) / stride)) + 1
 
         def conv2d_size_out(size, kernel_size=3, stride=1, padding=0):
-            return (math.ceil((size + (padding * 2) - (kernel_size - 1) - 1) / stride)) + 1
+            return math.ceil((size + (padding * 2) - (kernel_size - 1) - 1) // stride) + 1
 
         self.n_chans1 = n_chans1
         finalOutput = n_chans1 // 2
@@ -93,29 +93,40 @@ class Net(nn.Module):
         # width = 94
         # height = 125
 
+        # print(f"step1 {conv2d_size_out(94, padding=1, stride=stride1)}")
+        # print(f"step2 {poolAdjust(conv2d_size_out(94, padding=1, stride=stride1))}")
+        # print(
+        #     f"step3 {conv2d_size_out(poolAdjust(conv2d_size_out(94, padding=1, stride=stride1)), padding=1, stride=stride2)}")
+        # print(
+        #     f"step4 {poolAdjust(conv2d_size_out(poolAdjust(conv2d_size_out(94, padding=1, stride=stride1)), padding=1, stride=stride2))}")
+
         widthFinal = poolAdjust(
-            conv2d_size_out(poolAdjust(conv2d_size_out(94, padding=1, stride=stride1)), padding=1, stride=stride2))
+            conv2d_size_out(poolAdjust(conv2d_size_out(94, padding=1, stride=stride1)), padding=1, stride=stride2)
+        )
         heightFinal = poolAdjust(
-            conv2d_size_out(poolAdjust(conv2d_size_out(125, padding=1, stride=stride1)), padding=1, stride=stride2))
+            conv2d_size_out(poolAdjust(conv2d_size_out(125, padding=1, stride=stride1)), padding=1, stride=stride2)
+        )
         # print(
-        #   f"We got Width: {widthFinal}")
+        #     f"We got Width: {widthFinal}")
         # print(
-        #  f"We got Height: {heightFinal}")
+        #     f"We got Height: {heightFinal}")
 
         self.finalSize = widthFinal * heightFinal * finalOutput
 
-        print(f"Final: {self.finalSize}")
+        #print(f"Final: {self.finalSize}")
 
-        self.fc1 = nn.Linear(31 * 23 * finalOutput, 32)
-        self.fc2 = nn.Linear(32, 62)
+        self.fc1 = nn.Linear(self.finalSize, finalChannel)
+        self.fc2 = nn.Linear(finalChannel, 62)
 
     def forward(self, x):
         out = self.conv1_batchnorm(self.conv1(x))
+        #print(f"conv1: {out.size()}")
         out = F.max_pool2d(torch.relu(out), 2)
+        #print(f"first pool: {out.size()}")
         out = self.conv2_batchnorm(self.conv2(out))
         #print(f"pre pool {out.size()}")
         out = F.max_pool2d(torch.relu(out), 2)
-       #print(f"post pool {out.size()}")
+        #print(f"post pool {out.size()}")
         out = out.view(-1, self.finalSize)
         #print(f"post view: {out.size}")
         #print(f"finalSize: {self.finalSize}")
@@ -233,7 +244,7 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
 
 
 def train(config):
-    model = Net(n_chans1=config['finalOutput'], stride1=config['stride1'], stride2=config['stride2'])
+    model = Net(n_chans1=config['finalOutput'], stride1=config['stride1'], stride2=config['stride2'], finalChannel=config['finalChannel'])
     if torch.cuda.is_available():
         model = model.cuda()
     criterion = nn.CrossEntropyLoss()
@@ -253,10 +264,11 @@ def tunerTrain():
         'finalOutput': tune.randint(1, 50),
         'stride1': tune.grid_search(np.arange(1, 4).tolist()),
         'stride2': tune.grid_search(np.arange(1, 4).tolist()),
-        'batchSize': tune.grid_search([2, 4, 8, 16, 32, 64, 128, 256])
+        'batchSize': tune.grid_search([2, 4, 8, 16, 32, 64, 128, 256]),
+        'finalChannel': tune.randint(1, 50),
     }
 
-    analysis = tune.run(train, num_samples=30, scheduler=ASHAScheduler(metric='score', mode='max'),
+    analysis = tune.run(train, num_samples=1, scheduler=ASHAScheduler(metric='score', mode='max'),
                         config=searchSpace)
     dfs = analysis.trial_dataframes
     print(f"Best Config: {analysis.get_all_configs(metric='score', mode='max')}")
@@ -267,3 +279,11 @@ def tunerTrain():
 
 # train()
 tunerTrain()
+
+# train({'lr': 0.1,
+#        'finalOutput': 36,
+#        # 'stride1': tune.grid_search(np.arange(1, 4).tolist()),
+#        'stride1': 2,
+#        'stride2': 1,
+#        'batchSize': 2
+#        })
