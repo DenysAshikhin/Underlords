@@ -240,12 +240,16 @@ def train(config):
 
 def tunerTrain():
     searchSpace = {
-        'lr': tune.uniform(0, 0.9),
-        # 'epochs': tune.grid_search(np.arange(1, 4).tolist()),
+        'lr': tune.loguniform(1e-4, 9e-1),
+        'finalOutput': tune.randint(1, 50),
+        'stride1': tune.grid_search(np.arange(1, 4).tolist()),
+        'stride2': tune.grid_search(np.arange(1, 4).tolist()),
+        'batchSize': tune.randint(2, 256)
     }
 
-    analysis = tune.run(train, config=searchSpace)
-
+    analysis = tune.run(train, num_samples=30, scheduler=ASHAScheduler(metric='mean_accuracy', mode='max'),
+                        config=searchSpace)
+    dfs = analysis.trial_dataframes
     print(f"Best Config: {analysis.get_all_configs(metric='mode', mode='max')}")
     df = analysis.results_df
     logdir = analysis.get_best_logdir("mean_accuracy", mode="max")
