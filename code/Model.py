@@ -256,7 +256,7 @@ def tunerTrain():
         'batchSize': tune.grid_search([2, 4, 8, 16, 32, 64, 128, 256])
     }
 
-    analysis = tune.run(train, num_samples=30, scheduler=ASHAScheduler(metric='score', mode='max'),
+    analysis = tune.run(train, num_samples=1, scheduler=ASHAScheduler(metric='score', mode='max'),
                         config=searchSpace)
     dfs = analysis.trial_dataframes
     print(f"Best Config: {analysis.get_all_configs(metric='score', mode='max')}")
