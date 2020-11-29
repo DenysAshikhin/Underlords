@@ -55,9 +55,9 @@ def cropShop(shop, save=True):
     draw = ImageDraw.Draw(shop)
     offset = 120
     imageList = []
-    for i in range(1):
+    for i in range(5):
         # draw.rectangle((300, 90) + (400, 195))
-        crop = shop.crop((294 + (i+3) * offset, 70) + (388 + (i+3) * offset, 195))
+        crop = shop.crop((294 + i * offset, 70) + (388 + i * offset, 195))
         # draw.rectangle((294 + i*offset, 70) + (388 + i*offset, 195))
 
         imageList.append(crop)
