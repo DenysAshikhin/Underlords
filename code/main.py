@@ -10,12 +10,14 @@ from pynput.keyboard import Listener
 from torchvision import transforms
 import Model
 
+
 # look at us now
 def on_release(key):
     if str(key) == '\'+\'':
         cropShop(imageGrab())
         # Stop listener
         # return False
+
 
 def imageGrab():
     ctypes.windll.user32.SetProcessDPIAware()
@@ -39,26 +41,29 @@ def imageGrab():
     # image.show()
     # image.save("test.jpg")
 
+
 def cropShop(shop):
     # shop = Image.open("test.jpg")
     draw = ImageDraw.Draw(shop)
     offset = 120
     for i in range(5):
         # draw.rectangle((300, 90) + (400, 195))
-        crop = shop.crop((294 + i*offset, 70) + (388 + i*offset, 195))
+        crop = shop.crop((294 + i * offset, 70) + (388 + i * offset, 195))
         # draw.rectangle((294 + i*offset, 70) + (388 + i*offset, 195))
         print(str(datetime.now()))
-        crop.save("./WIP/" + str(datetime.now()).replace(":","")+ ".jpg")
-     # shop.show()
+        crop.save("./WIP/" + str(datetime.now()).replace(":", "") + ".jpg")
+    # shop.show()
+
 
 def loadOne():
     data_transform = transforms.Compose([transforms.ToTensor(),
-                                        transforms.Normalize((0.5,), (0.5,), (0.5,)),
-                                        ])
+                                         transforms.Normalize((0.5,), (0.5,), (0.5,)),
+                                         ])
     data = []
 
     net = Model.Net()
     net.load_state_dict(torch.load("model.pth"))
+
     def listdirs(path):
         return [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
@@ -78,7 +83,7 @@ def loadOne():
     m = nn.Softmax(dim=1)
     # Perform forward pass with ANN
 
-    out = net(out) # use model to evaluate
+    out = net(out)  # use model to evaluate
     out = m(out)  # apply softmax
 
     save_path = "./save/"
@@ -96,14 +101,15 @@ def loadOne():
         # image_list[cnt].show()
         # time.sleep(1)
         # image_list[cnt].save(save_path+folder_name+"/"+str(datetime.now()).replace(":","")+".jpg")
-        cnt +=1
+        cnt += 1
+
 
 def main():
     with Listener(
-        on_release=on_release) as listener:
+            on_release=on_release) as listener:
         listener.join()
 
-#cropShop(imageGrab())
-#loadOne()
-#main()
-#Model.train()
+# cropShop(imageGrab())
+# loadOne()
+# main()
+# Model.train()
