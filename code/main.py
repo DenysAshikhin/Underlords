@@ -70,10 +70,16 @@ def labelShop():
     imageList = cropShop(imageGrab(), save=False)
     value, inspect = predict(imageList)
     classes = getClasses()
+    statesList = []
+
 
     for i, img in enumerate(inspect):
         state = img.item()
-        print("Position %d:" % i, "Label: %s" % classes[state], "Confidence: %f" % value[i])
+        statesList.append(state)
+        #print("Position %d:" % i, "Label: %s" % classes[state], "Confidence: %f" % value[i])
+
+
+    return imageList, classes, value, inspect, statesList
 
 
 def getClasses():
@@ -150,4 +156,4 @@ def main():
 
 # cropShop(imageGrab())
 #loadOne()
-main()
+#main()
