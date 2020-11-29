@@ -134,8 +134,15 @@ class Net(nn.Module):
         return out
 
 
-def calculateF1():
-    print()
+def calculateF1(value, inspect):
+    scores = {
+        "Class": {
+            
+        }
+    }
+    print(scores["key1"])
+    for i, img in enumerate(inspect):
+        state = img.item()
 
 
 def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_loader, writer):
@@ -179,7 +186,6 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
         # update-training-loss
         train_loss += loss.item() * imgs.size(0)
         prediction = output.max(1, keepdim=True)[1]
-
         # print(f"pred: {prediction}")
         # print(f"viewAS: {labels.view_as(prediction)}")
         #
@@ -237,9 +243,9 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
     print(
         'Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}  \tTraining Accuracy: {:.6f}  \tValidation Accuracy: {:.6f}'.format(
             num_epochs, train_loss, valid_loss, epoch_train_accuracy, epoch_validation_accuracy))
-    torch.save(model.state_dict(), "model.pth")
+
     writer.close()
-    return epoch_validation_accuracy
+    return epoch_validation_accuracy, model
 
 
 def train(config):
@@ -253,8 +259,12 @@ def train(config):
 
     # print(f"The epoch! {config['epochs']}")
     for i in range(10):
-        accuracy = training_loop(i, optimizer, model, criterion, trainingLoader, validationLoader, writer)
+        accuracy, model = training_loop(i, optimizer, model, criterion, trainingLoader, validationLoader, writer)
         tune.report(score=accuracy)
+
+    torch.save(model.state_dict(), "model.pth")
+    cpu_model = model.to('cpu')
+    torch.save(model.state_dict(), "model_CPU.pth")
 
 
 def tunerTrain():
@@ -280,10 +290,10 @@ def tunerTrain():
 # train()
 #tunerTrain()
 
-# train({'lr': 0.0126767,
-#        'finalOutput': 7,
-#        'stride1': 1,
-#        'stride2': 1,
-#        'batchSize': 256,
-#        'finalChannel': 47
-#        })
+train({'lr': 0.0126767,
+       'finalOutput': 7,
+       'stride1': 1,
+       'stride2': 1,
+       'batchSize': 256,
+       'finalChannel': 47
+       })
