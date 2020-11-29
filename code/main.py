@@ -1,13 +1,16 @@
 import os
 import time
+from datetime import datetime
 
+import ctypes
 import torch
 import torch.nn as nn
-import win32gui, win32con, ctypes
+import win32con
+import win32gui
 from PIL import ImageGrab, Image, ImageDraw
-from datetime import datetime
 from pynput.keyboard import Listener
 from torchvision import transforms
+
 import Model
 
 
@@ -21,6 +24,7 @@ def on_release(key):
     if str(key) == '\'r\'':
         time.sleep(0.5)
         labelShop()
+
 
 def imageGrab():
     ctypes.windll.user32.SetProcessDPIAware()
@@ -54,13 +58,10 @@ def cropShop(shop, save=True):
         # draw.rectangle((300, 90) + (400, 195))
         crop = shop.crop((294 + i * offset, 70) + (388 + i * offset, 195))
         # draw.rectangle((294 + i*offset, 70) + (388 + i*offset, 195))
-<<<<<<< Updated upstream
-        #print(str(datetime.now()))
+        # print(str(datetime.now()))
 
-=======
         crop.show()
         print(str(datetime.now()))
->>>>>>> Stashed changes
         imageList.append(crop)
         if save:
             crop.save("./WIP/" + str(datetime.now()).replace(":", "") + ".jpg")
@@ -68,7 +69,7 @@ def cropShop(shop, save=True):
 
 
 def labelShop():
-    imageList = cropShop(imageGrab(),save=False)
+    imageList = cropShop(imageGrab(), save=False)
     value, inspect = predict(imageList)
     classes = getClasses()
 
@@ -85,10 +86,10 @@ def getClasses():
     classes = listdirs(class_path)
     return classes
 
+
 def loadOne():
     image_root = "/WIP"
     image_list = []
-
 
     for file in os.listdir(image_root):
         image_list.append(Image.open(image_root + "/" + file))
@@ -105,9 +106,9 @@ def loadOne():
         cnt += 1
     return True
 
+
 # Given a list of images, run a forward pass with CNN and return predictions
 def predict(imageList):
-
     data_transform = transforms.Compose([transforms.ToTensor(),
                                          transforms.Normalize((0.5,), (0.5,), (0.5,)),
                                          ])
@@ -118,10 +119,6 @@ def predict(imageList):
 
     net = Model.Net(n_chans1=7, stride1=1, stride2=1, finalChannel=47)
     net.load_state_dict(torch.load("model.pth", map_location=torch.device('cpu')))
-
-<<<<<<< Updated upstream
-=======
-
 
     # conve rt image to tensor
     out = torch.stack(data, dim=0)  # output all images as one tensor
@@ -137,7 +134,6 @@ def predict(imageList):
     else:
         DEVICE = 'cpu'
         net.load_state_dict(torch.load("model_CPU.pth"))
->>>>>>> Stashed changes
 
     out = net(out)  # use model to evaluate
     out = m(out)  # apply softmax
@@ -145,11 +141,11 @@ def predict(imageList):
 
     return value, inspect
 
+
 def main():
     with Listener(
             on_release=on_release) as listener:
         listener.join()
-
 
 
 # cropShop(imageGrab())
