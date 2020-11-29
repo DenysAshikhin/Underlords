@@ -111,7 +111,14 @@ def predict(imageList):
         data.append(data_transform(img))
 
     net = Model.Net(n_chans1=7, stride1=1, stride2=1, finalChannel=47)
-    net.load_state_dict(torch.load("model.pth"))
+
+    if (torch.cuda.is_available()):
+        DEVICE = 'cuda'
+        net = net.cuda()
+        net.load_state_dict(torch.load("model.pth"))
+    else:
+        DEVICE = 'cpu'
+        net.load_state_dict(torch.load("model_CPU.pth"))
 
     # conve rt image to tensor
     out = torch.stack(data, dim=0)  # output all images as one tensor

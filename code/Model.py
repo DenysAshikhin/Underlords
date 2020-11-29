@@ -137,7 +137,7 @@ class Net(nn.Module):
 def calculateF1(value, inspect):
     scores = {
         "Class": {
-            
+
         }
     }
     print(scores["key1"])
