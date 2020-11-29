@@ -145,5 +145,5 @@ def main():
 
 
 # cropShop(imageGrab())
-loadOne()
-#main()
+#loadOne()
+main()
