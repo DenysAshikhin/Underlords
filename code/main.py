@@ -80,7 +80,11 @@ def getClasses():
     def listdirs(path):
         return [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
+
     class_path = "../Pics"
+    if (torch.cuda.is_available()):
+        class_path = "./Pics"
+
     classes = listdirs(class_path)
     return classes
 
