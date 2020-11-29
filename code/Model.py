@@ -36,6 +36,7 @@ def loadData(batchSize):
     # print(lastSlash)
 
     root = os.path.dirname(os.path.realpath(__file__))[: lastSlash] + "\\Pics"
+
     # print(root)
     classes = listdirs(root)
     # print(classes)
@@ -289,6 +290,7 @@ def tunerTrain():
 
 # train()
 #tunerTrain()
+
 # #
 # train({'lr': 0.0126767,
 #        'finalOutput': 7,
@@ -297,3 +299,4 @@ def tunerTrain():
 #        'batchSize': 256,
 #        'finalChannel': 47
 #        })
+
