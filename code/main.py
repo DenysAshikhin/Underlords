@@ -14,10 +14,11 @@ import Model
 # look at us now
 def on_release(key):
     print(key)
-    if str(key) == '\'+\'':
+    if str(key) == '\'+\'' or str(key) == '\'=\'':
         cropShop(imageGrab())
         # Stop listener
         # return False
+
     if str(key) == '\'r\'':
         time.sleep(0.5)
         labelShop()
@@ -54,16 +55,12 @@ def cropShop(shop, save=True):
         # draw.rectangle((300, 90) + (400, 195))
         crop = shop.crop((294 + i * offset, 70) + (388 + i * offset, 195))
         # draw.rectangle((294 + i*offset, 70) + (388 + i*offset, 195))
-<<<<<<< Updated upstream
+        #crop.show()
         #print(str(datetime.now()))
 
-=======
-        crop.show()
-        print(str(datetime.now()))
->>>>>>> Stashed changes
         imageList.append(crop)
         if save:
-            crop.save("./WIP/" + str(datetime.now()).replace(":", "") + ".jpg")
+            crop.save("../WIP/" + str(datetime.now()).replace(":", "") + ".jpg")
     return imageList
 
 
@@ -86,7 +83,7 @@ def getClasses():
     return classes
 
 def loadOne():
-    image_root = "/WIP"
+    image_root = "../WIP"
     image_list = []
 
 
@@ -119,10 +116,6 @@ def predict(imageList):
     net = Model.Net(n_chans1=7, stride1=1, stride2=1, finalChannel=47)
     net.load_state_dict(torch.load("model.pth", map_location=torch.device('cpu')))
 
-<<<<<<< Updated upstream
-=======
-
-
     # conve rt image to tensor
     out = torch.stack(data, dim=0)  # output all images as one tensor
     m = nn.Softmax(dim=1)
@@ -134,10 +127,6 @@ def predict(imageList):
         net.cuda()
         net.load_state_dict(torch.load("model.pth"))
         out = out.cuda()
-    else:
-        DEVICE = 'cpu'
-        net.load_state_dict(torch.load("model_CPU.pth"))
->>>>>>> Stashed changes
 
     out = net(out)  # use model to evaluate
     out = m(out)  # apply softmax
@@ -153,5 +142,5 @@ def main():
 
 
 # cropShop(imageGrab())
-# loadOne()
-main()
+loadOne()
+#main()
