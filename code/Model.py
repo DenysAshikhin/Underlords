@@ -281,9 +281,9 @@ def tunerTrain():
 #tunerTrain()
 
 train({'lr': 0.0126767,
-       'finalOutput':  47,
+       'finalOutput': 7,
        'stride1': 1,
        'stride2': 1,
        'batchSize': 256,
-       'finalChannel': 7
+       'finalChannel': 47
        })
