@@ -10,6 +10,7 @@
 /save
 /__pycache__
 /code/runs
+\code\runs
 /runs
 /code/__pycache__
 
@@ -82,3 +83,4 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
+code/Model - Copy.py

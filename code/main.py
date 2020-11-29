@@ -22,8 +22,6 @@ def on_release(key):
         time.sleep(0.5)
         labelShop()
 
-
-
 def imageGrab():
     ctypes.windll.user32.SetProcessDPIAware()
 
@@ -99,7 +97,6 @@ def loadOne():
         folder_name = classes[state]
         image_list[cnt].save(save_path + folder_name + "/" + str(datetime.now()).replace(":", "") + ".jpg")
         cnt += 1
-
     return True
 
 # Given a list of images, run a forward pass with CNN and return predictions
@@ -124,6 +121,7 @@ def predict(imageList):
     out = net(out)  # use model to evaluate
     out = m(out)  # apply softmax
     value, inspect = torch.max(out, 1)
+
     return value, inspect
 
 def main():
@@ -132,7 +130,7 @@ def main():
         listener.join()
 
 
+
 # cropShop(imageGrab())
 # loadOne()
 main()
-# Model.train()
