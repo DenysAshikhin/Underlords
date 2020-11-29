@@ -54,7 +54,8 @@ def cropShop(shop, save=True):
         # draw.rectangle((300, 90) + (400, 195))
         crop = shop.crop((294 + i * offset, 70) + (388 + i * offset, 195))
         # draw.rectangle((294 + i*offset, 70) + (388 + i*offset, 195))
-        print(str(datetime.now()))
+        #print(str(datetime.now()))
+
         imageList.append(crop)
         if save:
             crop.save("./WIP/" + str(datetime.now()).replace(":", "") + ".jpg")
@@ -75,12 +76,12 @@ def getClasses():
     def listdirs(path):
         return [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-    class_path = "./Pics"
+    class_path = "../Pics"
     classes = listdirs(class_path)
     return classes
 
 def loadOne():
-    image_root = "./WIP"
+    image_root = "/WIP"
     image_list = []
 
 
@@ -111,14 +112,8 @@ def predict(imageList):
         data.append(data_transform(img))
 
     net = Model.Net(n_chans1=7, stride1=1, stride2=1, finalChannel=47)
+    net.load_state_dict(torch.load("model.pth", map_location=torch.device('cpu')))
 
-    if (torch.cuda.is_available()):
-        DEVICE = 'cuda'
-        net = net.cuda()
-        net.load_state_dict(torch.load("model.pth"))
-    else:
-        DEVICE = 'cpu'
-        net.load_state_dict(torch.load("model_CPU.pth"))
 
     # conve rt image to tensor
     out = torch.stack(data, dim=0)  # output all images as one tensor

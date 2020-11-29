@@ -289,11 +289,11 @@ def tunerTrain():
 
 # train()
 #tunerTrain()
-
-train({'lr': 0.0126767,
-       'finalOutput': 7,
-       'stride1': 1,
-       'stride2': 1,
-       'batchSize': 256,
-       'finalChannel': 47
-       })
+#
+# train({'lr': 0.0126767,
+#        'finalOutput': 7,
+#        'stride1': 1,
+#        'stride2': 1,
+#        'batchSize': 256,
+#        'finalChannel': 47
+#        })
