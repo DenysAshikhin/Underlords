@@ -261,7 +261,7 @@ def train(config):
 def tunerTrain():
     searchSpace = {
         'lr': tune.loguniform(1e-4, 9e-1),
-        'finalOutput': tune.randint(1, 50),
+        'finalOutput': tune.randint(2, 50),#minimum of 2, other 1//2 = 0 activation maps
         'stride1': tune.grid_search(np.arange(1, 4).tolist()),
         'stride2': tune.grid_search(np.arange(1, 4).tolist()),
         'batchSize': tune.grid_search([2, 4, 8, 16, 32, 64, 128, 256]),
@@ -278,12 +278,12 @@ def tunerTrain():
 
 
 # train()
-tunerTrain()
+#tunerTrain()
 
-# train({'lr': 0.1,
-#        'finalOutput': 36,
-#        # 'stride1': tune.grid_search(np.arange(1, 4).tolist()),
-#        'stride1': 2,
-#        'stride2': 1,
-#        'batchSize': 2
-#        })
+train({'lr': 0.1,
+       'finalOutput': 1,
+       'stride1': 2,
+       'stride2': 1,
+       'batchSize': 4,
+       'finalChannel': 48
+       })
