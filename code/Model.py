@@ -280,10 +280,10 @@ def tunerTrain():
 # train()
 #tunerTrain()
 
-train({'lr': 0.1,
-       'finalOutput': 1,
-       'stride1': 2,
+train({'lr': 0.0126767,
+       'finalOutput':  47,
+       'stride1': 1,
        'stride2': 1,
-       'batchSize': 4,
-       'finalChannel': 48
+       'batchSize': 256,
+       'finalChannel': 7
        })
