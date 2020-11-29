@@ -1,13 +1,16 @@
 import os
 import time
+from datetime import datetime
 
+import ctypes
 import torch
 import torch.nn as nn
-import win32gui, win32con, ctypes
+import win32con
+import win32gui
 from PIL import ImageGrab, Image, ImageDraw
-from datetime import datetime
 from pynput.keyboard import Listener
 from torchvision import transforms
+
 import Model
 
 
@@ -22,6 +25,7 @@ def on_release(key):
     if str(key) == '\'r\'':
         time.sleep(0.5)
         labelShop()
+
 
 def imageGrab():
     ctypes.windll.user32.SetProcessDPIAware()
@@ -55,8 +59,6 @@ def cropShop(shop, save=True):
         # draw.rectangle((300, 90) + (400, 195))
         crop = shop.crop((294 + i * offset, 70) + (388 + i * offset, 195))
         # draw.rectangle((294 + i*offset, 70) + (388 + i*offset, 195))
-        #crop.show()
-        #print(str(datetime.now()))
 
         imageList.append(crop)
         if save:
@@ -65,7 +67,7 @@ def cropShop(shop, save=True):
 
 
 def labelShop():
-    imageList = cropShop(imageGrab(),save=False)
+    imageList = cropShop(imageGrab(), save=False)
     value, inspect = predict(imageList)
     classes = getClasses()
 
@@ -82,10 +84,10 @@ def getClasses():
     classes = listdirs(class_path)
     return classes
 
+
 def loadOne():
     image_root = "../WIP"
     image_list = []
-
 
     for file in os.listdir(image_root):
         image_list.append(Image.open(image_root + "/" + file))
@@ -102,9 +104,9 @@ def loadOne():
         cnt += 1
     return True
 
+
 # Given a list of images, run a forward pass with CNN and return predictions
 def predict(imageList):
-
     data_transform = transforms.Compose([transforms.ToTensor(),
                                          transforms.Normalize((0.5,), (0.5,), (0.5,)),
                                          ])
@@ -128,17 +130,18 @@ def predict(imageList):
         net.load_state_dict(torch.load("model.pth"))
         out = out.cuda()
 
+
     out = net(out)  # use model to evaluate
     out = m(out)  # apply softmax
     value, inspect = torch.max(out, 1)
 
     return value, inspect
 
+
 def main():
     with Listener(
             on_release=on_release) as listener:
         listener.join()
-
 
 
 # cropShop(imageGrab())
