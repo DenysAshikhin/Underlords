@@ -135,18 +135,23 @@ class Net(nn.Module):
         return out
 
 
-def calculateF1(value, inspect):
-    scores = {
-        "Class": {
+def calculateF1(predictions, labels, classStats, update = True):
+    # classStats [0] = # of correct
+    # classStats [1] = # of incorrect
+    if update:
+        predictions = torch.flatten(predictions)
+        for label, i in enumerate(labels):
+            if labels[i] == predictions[i]:
+                classStats[0][labels[i]] += 1
+            else:
+                classStats[1][labels[i]] += 1
+    else:
+        for i, element in enumerate(classStats[0]):
+            classStats[0][i] = classStats[0][i] / (classStats[0][i] + classStats[1][i])
+            classStats[1][i] = 1 - classStats[0][i]
 
-        }
-    }
-    print(scores["key1"])
-    for i, img in enumerate(inspect):
-        state = img.item()
 
-
-def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_loader, writer):
+def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_loader, writer, classStats):
     train_losses = []
     valid_losses = []
     training_accuracy = []
@@ -186,7 +191,9 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
         optimizer.step()
         # update-training-loss
         train_loss += loss.item() * imgs.size(0)
+
         prediction = output.max(1, keepdim=True)[1]
+        calculateF1(prediction,labels,classStats)
         # print(f"pred: {prediction}")
         # print(f"viewAS: {labels.view_as(prediction)}")
         #
@@ -196,6 +203,7 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
         # print('---------------------------')
 
         correct = prediction.eq(labels.view_as(prediction)).sum().item()
+
         total = imgs.shape[0]
         training_accuracy.append((correct / total))
         # writer.add_scalar("Loss/train", train_loss, epoch)
@@ -246,7 +254,7 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
             num_epochs, train_loss, valid_loss, epoch_train_accuracy, epoch_validation_accuracy))
 
     writer.close()
-    return epoch_validation_accuracy, model
+    return epoch_validation_accuracy, model, classStats
 
 
 def train(config):
@@ -258,15 +266,21 @@ def train(config):
     writer = SummaryWriter()
     trainingLoader, validationLoader, classes = loadData(config['batchSize'])
 
+    # print(classStats)
+    classStats = []
+
     # print(f"The epoch! {config['epochs']}")
     for i in range(10):
-        accuracy, model = training_loop(i, optimizer, model, criterion, trainingLoader, validationLoader, writer)
+        classStatsEpoch = np.zeros([3, 62])
+        accuracy, model, classStatsEpoch = training_loop(i, optimizer, model, criterion, trainingLoader, validationLoader, writer, classStatsEpoch)
+        calculateF1(None, None, classStatsEpoch, update=False)
+        classStats.append(classStatsEpoch[0])
+        print(classStatsEpoch[0])
         tune.report(score=accuracy)
 
     torch.save(model.state_dict(), "model.pth")
     cpu_model = model.to('cpu')
     torch.save(model.state_dict(), "model_CPU.pth")
-
 
 def tunerTrain():
     ray.init(_memory=4000000000, num_cpus=5)
@@ -292,11 +306,11 @@ def tunerTrain():
 #tunerTrain()
 
 # #
-# train({'lr': 0.0126767,
-#        'finalOutput': 7,
-#        'stride1': 1,
-#        'stride2': 1,
-#        'batchSize': 256,
-#        'finalChannel': 47
-#        })
+train({'lr': 0.0126767,
+       'finalOutput': 7,
+       'stride1': 1,
+       'stride2': 1,
+       'batchSize': 256,
+       'finalChannel': 47
+       })
 
