@@ -17,7 +17,6 @@ import ray
 from ray import tune
 from ray.tune.schedulers import ASHAScheduler
 
-ray.init(_memory=4000000000, num_cpus=5)
 
 
 def loadData(batchSize):
@@ -259,6 +258,7 @@ def train(config):
 
 
 def tunerTrain():
+    ray.init(_memory=4000000000, num_cpus=5)
     searchSpace = {
         'lr': tune.loguniform(1e-4, 9e-1),
         'finalOutput': tune.randint(2, 50),#minimum of 2, other 1//2 = 0 activation maps
@@ -280,10 +280,10 @@ def tunerTrain():
 # train()
 #tunerTrain()
 
-train({'lr': 0.0126767,
-       'finalOutput': 7,
-       'stride1': 1,
-       'stride2': 1,
-       'batchSize': 256,
-       'finalChannel': 47
-       })
+# train({'lr': 0.0126767,
+#        'finalOutput': 7,
+#        'stride1': 1,
+#        'stride2': 1,
+#        'batchSize': 256,
+#        'finalChannel': 47
+#        })
