@@ -145,6 +145,7 @@ def calculateF1(predictions, labels, classStats, update = True):
                 classStats[0][labels[i]] += 1
             else:
                 classStats[1][labels[i]] += 1
+                classStats[2][predictions[i]] +=1
     else:
         for i, element in enumerate(classStats[0]):
             classStats[0][i] = classStats[0][i] / (classStats[0][i] + classStats[1][i])
@@ -271,11 +272,12 @@ def train(config):
 
     # print(f"The epoch! {config['epochs']}")
     for i in range(10):
-        classStatsEpoch = np.zeros([3, 62])
+        classStatsEpoch = np.zeros([3, 62]) # List of # correct and # incorrect for each label
         accuracy, model, classStatsEpoch = training_loop(i, optimizer, model, criterion, trainingLoader, validationLoader, writer, classStatsEpoch)
-        calculateF1(None, None, classStatsEpoch, update=False)
+        calculateF1(None, None, classStatsEpoch, update=False) # Calculate # Incorrect, # Correct and # False Positives
         classStats.append(classStatsEpoch[0])
-        print(classStatsEpoch[0])
+        # print(classStatsEpoch[0])
+        print(classStatsEpoch[2])
         tune.report(score=accuracy)
 
     torch.save(model.state_dict(), "model.pth")
