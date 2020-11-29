@@ -54,8 +54,13 @@ def cropShop(shop, save=True):
         # draw.rectangle((300, 90) + (400, 195))
         crop = shop.crop((294 + i * offset, 70) + (388 + i * offset, 195))
         # draw.rectangle((294 + i*offset, 70) + (388 + i*offset, 195))
+<<<<<<< Updated upstream
         #print(str(datetime.now()))
 
+=======
+        crop.show()
+        print(str(datetime.now()))
+>>>>>>> Stashed changes
         imageList.append(crop)
         if save:
             crop.save("./WIP/" + str(datetime.now()).replace(":", "") + ".jpg")
@@ -114,11 +119,25 @@ def predict(imageList):
     net = Model.Net(n_chans1=7, stride1=1, stride2=1, finalChannel=47)
     net.load_state_dict(torch.load("model.pth", map_location=torch.device('cpu')))
 
+<<<<<<< Updated upstream
+=======
+
 
     # conve rt image to tensor
     out = torch.stack(data, dim=0)  # output all images as one tensor
     m = nn.Softmax(dim=1)
     # Perform forward pass with ANN
+
+    if (torch.cuda.is_available()):
+        DEVICE = 'cuda'
+        # print("cuda")
+        net.cuda()
+        net.load_state_dict(torch.load("model.pth"))
+        out = out.cuda()
+    else:
+        DEVICE = 'cpu'
+        net.load_state_dict(torch.load("model_CPU.pth"))
+>>>>>>> Stashed changes
 
     out = net(out)  # use model to evaluate
     out = m(out)  # apply softmax
