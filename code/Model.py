@@ -280,9 +280,9 @@ def train(config):
         print(classStatsEpoch[2])
         tune.report(score=accuracy)
 
-    torch.save(model.state_dict(), "model.pth")
-    cpu_model = model.to('cpu')
-    torch.save(model.state_dict(), "model_CPU.pth")
+    #torch.save(model.state_dict(), "model.pth")
+    #cpu_model = model.to('cpu')
+    #torch.save(model.state_dict(), "model_CPU.pth")
 
 def tunerTrain():
     ray.init(_memory=4000000000, num_cpus=5)
@@ -308,11 +308,11 @@ def tunerTrain():
 #tunerTrain()
 
 # #
-train({'lr': 0.0126767,
-       'finalOutput': 7,
-       'stride1': 1,
-       'stride2': 1,
-       'batchSize': 256,
-       'finalChannel': 47
-       })
+# train({'lr': 0.0126767,
+#        'finalOutput': 7,
+#        'stride1': 1,
+#        'stride2': 1,
+#        'batchSize': 256,
+#        'finalChannel': 47
+#        })
 

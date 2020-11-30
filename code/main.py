@@ -66,9 +66,9 @@ def cropShop(shop, save=True):
     return imageList
 
 
-def labelShop():
+def labelShop(model=None):
     imageList = cropShop(imageGrab(), save=False)
-    value, inspect = predict(imageList)
+    value, inspect = predict(imageList, model)
     classes = getClasses()
     statesList = []
 
@@ -115,8 +115,14 @@ def loadOne():
     return True
 
 
+
+def createModel():
+    net = Model.Net(n_chans1=7, stride1=1, stride2=1, finalChannel=47)
+    net.load_state_dict(torch.load("model.pth", map_location=torch.device('cpu')))
+    return net
+
 # Given a list of images, run a forward pass with CNN and return predictions
-def predict(imageList):
+def predict(imageList, model=None):
     data_transform = transforms.Compose([transforms.ToTensor(),
                                          transforms.Normalize((0.5,), (0.5,), (0.5,)),
                                          ])
@@ -125,8 +131,11 @@ def predict(imageList):
     for img in imageList:
         data.append(data_transform(img))
 
-    net = Model.Net(n_chans1=7, stride1=1, stride2=1, finalChannel=47)
-    net.load_state_dict(torch.load("model.pth", map_location=torch.device('cpu')))
+    net = model
+
+    if model == None:
+        net = Model.Net(n_chans1=7, stride1=1, stride2=1, finalChannel=47)
+        net.load_state_dict(torch.load("model.pth", map_location=torch.device('cpu')))
 
     # conve rt image to tensor
     out = torch.stack(data, dim=0)  # output all images as one tensor

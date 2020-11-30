@@ -35,11 +35,12 @@ class controlWindow(Frame):
 
 
 class ShopThread(Thread):
-    def __init__(self, event, rootWindow):
+    def __init__(self, event, rootWindow, model):
         Thread.__init__(self)
         self.stopped = event
+        self.model = model
 
-        shopImages, classes, value, inspect, statesList = main.labelShop()
+        shopImages, classes, value, inspect, statesList = main.labelShop(model=model)
 
         self.shopLabels = []
         self.shopImages = []
@@ -61,7 +62,7 @@ class ShopThread(Thread):
     def run(self):
         while not self.stopped.wait(1):
             print("Updating store")
-            shopImages, classes, value, inspect, statesList = main.labelShop()
+            shopImages, classes, value, inspect, statesList = main.labelShop(self.model)
 
             for i in range(5):
                 tempImage = ImageTk.PhotoImage(shopImages[i])
@@ -76,8 +77,10 @@ def openVision():
     app = controlWindow()
     root.resizable(0, 0)
 
+    model = main.createModel()
+
     stopFlag = Event()
-    thread = ShopThread(stopFlag, root)
+    thread = ShopThread(stopFlag, root, model)
     thread.start()
     # this will stop the timer
     # stopFlag.set()
