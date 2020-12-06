@@ -1,13 +1,11 @@
 import math
 import os
-
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
-from PIL import Image
 from torch.utils.data.sampler import SubsetRandomSampler
 
 from torch.utils.tensorboard import SummaryWriter
@@ -16,7 +14,6 @@ import ray
 
 from ray import tune
 from ray.tune.schedulers import ASHAScheduler
-
 
 
 def loadData(batchSize):
@@ -93,12 +90,10 @@ class Net(nn.Module):
         # width = 94
         # height = 125
 
-        # print(f"step1 {conv2d_size_out(94, padding=1, stride=stride1)}")
-        # print(f"step2 {poolAdjust(conv2d_size_out(94, padding=1, stride=stride1))}")
-        # print(
-        #     f"step3 {conv2d_size_out(poolAdjust(conv2d_size_out(94, padding=1, stride=stride1)), padding=1, stride=stride2)}")
-        # print(
-        #     f"step4 {poolAdjust(conv2d_size_out(poolAdjust(conv2d_size_out(94, padding=1, stride=stride1)), padding=1, stride=stride2))}")
+        # print(f"step1 {conv2d_size_out(94, padding=1, stride=stride1)}") print(f"step2 {poolAdjust(conv2d_size_out(
+        # 94, padding=1, stride=stride1))}") print( f"step3 {conv2d_size_out(poolAdjust(conv2d_size_out(94,
+        # padding=1, stride=stride1)), padding=1, stride=stride2)}") print( f"step4 {poolAdjust(conv2d_size_out(
+        # poolAdjust(conv2d_size_out(94, padding=1, stride=stride1)), padding=1, stride=stride2))}")
 
         widthFinal = poolAdjust(
             conv2d_size_out(poolAdjust(conv2d_size_out(94, padding=1, stride=stride1)), padding=1, stride=stride2)
@@ -113,29 +108,29 @@ class Net(nn.Module):
 
         self.finalSize = widthFinal * heightFinal * finalOutput
 
-        #print(f"Final: {self.finalSize}")
+        # print(f"Final: {self.finalSize}")
 
         self.fc1 = nn.Linear(self.finalSize, finalChannel)
         self.fc2 = nn.Linear(finalChannel, 62)
 
     def forward(self, x):
         out = self.conv1_batchnorm(self.conv1(x))
-        #print(f"conv1: {out.size()}")
+        # print(f"conv1: {out.size()}")
         out = F.max_pool2d(torch.relu(out), 2)
-        #print(f"first pool: {out.size()}")
+        # print(f"first pool: {out.size()}")
         out = self.conv2_batchnorm(self.conv2(out))
-        #print(f"pre pool {out.size()}")
+        # print(f"pre pool {out.size()}")
         out = F.max_pool2d(torch.relu(out), 2)
-        #print(f"post pool {out.size()}")
+        # print(f"post pool {out.size()}")
         out = out.view(-1, self.finalSize)
-        #print(f"post view: {out.size}")
-        #print(f"finalSize: {self.finalSize}")
+        # print(f"post view: {out.size}")
+        # print(f"finalSize: {self.finalSize}")
         out = torch.relu(self.fc1(out))
         out = self.fc2(out)
         return out
 
 
-def calculateF1(predictions, labels, classStats, update = True):
+def calculateF1(predictions, labels, classStats, update=True):
     # classStats [0] = # of correct
     # classStats [1] = # of incorrect
     if update:
@@ -145,7 +140,7 @@ def calculateF1(predictions, labels, classStats, update = True):
                 classStats[0][labels[i]] += 1
             else:
                 classStats[1][labels[i]] += 1
-                classStats[2][predictions[i]] +=1
+                classStats[2][predictions[i]] += 1
     else:
         for i, element in enumerate(classStats[0]):
             classStats[0][i] = classStats[0][i] / (classStats[0][i] + classStats[1][i])
@@ -194,7 +189,7 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
         train_loss += loss.item() * imgs.size(0)
 
         prediction = output.max(1, keepdim=True)[1]
-        calculateF1(prediction,labels,classStats)
+        calculateF1(prediction, labels, classStats)
         # print(f"pred: {prediction}")
         # print(f"viewAS: {labels.view_as(prediction)}")
         #
@@ -251,7 +246,8 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
 
     # print-training/validation-statistics
     print(
-        'Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}  \tTraining Accuracy: {:.6f}  \tValidation Accuracy: {:.6f}'.format(
+        'Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}  \tTraining Accuracy: {:.6f}  \tValidation '
+        'Accuracy: {:.6f}'.format(
             num_epochs, train_loss, valid_loss, epoch_train_accuracy, epoch_validation_accuracy))
 
     writer.close()
@@ -259,7 +255,8 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
 
 
 def train(config):
-    model = Net(n_chans1=config['finalOutput'], stride1=config['stride1'], stride2=config['stride2'], finalChannel=config['finalChannel'])
+    model = Net(n_chans1=config['finalOutput'], stride1=config['stride1'], stride2=config['stride2'],
+                finalChannel=config['finalChannel'])
     if torch.cuda.is_available():
         model = model.cuda()
     criterion = nn.CrossEntropyLoss()
@@ -272,23 +269,25 @@ def train(config):
 
     # print(f"The epoch! {config['epochs']}")
     for i in range(10):
-        classStatsEpoch = np.zeros([3, 62]) # List of # correct and # incorrect for each label
-        accuracy, model, classStatsEpoch = training_loop(i, optimizer, model, criterion, trainingLoader, validationLoader, writer, classStatsEpoch)
-        calculateF1(None, None, classStatsEpoch, update=False) # Calculate # Incorrect, # Correct and # False Positives
+        classStatsEpoch = np.zeros([3, 62])  # List of # correct and # incorrect for each label
+        accuracy, model, classStatsEpoch = training_loop(i, optimizer, model, criterion, trainingLoader,
+                                                         validationLoader, writer, classStatsEpoch)
+        calculateF1(None, None, classStatsEpoch, update=False)  # Calculate # Incorrect, # Correct and # False Positives
         classStats.append(classStatsEpoch[0])
         # print(classStatsEpoch[0])
         print(classStatsEpoch[2])
         tune.report(score=accuracy)
 
-    #torch.save(model.state_dict(), "model.pth")
-    #cpu_model = model.to('cpu')
-    #torch.save(model.state_dict(), "model_CPU.pth")
+    # torch.save(model.state_dict(), "model.pth")
+    # cpu_model = model.to('cpu')
+    # torch.save(model.state_dict(), "model_CPU.pth")
+
 
 def tunerTrain():
     ray.init(_memory=4000000000, num_cpus=5)
     searchSpace = {
         'lr': tune.loguniform(1e-4, 9e-1),
-        'finalOutput': tune.randint(2, 50),#minimum of 2, other 1//2 = 0 activation maps
+        'finalOutput': tune.randint(2, 50),  # minimum of 2, other 1//2 = 0 activation maps
         'stride1': tune.grid_search(np.arange(1, 4).tolist()),
         'stride2': tune.grid_search(np.arange(1, 4).tolist()),
         'batchSize': tune.grid_search([2, 4, 8, 16, 32, 64, 128, 256]),
@@ -297,15 +296,13 @@ def tunerTrain():
 
     analysis = tune.run(train, num_samples=1, scheduler=ASHAScheduler(metric='score', mode='max'),
                         config=searchSpace)
-    dfs = analysis.trial_dataframes
     print(f"Best Config: {analysis.get_all_configs(metric='score', mode='max')}")
     df = analysis.results_df
     logdir = analysis.get_best_logdir("mean_accuracy", mode="max")
     print(f"dir of best: {logdir}")
 
-
 # train()
-#tunerTrain()
+# tunerTrain()
 
 # #
 # train({'lr': 0.0126767,
@@ -315,4 +312,3 @@ def tunerTrain():
 #        'batchSize': 256,
 #        'finalChannel': 47
 #        })
-
