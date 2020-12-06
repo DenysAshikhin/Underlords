@@ -4,8 +4,6 @@ import win32con
 import win32gui
 from PIL import ImageGrab
 from pynput.keyboard import Listener
-import Model
-
 
 # look at us now
 
