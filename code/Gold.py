@@ -22,7 +22,8 @@ class Gold:
         self.gold = self.countItem(self.cropGold(gameScreen), self.goldTemplates)
         self.health = self.countItem(self.cropHealth(gameScreen), self.healthTemplates)
         self.units = self.countItem(self.cropUnit(gameScreen), self.unitTemplates)
-        return self.gold, self.health, self.units
+        allImage = self.cropAll(gameScreen)
+        return [self.gold, self.health, self.units], allImage
 
     def cropHealth(self, gameScreen):
         crop = gameScreen.crop((1010, 815) + (1100, 875))
@@ -30,11 +31,16 @@ class Gold:
 
     def cropUnit(self, gameScreen):
         crop = gameScreen.crop((925, 815) + (985, 875))
+        crop.save("../digits/1.jpg")
         return crop
 
     def cropGold(self, gameScreen):
-        img = gameScreen.crop((920, 52) + (943, 67))
-        return img
+        crop = gameScreen.crop((920, 52) + (943, 67))
+        return crop
+
+    def cropAll(self, gameScreen):
+        crop = gameScreen.crop((920, 815) + (1100, 975))
+        return crop
 
     # Given a cropped image, and a set of templates containing digits
     # count the current number present and return it
@@ -55,7 +61,7 @@ class Gold:
                                   maxOverlap=0,
                                   searchBox=None)
 
-        print(hits)
+        # print(hits)
 
         if len(hits['TemplateName']) == 1:
             # If only one match is found, single digit is present

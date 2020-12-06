@@ -10,16 +10,6 @@ from Shop import Shop
 # from tkinter.ttk import Frame
 # import tkinter as tk
 
-
-class controlWindow(Frame):
-
-    def __init__(self):
-        super().__init__()
-        self.gold = Gold()
-        self.shop = Shop()
-        self.update()
-
-
 class ShopThread(Thread):
     def __init__(self, event, rootWindow):
         Thread.__init__(self)
@@ -32,31 +22,44 @@ class ShopThread(Thread):
 
         self.shopLabels = []
         self.shopImages = []
+        self.itemLabel = None
+        shopFrame = Frame(
+            master=rootWindow,
+            relief=tkinter.RAISED,
+            borderwidth=1
+        )
         for i in range(5):
-            shopFrame = Frame(
-                master=rootWindow,
-                relief=tkinter.RAISED,
-                borderwidth=1
-            )
-            shopFrame.grid(row=0, column=i, padx=5, pady=5)
-
             tempImage = ImageTk.PhotoImage(shopImages[0])
             print(f"Confidence {statesList[i] * 100}")
-            label = label = Label(master=shopFrame, foreground='white', background='black', image=tempImage,
-                                  text=f"{classes[statesList[i]]} {value[i] * 100:.1f}%", compound='top')
+            label = Label(master=shopFrame, foreground='white', background='black', image=tempImage,
+                          text=f"{classes[statesList[i]]} {value[i] * 100:.1f}%", compound='top')
+            label.grid(row=0, column=i, padx=5, pady=5)
             self.shopLabels.append(label)
-            label.pack()
+
+
+        shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
+        self.itemLabel = Label(master=shopFrame, foreground='white', background='black', image=tempImage,
+                          text="Hi", compound='top')
+
+        self.itemLabel.grid(row=1, column=0, padx=5, pady=5, columnspan=5)
+        shopFrame.pack()
 
     def run(self):
         while not self.stopped.wait(1):
             print("Updating store")
             shopImages, classes, value, inspect, statesList = self.shop.labelShop()
+            itemCounts, itemImage = self.gold.getItems()
 
             for i in range(5):
                 tempImage = ImageTk.PhotoImage(shopImages[i])
                 self.shopImages.append(tempImage)
                 self.shopLabels[i].config(image=tempImage,
                                           text=f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
+
+            itemImage = ImageTk.PhotoImage(itemImage)
+            tempString = "Gold Count: %d" % itemCounts[0] +  "\nHealth Count: %d" % itemCounts[1] + "\nUnit Count %d" % itemCounts[2]
+            self.itemLabel.config(image=itemImage, text=tempString)
+
 
 
 def openVision():
@@ -95,6 +98,4 @@ def useles():
     # )
     # label.pack()
 
-
-print(Gold().getItems())
-# openVision()
+openVision()
