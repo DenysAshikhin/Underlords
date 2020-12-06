@@ -5,12 +5,10 @@ from tkinter import Frame, Tk, Label
 from PIL import ImageTk
 from Gold import Gold
 from Shop import Shop
-import main
 
 
 # from tkinter.ttk import Frame
 # import tkinter as tk
-
 
 
 class controlWindow(Frame):
@@ -97,4 +95,6 @@ def useles():
     # )
     # label.pack()
 
-openVision()
+
+print(Gold().getItems())
+# openVision()

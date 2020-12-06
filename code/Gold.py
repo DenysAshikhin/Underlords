@@ -10,101 +10,82 @@ class Gold:
     def __init__(self):
         super().__init__()
         self.gold = 0
-        self.templatesList = self.loadDigits()
+        self.health = 0
+        self.units = 3
+        self.goldTemplates = self.loadDigits("gold")
+        self.healthTemplates = self.loadDigits("health")
+        self.unitTemplates = self.loadDigits("unit")
 
-    def getGold(self):
-        self.gold = self.countGold(self.cropGold(imageGrab()))
-        return self.gold
+    def getItems(self):
+        # Capture screen once, and crop it as needed
+        gameScreen = imageGrab()
+        self.gold = self.countItem(self.cropGold(gameScreen), self.goldTemplates)
+        self.health = self.countItem(self.cropHealth(gameScreen), self.healthTemplates)
+        self.units = self.countItem(self.cropUnit(gameScreen), self.unitTemplates)
+        return self.gold, self.health, self.units
+
+    def cropHealth(self, gameScreen):
+        crop = gameScreen.crop((1010, 815) + (1100, 875))
+        return crop
+
+    def cropUnit(self, gameScreen):
+        crop = gameScreen.crop((925, 815) + (985, 875))
+        return crop
 
     def cropGold(self, gameScreen):
-        # draw = ImageDraw.Draw(gameScreen)
-        imageList = []
-        tensDigit = gameScreen.crop((920, 52) + (933, 67))
-        onesDigit = gameScreen.crop((930, 52) + (943, 67))
-        singeDigit = gameScreen.crop((925, 52) + (942, 67))
+        img = gameScreen.crop((920, 52) + (943, 67))
+        return img
 
-        imageList.append(singeDigit)
-        imageList.append(tensDigit)
-        imageList.append(onesDigit)
-        return imageList
-
-    def loadDigits(self):
-        root = os.path.join(os.path.dirname(os.getcwd()), "digits")
-        digitsList = []
-        for i in range(10):
-            # print(os.path.join(root,str(i) + ".jpg"))
-            img = cv2.imread(os.path.join(root, str(i) + ".jpg"))
-            cv2.imwrite("tes.jpg", img)
-            digitsList.append((str(i), img))
-        return digitsList
-
-    def countGold(self, imageList):
-        templates = self.templatesList
+    # Given a cropped image, and a set of templates containing digits
+    # count the current number present and return it
+    # gold = gold count
+    # health = current health, etc
+    def countItem(self, img, templates):
         # Convert from PIL image type to cv2
         # PIL image store in rgb format, non array
-        singleDigit = cv2.cvtColor(numpy.asarray(imageList[0]), cv2.COLOR_RGB2BGR)
-        tensDigit = cv2.cvtColor(numpy.asarray(imageList[1]), cv2.COLOR_RGB2BGR)
-        onesDigit = cv2.cvtColor(numpy.asarray(imageList[2]), cv2.COLOR_RGB2BGR)
+        img_cv = cv2.cvtColor(numpy.asarray(img), cv2.COLOR_RGB2BGR)
 
-        templates = self.loadDigits()
-
-        maxScoreTens = 0
-        maxScoreOnes = 0
-        digitNameTens = -1
-        digitNameOnes = -1
-
-        hitsTens = MTM.matchTemplates(templates,
-                                      tensDigit,
-                                      method=cv2.TM_CCOEFF_NORMED,
-                                      N_object=1,
-                                      score_threshold=0.5,
-                                      maxOverlap=0,
-                                      searchBox=None)
-        print(hitsTens)
-
-        hitsOnes = MTM.matchTemplates(templates,
-                                      onesDigit,
-                                      method=cv2.TM_CCOEFF_NORMED,
-                                      N_object=1,
-                                      score_threshold=0.5,
-                                      maxOverlap=0,
-                                      searchBox=None)
-
-        print(hitsOnes)
-        for index, row in hitsTens.iterrows():
-            if row['Score'] > maxScoreTens:
-                print("Digit %s" % row['TemplateName'], "Score %f" % row['Score'])
-                maxScoreTens = row['Score']
-                digitNameTens = int(row['TemplateName'])
-
-        for index, row in hitsOnes.iterrows():
-            if row['Score'] > maxScoreOnes:
-                print("Digit %s" % row['TemplateName'], "Score %f" % row['Score'])
-                maxScoreOnes = row['Score']
-                digitNameOnes = int(row['TemplateName'])
-
-        if maxScoreTens >= 0.9 and maxScoreOnes >= 0.9:
-            gold = 10 * digitNameTens + digitNameOnes
-            return gold
-
+        # Look for matches with over 90% confidence
+        # Note MTM converts BGR images to grayscale by taking an avg across 3 channels
         hits = MTM.matchTemplates(templates,
-                                  singleDigit,
+                                  img_cv,
                                   method=cv2.TM_CCOEFF_NORMED,
-                                  N_object=1,
-                                  score_threshold=0.80,
+                                  N_object=float("inf"),
+                                  score_threshold=0.9,
                                   maxOverlap=0,
                                   searchBox=None)
 
-        maxScoreSingle = 0
-        digitNameSingle = -1
-
         print(hits)
-        for index, row in hits.iterrows():
-            if row['Score'] > maxScoreSingle:
-                print("Digit %s" % row['TemplateName'], "Score %f" % row['Score'])
-                maxScoreSingle = row['Score']
-                digitNameSingle = int(row['TemplateName'])
 
-        gold = digitNameSingle
+        if len(hits['TemplateName']) == 1:
+            # If only one match is found, single digit is present
+            itemCount = int(hits['TemplateName'].iloc[0])
+        elif len(hits['TemplateName']) == 0:
+            itemCount = -1
+        else:
+            # For two matches, look at their location in the image
+            # to determine the tens and ones digit
+            x1, _, _, _ = hits['BBox'].iloc[0]
+            x2, _, _, _ = hits['BBox'].iloc[1]
 
-        return gold
+            if x1 <= x2:
+                tensDigit = int(hits['TemplateName'].iloc[0])
+                onesDigit = int(hits['TemplateName'].iloc[1])
+            else:
+                tensDigit = int(hits['TemplateName'].iloc[1])
+                onesDigit = int(hits['TemplateName'].iloc[0])
+
+            itemCount = tensDigit * 10 + onesDigit
+        return itemCount
+
+    # Load a templates of images in the format specified by MTM
+    # itemName redirects to the sub folder to search templates for
+    def loadDigits(self, itemName):
+        root = os.path.join(os.path.dirname(os.getcwd()), "digits", itemName)
+        digitsList = []
+        print(root)
+        for i in range(len(os.listdir(root)) + 1):
+            if os.path.isfile(os.path.join(root, str(i) + ".jpg")):
+                img = cv2.imread(os.path.join(root, str(i) + ".jpg"))
+                digitsList.append((str(i), img))
+        return digitsList
