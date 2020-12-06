@@ -1,9 +1,10 @@
-from threading import Event, Thread
 import tkinter
 from threading import Event, Thread
 from tkinter import Frame, Tk, Label
+
 from PIL import ImageTk
-import Shop
+from Gold import Gold
+from Shop import Shop
 import main
 
 
@@ -11,20 +12,25 @@ import main
 # import tkinter as tk
 
 
+
 class controlWindow(Frame):
 
     def __init__(self):
         super().__init__()
+        self.gold = Gold()
+        self.shop = Shop()
         self.update()
 
 
 class ShopThread(Thread):
-    def __init__(self, event, rootWindow, model):
+    def __init__(self, event, rootWindow):
         Thread.__init__(self)
         self.stopped = event
-        self.model = model
+        self.rootWindow = rootWindow
+        self.shop = Shop()
+        self.gold = Gold()
 
-        shopImages, classes, value, inspect, statesList = Shop.labelShop(model=model)
+        shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
         self.shopLabels = []
         self.shopImages = []
@@ -46,7 +52,7 @@ class ShopThread(Thread):
     def run(self):
         while not self.stopped.wait(1):
             print("Updating store")
-            shopImages, classes, value, inspect, statesList = Shop.labelShop(self.model)
+            shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
             for i in range(5):
                 tempImage = ImageTk.PhotoImage(shopImages[i])
@@ -58,13 +64,10 @@ class ShopThread(Thread):
 def openVision():
     root = Tk()
     # root.geometry("600x105")
-    app = controlWindow()
     root.resizable(0, 0)
 
-    model = main.createModel()
-
     stopFlag = Event()
-    thread = ShopThread(stopFlag, root, model)
+    thread = ShopThread(stopFlag, root)
     thread.start()
     # this will stop the timer
     # stopFlag.set()
@@ -93,6 +96,5 @@ def useles():
     #     height=10
     # )
     # label.pack()
-
 
 openVision()

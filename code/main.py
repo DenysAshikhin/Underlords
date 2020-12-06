@@ -8,6 +8,8 @@ import Model
 
 
 # look at us now
+
+
 def on_release(key):
     print(key)
     # if str(key) == '\'+\'' or str(key) == '\'=\'':
@@ -43,17 +45,12 @@ def imageGrab():
     return image
 
 
-def createModel():
-    net = Model.Net(n_chans1=7, stride1=1, stride2=1, finalChannel=47)
-    net.load_state_dict(torch.load("model.pth", map_location=torch.device('cpu')))
-    return net
 
 
 def main():
     with Listener(
             on_release=on_release) as listener:
         listener.join()
-
 
 # cropGold(imageGrab())
 # cropShop(imageGrab())
