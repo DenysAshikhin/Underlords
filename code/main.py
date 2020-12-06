@@ -1,5 +1,4 @@
 import ctypes
-import time
 import torch
 import win32con
 import win32gui

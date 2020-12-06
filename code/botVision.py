@@ -24,7 +24,7 @@ class ShopThread(Thread):
         self.stopped = event
         self.model = model
 
-        shopImages, classes, value, inspect, statesList =   Shop.labelShop(model=model)
+        shopImages, classes, value, inspect, statesList = Shop.labelShop(model=model)
 
         self.shopLabels = []
         self.shopImages = []

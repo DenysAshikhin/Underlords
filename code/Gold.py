@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 import cv2
 import MTM
 from main import imageGrab
