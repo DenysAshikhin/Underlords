@@ -5,8 +5,7 @@ from main import imageGrab
 import numpy
 
 
-class Gold:
-
+class HUD:
     def __init__(self):
         super().__init__()
         self.gold = 0
@@ -16,13 +15,13 @@ class Gold:
         self.healthTemplates = self.loadDigits("health")
         self.unitTemplates = self.loadDigits("unit")
 
-    def getItems(self):
+    def getHUD(self):
         # Capture screen once, and crop it as needed
         gameScreen = imageGrab()
-        self.gold = self.countItem(self.cropGold(gameScreen), self.goldTemplates)
-        self.health = self.countItem(self.cropHealth(gameScreen), self.healthTemplates)
-        self.units = self.countItem(self.cropUnit(gameScreen), self.unitTemplates)
-        allImage = self.cropAll(gameScreen)
+        self.gold = self.countHUD(self.cropGold(gameScreen), self.goldTemplates)
+        self.health = self.countHUD(self.cropHealth(gameScreen), self.healthTemplates)
+        self.units = self.countHUD(self.cropUnit(gameScreen), self.unitTemplates)
+        allImage = self.cropHUD(gameScreen)
         return [self.gold, self.health, self.units], allImage
 
     def cropHealth(self, gameScreen):
@@ -38,7 +37,7 @@ class Gold:
         crop = gameScreen.crop((920, 52) + (943, 67))
         return crop
 
-    def cropAll(self, gameScreen):
+    def cropHUD(self, gameScreen):
         crop = gameScreen.crop((920, 815) + (1100, 975))
         return crop
 
@@ -46,7 +45,7 @@ class Gold:
     # count the current number present and return it
     # gold = gold count
     # health = current health, etc
-    def countItem(self, img, templates):
+    def countHUD(self, img, templates):
         # Convert from PIL image type to cv2
         # PIL image store in rgb format, non array
         img_cv = cv2.cvtColor(numpy.asarray(img), cv2.COLOR_RGB2BGR)

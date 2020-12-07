@@ -1,9 +1,9 @@
 import ctypes
-import torch
 import win32con
 import win32gui
 from PIL import ImageGrab
 from pynput.keyboard import Listener
+
 
 # look at us now
 
@@ -41,8 +41,6 @@ def imageGrab():
     # grab screen region set in `dimensions`
     image = ImageGrab.grab(dimensions)
     return image
-
-
 
 
 def main():
