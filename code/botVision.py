@@ -11,20 +11,38 @@ from Shop import Shop
 from pynput import keyboard
 from pynput.keyboard import Key, Controller, Listener
 
-# from tkinter.ttk import Frame
-# import tkinter as tk
+
+from pynput.keyboard import Key, Controller as KeyboardController
+from pynput.mouse import Button, Controller as MouseController
 
 
-keyboard1 = Controller()
+
+keyboard1 = KeyboardController()
+mouse1 = MouseController()
 
 
-def buy1():
+def buy1(setStoreMap=True):
     print('wow')
     hwnd = win32gui.FindWindow(None, 'Dota Underlords')
     win32gui.SetForegroundWindow(hwnd)
+
+    rect = win32gui.GetWindowRect(hwnd)
+    x = rect[0]
+    y = rect[1]
+    w = rect[2] - x
+    h = rect[3] - y
+    print("Window %s:" % win32gui.GetWindowText(hwnd))
+    print("\tLocation: (%d, %d)" % (x, y))
+    print("\t    Size: (%d, %d)" % (w, h))
+
+    #mouse.position
+
+
     keyboard1.press('1')
     keyboard1.release('1')
-    storeMap[0].toBuy = 1
+    if setStoreMap:
+        print("Setting to buy!")
+        storeMap[0].toBuy = 1
 
 
 def buy2():
@@ -59,6 +77,7 @@ storeMap = {
 
 def on_press(key):
     print(f"pressed ${key}")
+
 
 def on_release(key):
     print(key)
@@ -121,9 +140,12 @@ class ShopThread(Thread):
 
     def run(self):
         while not self.stopped.wait(1):
-           #  print("Updating store")
+            #  print("Updating store")
             if not self.toBuy == None:
                 print("Trying to buy")
+                storeMap[self.toBuy](False)
+                self.toBuy = None
+
             shopImages, classes, value, inspect, statesList = self.shop.labelShop()
             itemCounts, itemImage = self.HUD.getHUD()
 
@@ -157,9 +179,7 @@ def openVision():
         on_release=on_release)
     listener.start()
 
-
     root.mainloop()
-
 
 
 def useless():
