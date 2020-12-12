@@ -268,7 +268,7 @@ def train(config):
     classStats = []
 
     # print(f"The epoch! {config['epochs']}")
-    for i in range(10):
+    for i in range(8):
         classStatsEpoch = np.zeros([3, 62])  # List of # correct and # incorrect for each label
         accuracy, model, classStatsEpoch = training_loop(i, optimizer, model, criterion, trainingLoader,
                                                          validationLoader, writer, classStatsEpoch)
@@ -278,7 +278,7 @@ def train(config):
         print(classStatsEpoch[2])
         tune.report(score=accuracy)
 
-    # torch.save(model.state_dict(), "model.pth")
+    torch.save(model.state_dict(), "model.pth")
     # cpu_model = model.to('cpu')
     # torch.save(model.state_dict(), "model_CPU.pth")
 

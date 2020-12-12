@@ -92,7 +92,7 @@ class Shop:
         for file in os.listdir(image_root):
             image_list.append(Image.open(image_root + "/" + file))
 
-        save_path = "./save/"
+        save_path = "../save/"
         cnt = 0
         value, inspect = self.predict(image_list)
         classes = self.getClasses()
