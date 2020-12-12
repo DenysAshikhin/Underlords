@@ -15,32 +15,10 @@ from pynput.mouse import Button, Controller as MouseController
 mouse1 = MouseController()
 
 
-def toggleStore(coords):
-    mouse1.position = coords
-    mouse1.click(Button.left, 1)
-    time.sleep(1)
-    storeMap[5].shopChoices = storeMap[5].shop.labelShop()
 
 
-def buy(xPos=350, idx=0):
-
-    hwnd = win32gui.FindWindow(None, 'Dota Underlords')
-    win32gui.SetForegroundWindow(hwnd)
-
-    rect = win32gui.GetWindowRect(hwnd)
-    x = rect[0]
-    y = rect[1]
-    w = rect[2] - x
-    h = rect[3] - y
-
-    toggleStore((x + 900, y + 65))
-
-    mouse1.position = (x + xPos, y + 130)
-    mouse1.click(Button.left, 1)
-    storeMap[5].bought = idx
 
 
-storeMap = [350, 450, 575, 700, 800, None]
 
 
 def loadProfiles():
@@ -65,6 +43,7 @@ class ShopThread(Thread):
         self.profilePics = loadProfiles()
         self.bought = None
         self.shopChoices = None
+        self.storeMap = [350, 450, 575, 700, 800]
 
         shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -94,7 +73,7 @@ class ShopThread(Thread):
                 height=1,
                 bg="blue",
                 fg="yellow",
-                command=lambda pos=storeMap[i], idx=i: buy(xPos=pos, idx=idx)
+                command=lambda pos=self.storeMap[i], idx=i: self.buy(xPos=pos, idx=idx)
             )
             button.grid(row=1, column=i)
 
@@ -140,6 +119,30 @@ class ShopThread(Thread):
                                                        image=self.profilePics[self.benchLabelHero[x]])
                             break
 
+    def toggleStore(self, coords):
+        mouse1.position = coords
+        mouse1.click(Button.left, 1)
+        time.sleep(1)
+        self.shopChoices = self.shop.labelShop()
+
+    def buy(self, xPos=350, idx=0):
+
+        hwnd = win32gui.FindWindow(None, 'Dota Underlords')
+        win32gui.SetForegroundWindow(hwnd)
+
+        rect = win32gui.GetWindowRect(hwnd)
+        x = rect[0]
+        y = rect[1]
+        w = rect[2] - x
+        h = rect[3] - y
+
+        self.toggleStore((x + 900, y + 65))
+
+        mouse1.position = (x + xPos, y + 130)
+        mouse1.click(Button.left, 1)
+        self.bought = idx
+
+
 
 def openVision():
     root = Tk()
@@ -149,7 +152,6 @@ def openVision():
     stopFlag = Event()
     thread = ShopThread(stopFlag, root)
     thread.start()
-    storeMap[5] = thread
     # this will stop the timer
     # stopFlag.set()
     # shopFrame.pack()
