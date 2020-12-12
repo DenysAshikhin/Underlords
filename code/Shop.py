@@ -103,3 +103,4 @@ class Shop:
             image_list[cnt].save(save_path + folder_name + "/" + str(datetime.now()).replace(":", "") + ".jpg")
             cnt += 1
         return True
+
