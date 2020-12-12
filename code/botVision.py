@@ -134,8 +134,6 @@ class ShopThread(Thread):
                     for x in range(8):
 
                         if self.benchLabelHero[x] is None:
-                            print(self.bought)
-                            print(classes[statesList[self.bought]])
                             self.benchLabelHero[x] = classes[statesList[self.bought]]
                             self.bought = None
                             self.benchLabels[x].config(text=f"{self.benchLabelHero[x]}",
