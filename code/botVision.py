@@ -113,31 +113,31 @@ class ShopThread(Thread):
             button.grid(row=1, column=i)
 
         shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
-        # self.itemLabel = Label(master=shopFrame, foreground='white', background='black', image=tempImage,
-        #                        text="Hi", compound='top')
-        #
-        # self.itemLabel.grid(row=1, column=0, padx=5, pady=5, columnspan=5)
+        self.itemLabel = Label(master=shopFrame, foreground='white', background='black', image=tempImage,
+                               text="Hi", compound='top')
+
+        self.itemLabel.grid(row=2, column=0, padx=5, pady=5, columnspan=5)
         shopFrame.pack()
 
     def run(self):
         while not self.stopped.wait(1):
            #  print("Updating store")
-             if not self.toBuy == None:
-                 print("Trying to buy")
-        #     shopImages, classes, value, inspect, statesList = self.shop.labelShop()
-        #     itemCounts, itemImage = self.HUD.getHUD()
-        #
-        #     for i in range(5):
-        #         tempImage = ImageTk.PhotoImage(shopImages[i])
-        #         self.shopImages.append(tempImage)
-        #         self.shopLabels[i].config(image=tempImage,
-        #                                   text=f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
-        #     #  print(f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
-        #
-        #     itemImage = ImageTk.PhotoImage(itemImage)
-        #     tempString = "Gold Count: %d" % itemCounts[0] + "\nHealth Count: %d" % itemCounts[1] + "\nUnit Count %d" % \
-        #                  itemCounts[2]
-        # # self.itemLabel.config(image=itemImage, text=tempString)
+            if not self.toBuy == None:
+                print("Trying to buy")
+            shopImages, classes, value, inspect, statesList = self.shop.labelShop()
+            itemCounts, itemImage = self.HUD.getHUD()
+
+            for i in range(5):
+                tempImage = ImageTk.PhotoImage(shopImages[i])
+                self.shopImages.append(tempImage)
+                self.shopLabels[i].config(image=tempImage,
+                                          text=f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
+            #  print(f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
+
+            itemImage = ImageTk.PhotoImage(itemImage)
+            tempString = "Gold Count: %d" % itemCounts[0] + "\nHealth Count: %d" % itemCounts[1] + "\nUnit Count %d" % \
+                         itemCounts[2]
+            self.itemLabel.config(image=itemImage, text=tempString)
 
 
 def openVision():

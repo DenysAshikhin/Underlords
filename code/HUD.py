@@ -14,6 +14,7 @@ class HUD:
         self.goldTemplates = self.loadDigits("gold")
         self.healthTemplates = self.loadDigits("health")
         self.unitTemplates = self.loadDigits("unit")
+        self.hero = False
 
     def getHUD(self):
         # Capture screen once, and crop it as needed
@@ -25,7 +26,7 @@ class HUD:
         return [self.gold, self.health, self.units], allImage
 
     def cropHealth(self, gameScreen):
-        crop = gameScreen.crop((1010, 815) + (1100, 875))
+        crop = gameScreen.crop((1010, 810) + (1100, 870))
         return crop
 
     def cropUnit(self, gameScreen):
@@ -34,7 +35,7 @@ class HUD:
         return crop
 
     def cropGold(self, gameScreen):
-        crop = gameScreen.crop((920, 52) + (943, 67))
+        crop = gameScreen.crop((920, 40) + (943, 65))
         return crop
 
     def cropHUD(self, gameScreen):
@@ -50,6 +51,9 @@ class HUD:
         # PIL image store in rgb format, non array
         img_cv = cv2.cvtColor(numpy.asarray(img), cv2.COLOR_RGB2BGR)
 
+
+        rand =  str(numpy.random.randint(0,1000000)) + ".jpg"
+
         # Look for matches with over 90% confidence
         # Note MTM converts BGR images to grayscale by taking an avg across 3 channels
         hits = MTM.matchTemplates(templates,
@@ -61,6 +65,10 @@ class HUD:
                                   searchBox=None)
 
         # print(hits)
+        debugImage = MTM.drawBoxesOnRGB(img_cv, hits, boxThickness=2, boxColor=(255, 255, 00), showLabel=True, labelColor=(255, 255, 0),
+                           labelScale=0.5)
+
+        cv2.imwrite('../WIP/' + rand, debugImage)
 
         if len(hits['TemplateName']) == 1:
             # If only one match is found, single digit is present
