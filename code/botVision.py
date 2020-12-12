@@ -17,9 +17,15 @@ from pynput.mouse import Button, Controller as MouseController
 keyboard1 = KeyboardController()
 mouse1 = MouseController()
 
+def openStore(coords):
+    mouse1.position = coords
+    mouse1.click(Button.left, 1)
 
-def buy1(setStoreMap=True):
+    time.sleep(1)
+
+def buy1():
     print('wow')
+
     hwnd = win32gui.FindWindow(None, 'Dota Underlords')
     win32gui.SetForegroundWindow(hwnd)
 
@@ -28,67 +34,84 @@ def buy1(setStoreMap=True):
     y = rect[1]
     w = rect[2] - x
     h = rect[3] - y
-    print("Window %s:" % win32gui.GetWindowText(hwnd))
-    print("\tLocation: (%d, %d)" % (x, y))
-    print("\t    Size: (%d, %d)" % (w, h))
 
-    mouse1.position(x + 20, y + 100)
+    openStore((x + 900, y + 65))
 
-    keyboard1.press('1')
-    keyboard1.release('1')
-    if setStoreMap:
-        print("Setting to buy!")
-        storeMap[0].toBuy = 1
+    mouse1.position = (x + 350, y + 130)
+    mouse1.click(Button.left, 1)
 
 
 def buy2():
-    keyboard1.press('2')
-    keyboard1.release('2')
+    hwnd = win32gui.FindWindow(None, 'Dota Underlords')
+    win32gui.SetForegroundWindow(hwnd)
+
+    rect = win32gui.GetWindowRect(hwnd)
+    x = rect[0]
+    y = rect[1]
+    w = rect[2] - x
+    h = rect[3] - y
+
+    openStore((x + 900, y + 65))
+
+    mouse1.position = (x + 450, y + 130)
+    mouse1.click(Button.left, 1)
 
 
 def buy3():
-    keyboard1.press('3')
-    keyboard1.release('3')
+    hwnd = win32gui.FindWindow(None, 'Dota Underlords')
+    win32gui.SetForegroundWindow(hwnd)
+
+    rect = win32gui.GetWindowRect(hwnd)
+    x = rect[0]
+    y = rect[1]
+    w = rect[2] - x
+    h = rect[3] - y
+
+    openStore((x + 900, y + 65))
+
+    mouse1.position = (x + 575, y + 130)
+    mouse1.click(Button.left, 1)
 
 
 def buy4():
-    keyboard1.press('4')
-    keyboard1.release('4')
+    hwnd = win32gui.FindWindow(None, 'Dota Underlords')
+    win32gui.SetForegroundWindow(hwnd)
+
+    rect = win32gui.GetWindowRect(hwnd)
+    x = rect[0]
+    y = rect[1]
+    w = rect[2] - x
+    h = rect[3] - y
+
+    openStore((x + 900, y + 65))
+
+    mouse1.position = (x + 700, y + 130)
+    mouse1.click(Button.left, 1)
 
 
 def buy5():
-    keyboard1.press('5')
-    keyboard1.release('5')
+    hwnd = win32gui.FindWindow(None, 'Dota Underlords')
+    win32gui.SetForegroundWindow(hwnd)
+
+    rect = win32gui.GetWindowRect(hwnd)
+    x = rect[0]
+    y = rect[1]
+    w = rect[2] - x
+    h = rect[3] - y
+
+    openStore((x + 900, y + 65))
+
+    mouse1.position = (x + 800, y + 130)
+    mouse1.click(Button.left, 1)
 
 
 storeMap = {
-    0: None,
     1: buy1,
     2: buy2,
     3: buy3,
     4: buy4,
     5: buy5
 }
-
-
-def on_press(key):
-    print(f"pressed ${key}")
-
-
-def on_release(key):
-    print(key)
-    # if str(key) == '\'+\'' or str(key) == '\'=\'':
-    #     Shop.cropShop(imageGrab())
-    #     # Stop listener
-    #     # return False
-    #
-    # # if str(key) == '\'-\'':
-    # #     Gold.cropGold(imageGrab())
-    #
-    # if str(key) == '\'r\'':
-    #     time.sleep(0.5)
-    #     Shop.labelShop()
-
 
 class ShopThread(Thread):
     def __init__(self, event, rootWindow):
@@ -137,10 +160,6 @@ class ShopThread(Thread):
     def run(self):
         while not self.stopped.wait(1):
             #  print("Updating store")
-            if not self.toBuy == None:
-                print("Trying to buy")
-                storeMap[self.toBuy](False)
-                self.toBuy = None
 
             shopImages, classes, value, inspect, statesList = self.shop.labelShop()
             itemCounts, itemImage = self.HUD.getHUD()
@@ -164,7 +183,6 @@ def openVision():
     root.resizable(0, 0)
     stopFlag = Event()
     thread = ShopThread(stopFlag, root)
-    storeMap[0] = thread
     thread.start()
     # this will stop the timer
     # stopFlag.set()
