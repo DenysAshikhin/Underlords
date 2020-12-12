@@ -32,9 +32,6 @@ class Items:
         item1 = (gameScreen.crop((315, 350) + (390, 480)))
         item2 = gameScreen.crop((540, 350) + (615, 480))
         item3 = gameScreen.crop((765, 350) + (840, 480))
-        item3.save("../items-heroes/items 2/" + str(datetime.now()).replace(":", "") + ".jpg")
-
-
         return [item1, item2, item3]
 
     def detectItem(self, img, templates):
