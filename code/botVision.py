@@ -11,11 +11,8 @@ from Shop import Shop
 from pynput import keyboard
 from pynput.keyboard import Key, Controller, Listener
 
-
 from pynput.keyboard import Key, Controller as KeyboardController
 from pynput.mouse import Button, Controller as MouseController
-
-
 
 keyboard1 = KeyboardController()
 mouse1 = MouseController()
@@ -35,8 +32,7 @@ def buy1(setStoreMap=True):
     print("\tLocation: (%d, %d)" % (x, y))
     print("\t    Size: (%d, %d)" % (w, h))
 
-    #mouse.position
-
+    mouse1.position(x + 20, y + 100)
 
     keyboard1.press('1')
     keyboard1.release('1')
