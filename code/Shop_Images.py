@@ -1,5 +1,8 @@
 import os
-from datetime import time, datetime
+import time
+from datetime import datetime
+
+import random
 
 from PIL import Image
 from pynput.keyboard import Listener
@@ -12,8 +15,9 @@ def on_release(key):
     print(key)
 
     if str(key) == '\'r\'':
-        time.sleep(0.5)
+        time.sleep(random.random() * 2 + 0.2)
         cropShop(imageGrab(), True)
+
 
 def cropShop(gameScreen, save=True):
     # shop = Image.open("test.jpg")
@@ -30,9 +34,11 @@ def cropShop(gameScreen, save=True):
             crop.save("../WIP/" + str(datetime.now()).replace(":", "") + ".jpg")
     return imageList
 
+
 def mains():
     with Listener(
             on_release=on_release) as listener:
         listener.join()
+
 
 mains()
