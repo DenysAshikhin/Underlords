@@ -22,9 +22,9 @@ def buy1():
     print('wow')
     hwnd = win32gui.FindWindow(None, 'Dota Underlords')
     win32gui.SetForegroundWindow(hwnd)
-    time.sleep(1)
     keyboard1.press('1')
     keyboard1.release('1')
+    storeMap[0].toBuy = 1
 
 
 def buy2():
