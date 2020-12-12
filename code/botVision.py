@@ -8,19 +8,13 @@ from PIL import ImageTk
 from HUD import HUD
 from Shop import Shop
 
-from pynput import keyboard
-from pynput.keyboard import Key, Controller, Listener
-
-from pynput.keyboard import Key, Controller as KeyboardController
 from pynput.mouse import Button, Controller as MouseController
 
-keyboard1 = KeyboardController()
 mouse1 = MouseController()
 
-def openStore(coords):
+def toggleStore(coords):
     mouse1.position = coords
     mouse1.click(Button.left, 1)
-
     time.sleep(1)
 
 def buy1():
@@ -35,7 +29,7 @@ def buy1():
     w = rect[2] - x
     h = rect[3] - y
 
-    openStore((x + 900, y + 65))
+    toggleStore((x + 900, y + 65))
 
     mouse1.position = (x + 350, y + 130)
     mouse1.click(Button.left, 1)
@@ -51,7 +45,7 @@ def buy2():
     w = rect[2] - x
     h = rect[3] - y
 
-    openStore((x + 900, y + 65))
+    toggleStore((x + 900, y + 65))
 
     mouse1.position = (x + 450, y + 130)
     mouse1.click(Button.left, 1)
@@ -67,7 +61,7 @@ def buy3():
     w = rect[2] - x
     h = rect[3] - y
 
-    openStore((x + 900, y + 65))
+    toggleStore((x + 900, y + 65))
 
     mouse1.position = (x + 575, y + 130)
     mouse1.click(Button.left, 1)
@@ -83,7 +77,7 @@ def buy4():
     w = rect[2] - x
     h = rect[3] - y
 
-    openStore((x + 900, y + 65))
+    toggleStore((x + 900, y + 65))
 
     mouse1.position = (x + 700, y + 130)
     mouse1.click(Button.left, 1)
@@ -99,7 +93,7 @@ def buy5():
     w = rect[2] - x
     h = rect[3] - y
 
-    openStore((x + 900, y + 65))
+    toggleStore((x + 900, y + 65))
 
     mouse1.position = (x + 800, y + 130)
     mouse1.click(Button.left, 1)
@@ -187,11 +181,6 @@ def openVision():
     # this will stop the timer
     # stopFlag.set()
     # shopFrame.pack()
-
-    listener = keyboard.Listener(
-        on_press=on_press,
-        on_release=on_release)
-    listener.start()
 
     root.mainloop()
 
