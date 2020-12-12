@@ -19,11 +19,11 @@ def toggleStore(coords):
     mouse1.position = coords
     mouse1.click(Button.left, 1)
     time.sleep(1)
+    storeMap[5].shopChoices = storeMap[5].shop.labelShop()
 
 
 def buy(xPos=350, idx=0):
-    print(xPos)
-    print(idx)
+
     hwnd = win32gui.FindWindow(None, 'Dota Underlords')
     win32gui.SetForegroundWindow(hwnd)
 
@@ -37,106 +37,10 @@ def buy(xPos=350, idx=0):
 
     mouse1.position = (x + xPos, y + 130)
     mouse1.click(Button.left, 1)
-    storeMap[0].bought = idx
+    storeMap[5].bought = idx
 
 
-# def buy1():
-#     hwnd = win32gui.FindWindow(None, 'Dota Underlords')
-#     win32gui.SetForegroundWindow(hwnd)
-#
-#     rect = win32gui.GetWindowRect(hwnd)
-#     x = rect[0]
-#     y = rect[1]
-#     w = rect[2] - x
-#     h = rect[3] - y
-#
-#     toggleStore((x + 900, y + 65))
-#
-#     mouse1.position = (x + 350, y + 130)
-#     mouse1.click(Button.left, 1)
-#     storeMap[0].bought = 1
-#
-#
-# def buy2():
-#     hwnd = win32gui.FindWindow(None, 'Dota Underlords')
-#     win32gui.SetForegroundWindow(hwnd)
-#
-#     rect = win32gui.GetWindowRect(hwnd)
-#     x = rect[0]
-#     y = rect[1]
-#     w = rect[2] - x
-#     h = rect[3] - y
-#
-#     toggleStore((x + 900, y + 65))
-#
-#     mouse1.position = (x + 450, y + 130)
-#     mouse1.click(Button.left, 1)
-#     storeMap[0].bought = 2
-#
-#
-# def buy3():
-#     hwnd = win32gui.FindWindow(None, 'Dota Underlords')
-#     win32gui.SetForegroundWindow(hwnd)
-#
-#     rect = win32gui.GetWindowRect(hwnd)
-#     x = rect[0]
-#     y = rect[1]
-#     w = rect[2] - x
-#     h = rect[3] - y
-#
-#     toggleStore((x + 900, y + 65))
-#
-#     mouse1.position = (x + 575, y + 130)
-#     mouse1.click(Button.left, 1)
-#     storeMap[0].bought = 3
-#
-#
-# def buy4():
-#     hwnd = win32gui.FindWindow(None, 'Dota Underlords')
-#     win32gui.SetForegroundWindow(hwnd)
-#
-#     rect = win32gui.GetWindowRect(hwnd)
-#     x = rect[0]
-#     y = rect[1]
-#     w = rect[2] - x
-#     h = rect[3] - y
-#
-#     toggleStore((x + 900, y + 65))
-#
-#     mouse1.position = (x + 700, y + 130)
-#     mouse1.click(Button.left, 1)
-#     storeMap[0].bought = 4
-#
-#
-# def buy5():
-#     hwnd = win32gui.FindWindow(None, 'Dota Underlords')
-#     win32gui.SetForegroundWindow(hwnd)
-#
-#     rect = win32gui.GetWindowRect(hwnd)
-#     x = rect[0]
-#     y = rect[1]
-#     w = rect[2] - x
-#     h = rect[3] - y
-#
-#     toggleStore((x + 900, y + 65))
-#
-#     mouse1.position = (x + 800, y + 130)
-#     mouse1.click(Button.left, 1)
-#     storeMap[0].bought = 5
-#
-
-# storeMap = {
-#     0: None,
-#     1: buy1,
-#     2: buy2,
-#     3: buy3,
-#     4: buy4,
-#     5: buy5
-# }
-
-
-storeMap = [350, 450, 575, 700, 800]
-
+storeMap = [350, 450, 575, 700, 800, None]
 
 
 def loadProfiles():
@@ -160,6 +64,7 @@ class ShopThread(Thread):
         self.board = numpy.zeros([4, 8])
         self.profilePics = loadProfiles()
         self.bought = None
+        self.shopChoices = None
 
         shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -193,14 +98,15 @@ class ShopThread(Thread):
             )
             button.grid(row=1, column=i)
 
+        for x in range(8):
             newLabel = Label(master=shopFrame, foreground='white', background='black',
                              text=f"None", compound='top')
-            newLabel.grid(row=4, column=i, padx=5, pady=5)
+            newLabel.grid(row=4, column=x, padx=5, pady=5)
             self.benchLabels.append(newLabel)
 
-        shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
-        self.hudLabel = Label(master=shopFrame, foreground='white', background='black',
-                              text="Hi", compound='top')
+            shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
+            self.hudLabel = Label(master=shopFrame, foreground='white', background='black',
+                                  text="Hi", compound='top')
 
         self.hudLabel.grid(row=2, column=0, padx=5, pady=5, columnspan=5)
         shopFrame.pack()
@@ -208,31 +114,33 @@ class ShopThread(Thread):
     def run(self):
         while not self.stopped.wait(1):
             #  print("Updating store")
+            if self.shopChoices is not None and self.bought is not None:
+                shopImages, classes, value, inspect, statesList = self.shopChoices
+                itemCounts, itemImage = self.HUD.getHUD()
 
-            shopImages, classes, value, inspect, statesList = self.shop.labelShop()
-            itemCounts, itemImage = self.HUD.getHUD()
+                for i in range(5):
+                    tempImage = ImageTk.PhotoImage(shopImages[i])
+                    self.shopImages.append(tempImage)
+                    self.shopLabels[i].config(image=tempImage,
+                                              text=f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
 
-            for i in range(5):
-                tempImage = ImageTk.PhotoImage(shopImages[i])
-                self.shopImages.append(tempImage)
-                self.shopLabels[i].config(image=tempImage,
-                                          text=f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
+                # itemImage = ImageTk.PhotoImage(itemImage)
+                tempString = "\nUnit Count %d" % itemCounts[2] + "\nGold Count: %d" % itemCounts[
+                    0] + "\nHealth Count: %d" % \
+                             itemCounts[1]
+                self.hudLabel.config(text=tempString)
 
-            # itemImage = ImageTk.PhotoImage(itemImage)
-            tempString = "\nUnit Count %d" % itemCounts[2] + "\nGold Count: %d" % itemCounts[0] + "\nHealth Count: %d" % \
-                         itemCounts[1]
-            self.hudLabel.config(text=tempString)
+                if self.bought is not None:
+                    for x in range(8):
 
-            if self.bought is not None:
-                shopImages, classes, value, inspect, statesList = self.shop.labelShop()
-                for x in range(8):
-
-                    if self.benchLabelHero[x] is None:
-                        self.benchLabelHero[x] = classes[statesList[self.bought]]
-                        self.bought = None
-                        self.benchLabels[x].config(text=f"{self.benchLabelHero[x]}",
-                                                   image=self.profilePics[self.benchLabelHero[x]])
-                        break
+                        if self.benchLabelHero[x] is None:
+                            print(self.bought)
+                            print(classes[statesList[self.bought]])
+                            self.benchLabelHero[x] = classes[statesList[self.bought]]
+                            self.bought = None
+                            self.benchLabels[x].config(text=f"{self.benchLabelHero[x]}",
+                                                       image=self.profilePics[self.benchLabelHero[x]])
+                            break
 
 
 def openVision():
@@ -243,7 +151,7 @@ def openVision():
     stopFlag = Event()
     thread = ShopThread(stopFlag, root)
     thread.start()
-    storeMap[0] = thread
+    storeMap[5] = thread
     # this will stop the timer
     # stopFlag.set()
     # shopFrame.pack()
