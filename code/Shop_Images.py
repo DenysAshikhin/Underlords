@@ -41,4 +41,7 @@ def mains():
         listener.join()
 
 
-mains()
+# mains()
+s = Shop()
+s.loadOne()
+
