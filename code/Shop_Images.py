@@ -14,7 +14,7 @@ from main import imageGrab
 def on_release(key):
     print(key)
 
-    if str(key) == '\'r\'':
+    if str(key) == '\'+\'':
         time.sleep(random.random() * 2 + 0.2)
         cropShop(imageGrab(), True)
 
@@ -41,7 +41,6 @@ def mains():
         listener.join()
 
 
-# mains()
-s = Shop()
-s.loadOne()
+mains()
+
 

@@ -111,7 +111,7 @@ class Net(nn.Module):
         # print(f"Final: {self.finalSize}")
 
         self.fc1 = nn.Linear(self.finalSize, finalChannel)
-        self.fc2 = nn.Linear(finalChannel, 62)
+        self.fc2 = nn.Linear(finalChannel, 63)
 
     def forward(self, x):
         out = self.conv1_batchnorm(self.conv1(x))
@@ -269,7 +269,7 @@ def train(config):
 
     # print(f"The epoch! {config['epochs']}")
     for i in range(8):
-        classStatsEpoch = np.zeros([3, 62])  # List of # correct and # incorrect for each label
+        classStatsEpoch = np.zeros([3, 63])  # List of # correct and # incorrect for each label
         accuracy, model, classStatsEpoch = training_loop(i, optimizer, model, criterion, trainingLoader,
                                                          validationLoader, writer, classStatsEpoch)
         calculateF1(None, None, classStatsEpoch, update=False)  # Calculate # Incorrect, # Correct and # False Positives

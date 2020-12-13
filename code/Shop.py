@@ -20,6 +20,7 @@ class Shop:
         self.model = self.createModel()
         self.storeIconTemplates = self.loadIcons()
         self.red = Image.open("../blank/red.jpg")
+        self.gray = Image.open("../blank/gray.jpg")
 
     def createModel(self):
         net = Model.Net(n_chans1=7, stride1=1, stride2=1, finalChannel=47)
@@ -52,6 +53,9 @@ class Shop:
             if (value[i] <= 0.5):
                 imageList[i] = self.red
                 statesList.append(len(classes) - 1)
+            elif state == len(classes) - 1:
+                imageList[i] = self.gray
+                statesList.append(state)
             else:
                 statesList.append(state)
 
