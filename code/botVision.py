@@ -56,6 +56,8 @@ class ShopThread(Thread):
             borderwidth=1
         )
         tempImage = ImageTk.PhotoImage(shopImages[0])
+
+        # Initialize 5 pictures for shop, 5 purchase buttons
         for i in range(5):
             # print(f"Confidence {statesList[i] * 100}")
             label = Label(master=shopFrame, foreground='white', background='black', image=tempImage,
@@ -73,6 +75,7 @@ class ShopThread(Thread):
             )
             button.grid(row=1, column=i)
 
+        # 8 bench portrait slots
         for x in range(8):
             newLabel = Label(master=shopFrame, foreground='white', background='black',
                              text=f"None", compound='top')
@@ -118,10 +121,10 @@ class ShopThread(Thread):
                             break
 
     def toggleStore(self, coords):
-
-        mouse1.position = coords
-        mouse1.click(Button.left, 1)
-        time.sleep(1)
+        if not self.shop.shopOpen():
+            mouse1.position = coords
+            mouse1.click(Button.left, 1)
+            time.sleep(1)
         self.shopChoices = self.shop.labelShop()
 
     def buy(self, xPos=350, idx=0):
@@ -147,7 +150,6 @@ class ShopThread(Thread):
         if self.benchLevelUp(idx):
             self.bought = None
             return 1
-
         self.bought = idx
 
         # Expand this to take precedence for tiering up once it is relevant
@@ -164,6 +166,9 @@ class ShopThread(Thread):
         tieredUp = False
         shopImages, classes, value, inspect, statesList = self.shopChoices
         boardScan = self.boardLevelUp()
+
+        if statesList[idx] == len(classes) - 1:
+            return True
 
         if boardScan["tieredUp"] == True:
             return True  # The shop unit will be consumed to tier up the units strictly on the board, bench is
@@ -248,27 +253,6 @@ def openVision():
     # shopFrame.pack()
 
     root.mainloop()
-
-
-def useless():
-    print()
-    # button = Button(
-    #     text="Click me!",
-    #     width=25,
-    #     height=5,
-    #     bg="blue",
-    #     fg="yellow",
-    # )
-    # button.pack()
-    # label = Label(
-    #     master= shopFrame,
-    #     text="This is the Shop!",
-    #     fg="white",
-    #     bg="black",
-    #     width=10,
-    #     height=10
-    # )
-    # label.pack()
 
 
 openVision()

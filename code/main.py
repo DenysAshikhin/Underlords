@@ -1,4 +1,7 @@
 import ctypes
+import sys
+
+import pywintypes
 import win32con
 import win32gui
 from PIL import ImageGrab
@@ -27,20 +30,26 @@ def imageGrab():
     ctypes.windll.user32.SetProcessDPIAware()
     # get window handle and dimensions
     hwnd = win32gui.FindWindow(None, 'Dota Underlords')
-    dimensions = win32gui.GetWindowRect(hwnd)
+    try:
 
-    # this gets the window size, comparing it to `dimensions` will show a difference
-    # winsize = win32gui.GetClientRect(hwnd)
+        dimensions = win32gui.GetWindowRect(hwnd)
 
-    # this sets window to front if it is not already
-    win32gui.SetWindowPos(hwnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
-    win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
-    win32gui.SetWindowPos(hwnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0,
-                          win32con.SWP_SHOWWINDOW | win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+        # this gets the window size, comparing it to `dimensions` will show a difference
+        # winsize = win32gui.GetClientRect(hwnd)
 
-    # grab screen region set in `dimensions`
-    image = ImageGrab.grab(dimensions)
-    return image
+        # this sets window to front if it is not already
+        win32gui.SetWindowPos(hwnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+        win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+        win32gui.SetWindowPos(hwnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0,
+                              win32con.SWP_SHOWWINDOW | win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+
+        # grab screen region set in `dimensions`
+        image = ImageGrab.grab(dimensions)
+        return image
+    except pywintypes.error:
+        print("Dota Underlords not OPEN!!!!")
+        sys.exit()
+
 
 
 def main():

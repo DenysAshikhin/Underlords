@@ -1,5 +1,9 @@
 from datetime import datetime
 import os
+
+import MTM
+import cv2
+import numpy
 import torch
 import torch.nn as nn
 from PIL import Image
@@ -14,6 +18,8 @@ class Shop:
         super().__init__()
         self.classes = self.getClasses()
         self.model = self.createModel()
+        self.storeIconTemplates = self.loadIcons()
+        self.red = Image.open("../blank/red.jpg")
 
     def createModel(self):
         net = Model.Net(n_chans1=7, stride1=1, stride2=1, finalChannel=47)
@@ -43,7 +49,12 @@ class Shop:
 
         for i, img in enumerate(inspect):
             state = img.item()
-            statesList.append(state)
+            if (value[i] <= 0.5):
+                imageList[i] = self.red
+                statesList.append(len(classes)-1)
+            else:
+                statesList.append(state)
+
             # print("Position %d:" % i, "Label: %s" % classes[state], "Confidence: %f" % value[i])
 
         return imageList, classes, value, inspect, statesList
@@ -62,6 +73,34 @@ class Shop:
             if save:
                 crop.save("../WIP/" + str(datetime.now()).replace(":", "") + ".jpg")
         return imageList
+
+    def shopOpen(self):
+        gameScreen = imageGrab()
+        crop = gameScreen.crop((885,20) + (925,110))
+        img_cv = cv2.cvtColor(numpy.asarray(crop), cv2.COLOR_RGB2BGR)
+
+        hits = MTM.matchTemplates(self.storeIconTemplates,
+                                  img_cv,
+                                  method=cv2.TM_CCOEFF_NORMED,
+                                  N_object=1,
+                                  score_threshold=0.9,
+                                  maxOverlap=0,
+                                  searchBox=None)
+        if "open" in hits['TemplateName'].iloc[0]:
+            return True
+
+        return False
+
+    def loadIcons(self):
+        root = "../digits/store/"
+        iconList = []
+
+        openIcon = cv2.imread(root + "open.jpg")
+        closeIcon = cv2.imread(root + "close.jpg")
+
+        iconList.append(("open", openIcon))
+        iconList.append(("close", closeIcon))
+        return iconList
 
     # Given a list of images, run a forward pass with CNN and return predictions
     def predict(self, imageList):
