@@ -51,7 +51,7 @@ class Shop:
             state = img.item()
             if (value[i] <= 0.5):
                 imageList[i] = self.red
-                statesList.append(len(classes)-1)
+                statesList.append(len(classes) - 1)
             else:
                 statesList.append(state)
 
@@ -76,7 +76,7 @@ class Shop:
 
     def shopOpen(self):
         gameScreen = imageGrab()
-        crop = gameScreen.crop((885,20) + (925,110))
+        crop = gameScreen.crop((885, 20) + (925, 110))
         img_cv = cv2.cvtColor(numpy.asarray(crop), cv2.COLOR_RGB2BGR)
 
         hits = MTM.matchTemplates(self.storeIconTemplates,
@@ -142,4 +142,3 @@ class Shop:
             image_list[cnt].save(save_path + folder_name + "/" + str(datetime.now()).replace(":", "") + ".jpg")
             cnt += 1
         return True
-
