@@ -31,6 +31,22 @@ class ShopThread(Thread):
         Thread.__init__(self)
         self.stopped = event
         self.rootWindow = rootWindow
+
+        self.hwnd = win32gui.FindWindow(None, 'Dota Underlords')
+        win32gui.SetForegroundWindow(self.hwnd)
+
+        rect = win32gui.GetWindowRect(self.hwnd)
+        self.x = rect[0]
+        self.y = rect[1]
+        self.w = rect[2] - self.x
+        self.h = rect[3] - self.y
+        self.shopX = self.x + 905
+        self.shopY = self.y + 65
+        self.rerollX = self.shopX
+        self.rerollY = self.shopY + 82
+        self.clickUpX = self.rerollX
+        self.clickUpY = self.rerollY + 70
+
         self.shop = Shop()
         self.HUD = HUD()
         self.bench = numpy.zeros([1, 8])
@@ -42,7 +58,6 @@ class ShopThread(Thread):
         self.purchaseHistory = []
         self.updateShop = False
 
-
         shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
         self.shopLabels = []
@@ -50,8 +65,9 @@ class ShopThread(Thread):
         self.benchLabels = []
         self.benchHeroes = [None, None, None, None, None, None, None, None]
         self.boardLabels = []
-        self.boardHeroes = numpy.empty((4, 8))
-        self.boardHeroes[:] = None
+        self.boardHeroes = numpy.full((4, 8), None)
+        # self.boardHeroes = numpy.empty((4, 8))
+        # self.boardHeroes[:] = None
         self.boardHeroes = self.boardHeroes.tolist()
 
         self.hudLabel = None
@@ -68,7 +84,7 @@ class ShopThread(Thread):
             # print(f"Confidence {statesList[i] * 100}")
             label = Label(master=shopFrame, foreground='white', background='black', image=tempImage,
                           text=f"{classes[statesList[i]]} {value[i] * 100:.1f}%", compound='top')
-            label.grid(row=0, column=i+1, padx=5, pady=5)
+            label.grid(row=0, column=i + 1, padx=5, pady=5)
             self.shopLabels.append(label)
             button = tkinter.Button(
                 master=shopFrame,
@@ -79,7 +95,7 @@ class ShopThread(Thread):
                 fg="yellow",
                 command=lambda pos=self.storeMap[i], idx=i: self.buy(xPos=pos, idx=idx)
             )
-            button.grid(row=1, column=i+1)
+            button.grid(row=1, column=i + 1)
 
         # 8 bench portrait slots
         for x in range(8):
@@ -88,17 +104,40 @@ class ShopThread(Thread):
             newLabel.grid(row=8, column=x, padx=5, pady=5)
             self.benchLabels.append(newLabel)
 
-       #shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
+        # shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
         self.hudLabel = Label(master=shopFrame, foreground='white', background='black',
                               text="Hi", compound='top')
 
-        self.hudLabel.grid(row=7, column=0, padx=5, pady=5, columnspan=5)
+        self.hudLabel.grid(row=7, column=3, padx=5, pady=5)
+
+        self.rerollButton = tkinter.Button(
+            master=shopFrame,
+            text="Reroll",
+            width=10,
+            height=1,
+            bg="blue",
+            fg="yellow",
+            command=self.rerollStore
+        )
+        self.rerollButton.grid(row=7, column=1)
+
+        self.clickUpButton = tkinter.Button(
+            master=shopFrame,
+            text="Click Up",
+            width=10,
+            height=1,
+            bg="blue",
+            fg="yellow",
+            command=self.clickUp
+        )
+        self.clickUpButton.grid(row=7, column=2)
+
 
         for i in range(4):
             for j in range(8):
                 newLabel = Label(master=shopFrame, foreground='white', background='black',
                                  text=f"None", compound='top')
-                newLabel.grid(row=3+i, column=j, padx=5, pady=5)
+                newLabel.grid(row=3 + i, column=j, padx=5, pady=5)
                 self.boardLabels.append(newLabel)
 
         shopFrame.pack()
@@ -144,10 +183,24 @@ class ShopThread(Thread):
                     self.updateShop = False
 
 
+    def clickUp(self):
+        self.openStore()
+        mouse1.position = (self.clickUpX, self.clickUpY)
+        mouse1.click(Button.left, 1)
+        self.shopChoices = self.shop.labelShop()
+        self.updateShop = True
 
-    def openStore(self, coords):
+    def rerollStore(self):
+        self.openStore()
+        mouse1.position = (self.rerollX, self.rerollY)
+        mouse1.click(Button.left, 1)
+        time.sleep(0.5)
+        self.shopChoices = self.shop.labelShop()
+        self.updateShop = True
+
+    def openStore(self):
         if not self.shop.shopOpen():
-            mouse1.position = coords
+            mouse1.position = (self.shopX, self.shopY)
             mouse1.click(Button.left, 1)
             time.sleep(1)
         self.shopChoices = self.shop.labelShop()
@@ -158,18 +211,9 @@ class ShopThread(Thread):
             print("Invalid attempt to buy a unit!")
             return -1
 
-        hwnd = win32gui.FindWindow(None, 'Dota Underlords')
-        win32gui.SetForegroundWindow(hwnd)
+        self.openStore()
 
-        rect = win32gui.GetWindowRect(hwnd)
-        x = rect[0]
-        y = rect[1]
-        w = rect[2] - x
-        h = rect[3] - y
-
-        self.openStore((x + 900, y + 65))
-
-        mouse1.position = (x + xPos, y + 130)
+        mouse1.position = (self.x + xPos, self.y + 130)
         mouse1.click(Button.left, 1)
 
         if self.benchLevelUp(idx):
@@ -178,8 +222,6 @@ class ShopThread(Thread):
 
         self.bought = idx
 
-        # Expand this to take precedence for tiering up once it is relevant
-
     def boardLevelUp(self, idx):
 
         levThresh = 2
@@ -187,38 +229,42 @@ class ShopThread(Thread):
         board = {"tierTwo": 0, "tierOne": 0 + 1, "tierTwoHeroes": [], "tierOneHeroes": [], "tieredUp": False}
         shopImages, classes, value, inspect, statesList = self.shopChoices
 
+        for i in range(4):
+            for j in range(8):
 
-        # for i in range(4):
-        #     for j in range(8):
-        #
-        #         if self.boardHeroes[i]:
-        #             if self.boardHeroes[i].name == classes[statesList[idx]]:
-        #
-        #                 if self.boardHeroes[i].tier == 1:
-        #                     board["tierOne"] += 1
-        #                     board["tierOneHeroes"].append(self.boardHeroes[i])
-        #
-        #                 elif self.boardHeroes[i].tier == 2:
-        #                     board["tierTwo"] += 1
-        #                     board["tierTwoHeroes"].append(self.boardHeroes[i])
-        #
-        #
-        #
-        # if board["tierOne"] == levThresh:  # If there is enough tier ones to make a tier 2,
-        #     # first instance hero levels up, the rest should be removed from reference and update labels?
-        #
-        #     board["tierOneHeroes"][0].tier += 1
-        #
-        #     board["tierTwoHeroes"].append(board["tierOneHeroes"][0])
-        #     board["tierTwo"] += 1
-        #     board["tieredUp"] = True
-        #
-        #     for x in range(1, len(board["tierOneHeroes"])):
-        #
-        #         specificHero = board["tierOneHeroes"][x]
-        #         self.boardHeroes[specificHero.coords[0]][specificHero.coords[1]] = None
-        #
+                if self.boardHeroes[i][j]:
+                    if self.boardHeroes[i][j].name == classes[statesList[idx]]:
 
+                        if self.boardHeroes[i][j].tier == 1:
+                            board["tierOne"] += 1
+                            board["tierOneHeroes"].append(self.boardHeroes[i][j])
+
+                        elif self.boardHeroes[i][j].tier == 2:
+                            board["tierTwo"] += 1
+                            board["tierTwoHeroes"].append(self.boardHeroes[i][j])
+
+        if board["tierOne"] == levThresh:  # If there is enough tier ones to make a tier 2,
+            # first instance hero levels up, the rest should be removed from reference and update labels?
+
+            board["tierOneHeroes"][0].tier += 1
+
+            board["tierTwoHeroes"].append(board["tierOneHeroes"][0])
+            board["tierTwo"] += 1
+            board["tieredUp"] = True
+
+            for x in range(1, len(board["tierOneHeroes"])):
+                specificHero = board["tierOneHeroes"][x]
+                self.boardHeroes[specificHero.coords[0]][specificHero.coords[1]] = None
+
+        if board["tierTwo"] == levThresh:  # If there is enough tier ones to make a tier 2,
+            # first instance hero levels up, the rest should be removed from reference and update labels?
+
+            board["tierTwoHeroes"][0].tier += 1
+            board["tieredUp"] = True
+
+            for x in range(1, len(board["tierTwoHeroes"])):
+                specificHero = board["tierTwoHeroes"][x]
+                self.boardHeroes[specificHero.coords[0]][specificHero.coords[1]] = None
 
         return board
 
@@ -272,8 +318,8 @@ class ShopThread(Thread):
                 if specificHero.coords[1] == -1:  # Only if this hero is located on the bench!
                     self.benchHeroes[specificHero.coords[0]] = None
                     self.benchLabels[specificHero.coords[0]].config(text="Tiered Up")
-                # else
-                # To do - note - NOTE add board logic wiping later
+                else:
+                    self.boardHeroes[specificHero.coords[0]][specificHero.coords[1]] = None
 
         if bench["tierTwo"] == levThresh:
 
@@ -291,16 +337,10 @@ class ShopThread(Thread):
                 if specificHero.coords[1] == -1:  # Only if this hero is located on the bench!
                     self.benchHeroes[specificHero.coords[0]] = None
                     self.benchLabels[specificHero.coords[0]].config(text="Tiered Up", bg='black')
-                # else
-                # To do - note - NOTE add board logic wiping later
-
-        #   print(bench)
+                else:
+                    self.boardHeroes[specificHero.coords[0]][specificHero.coords[1]] = None
 
         return tieredUp
-
-    def updateBenchLabels(self):
-        # To do
-        return 1
 
 
 def openVision():
