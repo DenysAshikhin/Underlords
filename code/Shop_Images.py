@@ -12,9 +12,8 @@ from main import imageGrab
 
 
 def on_release(key):
-    print(key)
 
-    if str(key) == '\'+\'':
+    if str(key) == '\'l\'':
         time.sleep(random.random() * 2 + 0.2)
         cropShop(imageGrab(), True)
 

@@ -33,7 +33,7 @@ class ShopThread(Thread):
         self.rootWindow = rootWindow
 
         self.hwnd = win32gui.FindWindow(None, 'Dota Underlords')
-        win32gui.SetForegroundWindow(self.hwnd)
+        #        win32gui.SetForegroundWindow(self.hwnd)
 
         rect = win32gui.GetWindowRect(self.hwnd)
         self.x = rect[0]
@@ -46,6 +46,13 @@ class ShopThread(Thread):
         self.rerollY = self.shopY + 82
         self.clickUpX = self.rerollX
         self.clickUpY = self.rerollY + 70
+        self.benchX = 200
+        self.benchXOffset = 40
+        self.benchY = 600
+        self.boardX = 210
+        self.boardXOffset = 40
+        self.boardY = 300
+        self.boardYOffset = 20
 
         self.heroToMove = None
 
@@ -71,6 +78,8 @@ class ShopThread(Thread):
         # self.boardHeroes = numpy.empty((4, 8))
         # self.boardHeroes[:] = None
         self.boardHeroes = self.boardHeroes.tolist()
+
+        self.levelThresh = 2
 
         self.hudLabel = None
         self.toBuy = None
@@ -191,6 +200,32 @@ class ShopThread(Thread):
                 else:
                     self.updateShop = False
 
+    def moveGameHero(self, hero, newX, newY):
+
+        self.updateWindowCoords()
+
+        heroX, heroY = hero.coords
+
+        if heroY == -1:
+            mouse1.position = (self.benchX + (self.benchXOffset * heroX), self.benchY)
+        else:
+            mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
+           # print(f"Moving to board {mouse1.position}")
+
+        mouse1.press(Button.left)
+
+        time.sleep(0.25)
+
+        if newY == -1:  # Moving onto the bench
+            mouse1.position = (self.benchX + (self.benchXOffset * newX), self.benchY)
+           # print(f"Moving to bench {mouse1.position}")
+
+        else:
+            mouse1.position = (self.boardX + (self.boardXOffset * newY), self.boardY + (self.boardYOffset * newX))
+           # print(f"Moving to board {mouse1.position}")
+        time.sleep(0.25)
+        mouse1.release(Button.left)
+
     def clickUp(self):
         self.openStore()
         mouse1.position = (self.clickUpX, self.clickUpY)
@@ -207,21 +242,47 @@ class ShopThread(Thread):
         self.updateShop = True
 
     def openStore(self):
+
+        self.updateWindowCoords()
+
         if not self.shop.shopOpen():
             mouse1.position = (self.shopX, self.shopY)
             mouse1.click(Button.left, 1)
             time.sleep(1)
         self.shopChoices = self.shop.labelShop()
 
-    def moveUnit(self, x=-1, y=-1):
+    def updateWindowCoords(self):
+        self.hwnd = win32gui.FindWindow(None, 'Dota Underlords')
+        win32gui.SetForegroundWindow(self.hwnd)
 
-        print(f"Tried to move x:{x} and y: {y}")
+        rect = win32gui.GetWindowRect(self.hwnd)
+        self.x = rect[0]
+        self.y = rect[1]
+        self.w = rect[2] - self.x
+        self.h = rect[3] - self.y
+        self.shopX = self.x + 905
+        self.shopY = self.y + 65
+        self.rerollX = self.shopX
+        self.rerollY = self.shopY + 82
+        self.clickUpX = self.rerollX
+        self.clickUpY = self.rerollY + 70
+
+        self.benchX = self.x + 260
+        self.benchXOffset = 88
+        self.benchY = self.y + 820
+        self.boardX = self.x + 330
+        self.boardXOffset = 73
+        self.boardY = self.y + 420
+        self.boardYOffset = 70
+
+    def moveUnit(self, x=-1, y=-1):
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
                 if self.benchHeroes[x] is None:  # Making sure bench spot is open
                     self.benchHeroes[x] = self.heroToMove
                     self.resetLabel(self.heroToMove)
+                    self.moveGameHero(self.heroToMove, x, -1)
                     self.heroToMove.coords = (x, -1)
                     self.updateHeroLabel(self.heroToMove)
                     self.heroToMove = None
@@ -234,6 +295,7 @@ class ShopThread(Thread):
                     print("calling board move")
                     self.boardHeroes[x][y] = self.heroToMove
                     self.resetLabel(self.heroToMove)
+                    self.moveGameHero(self.heroToMove, x, y)
                     self.heroToMove.coords = (x, y)
                     self.updateHeroLabel(self.heroToMove)
                     self.heroToMove = None
@@ -305,7 +367,6 @@ class ShopThread(Thread):
 
     def boardLevelUp(self, idx):
 
-        levThresh = 2
         # Adding +1 to represent the shop unit coming in
         board = {"tierTwo": 0, "tierOne": 0 + 1, "tierTwoHeroes": [], "tierOneHeroes": [], "tieredUp": False}
         shopImages, classes, value, inspect, statesList = self.shopChoices
@@ -324,7 +385,7 @@ class ShopThread(Thread):
                             board["tierTwo"] += 1
                             board["tierTwoHeroes"].append(self.boardHeroes[i][j])
 
-        if board["tierOne"] == levThresh:  # If there is enough tier ones to make a tier 2,
+        if board["tierOne"] == self.levelThresh:  # If there is enough tier ones to make a tier 2,
             # first instance hero levels up, the rest should be removed from reference and update labels?
 
             board["tierOneHeroes"][0].tier += 1
@@ -338,7 +399,7 @@ class ShopThread(Thread):
                 specificHero = board["tierOneHeroes"][x]
                 self.resetLabel(specificHero)
 
-        if board["tierTwo"] == levThresh:  # If there is enough tier ones to make a tier 2,
+        if board["tierTwo"] == self.levelThresh:  # If there is enough tier ones to make a tier 2,
             # first instance hero levels up, the rest should be removed from reference and update labels?
 
             board["tierTwoHeroes"][0].tier += 1
@@ -353,7 +414,6 @@ class ShopThread(Thread):
 
     def benchLevelUp(self, idx):
 
-        levThresh = 2
         tieredUp = False
         shopImages, classes, value, inspect, statesList = self.shopChoices
         boardScan = self.boardLevelUp(idx)
@@ -382,7 +442,7 @@ class ShopThread(Thread):
                         bench["tierTwo"] += 1
                         bench["tierTwoHeroes"].append(self.benchHeroes[i])
 
-        if bench["tierOne"] == levThresh:  # If there is enough tier ones to make a tier 2,
+        if bench["tierOne"] == self.levelThresh:  # If there is enough tier ones to make a tier 2,
             # first instance hero levels up, the rest should be removed from reference and update labels?
 
             bench["tierOneHeroes"][0].tier += 1
@@ -396,12 +456,10 @@ class ShopThread(Thread):
             tieredUp = True
 
             for x in range(1, len(bench["tierOneHeroes"])):
-
                 specificHero = bench["tierOneHeroes"][x]
                 self.resetLabel(specificHero)
 
-
-        if bench["tierTwo"] == levThresh:
+        if bench["tierTwo"] == self.levelThresh:
 
             bench["tierTwoHeroes"][0].tier += 1
 
@@ -412,7 +470,6 @@ class ShopThread(Thread):
             tieredUp = True
 
             for x in range(1, len(bench["tierTwoHeroes"])):
-
                 specificHero = bench["tierTwoHeroes"][x]
                 self.resetLabel(specificHero)
 
