@@ -47,6 +47,8 @@ class ShopThread(Thread):
         self.clickUpX = self.rerollX
         self.clickUpY = self.rerollY + 70
 
+        self.heroToMove = None
+
         self.shop = Shop()
         self.HUD = HUD()
         self.bench = numpy.zeros([1, 8])
@@ -64,7 +66,7 @@ class ShopThread(Thread):
         self.shopImages = []
         self.benchLabels = []
         self.benchHeroes = [None, None, None, None, None, None, None, None]
-        self.boardLabels = []
+        self.boardLabels = numpy.full((4, 8), None)
         self.boardHeroes = numpy.full((4, 8), None)
         # self.boardHeroes = numpy.empty((4, 8))
         # self.boardHeroes[:] = None
@@ -97,18 +99,23 @@ class ShopThread(Thread):
             )
             button.grid(row=1, column=i + 1)
 
+        hudRow = 14
+
         # 8 bench portrait slots
         for x in range(8):
             newLabel = Label(master=shopFrame, foreground='white', background='black',
                              text=f"None", compound='top')
-            newLabel.grid(row=8, column=x, padx=5, pady=5)
+            newLabel.grid(row=hudRow + 1, column=x, padx=5, pady=5)
             self.benchLabels.append(newLabel)
+            tempButton = tkinter.Button(master=shopFrame, text="Move", width=4, height=1,
+                                        command=lambda pos=x, idx=-1: self.moveUnit(x=pos, y=idx))
+            tempButton.grid(row=hudRow + 2, column=x)
 
         # shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
         self.hudLabel = Label(master=shopFrame, foreground='white', background='black',
                               text="Hi", compound='top')
 
-        self.hudLabel.grid(row=7, column=3, padx=5, pady=5)
+        self.hudLabel.grid(row=hudRow, column=3, padx=5, pady=5)
 
         self.rerollButton = tkinter.Button(
             master=shopFrame,
@@ -119,7 +126,7 @@ class ShopThread(Thread):
             fg="yellow",
             command=self.rerollStore
         )
-        self.rerollButton.grid(row=7, column=1)
+        self.rerollButton.grid(row=hudRow, column=1)
 
         self.clickUpButton = tkinter.Button(
             master=shopFrame,
@@ -130,15 +137,17 @@ class ShopThread(Thread):
             fg="yellow",
             command=self.clickUp
         )
-        self.clickUpButton.grid(row=7, column=2)
-
+        self.clickUpButton.grid(row=hudRow, column=2)
 
         for i in range(4):
             for j in range(8):
                 newLabel = Label(master=shopFrame, foreground='white', background='black',
                                  text=f"None", compound='top')
-                newLabel.grid(row=3 + i, column=j, padx=5, pady=5)
-                self.boardLabels.append(newLabel)
+                newLabel.grid(row=3 + (2 * i), column=j, padx=3, pady=2)
+                self.boardLabels[i][j] = newLabel
+                tempButton = tkinter.Button(master=shopFrame, text="Move", width=4, height=1,
+                                            command=lambda pos=i, idx=j: self.moveUnit(x=pos, y=idx))
+                tempButton.grid(row=4 + (2 * i), column=j)
 
         shopFrame.pack()
 
@@ -159,7 +168,7 @@ class ShopThread(Thread):
                     self.shopImages.append(tempImage)
                     self.shopLabels[i].config(image=tempImage,
                                               text=f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
-                    print(f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
+                    # print(f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
 
                 # itemImage = ImageTk.PhotoImage(itemImage)
                 tempString = "\nUnit Count %d" % itemCounts[2] + "\nGold Count: %d" % itemCounts[
@@ -182,7 +191,6 @@ class ShopThread(Thread):
                 else:
                     self.updateShop = False
 
-
     def clickUp(self):
         self.openStore()
         mouse1.position = (self.clickUpX, self.clickUpY)
@@ -204,6 +212,79 @@ class ShopThread(Thread):
             mouse1.click(Button.left, 1)
             time.sleep(1)
         self.shopChoices = self.shop.labelShop()
+
+    def moveUnit(self, x=-1, y=-1):
+
+        print(f"Tried to move x:{x} and y: {y}")
+
+        if self.heroToMove:  # If a hero has been selected to move previously
+            if y == -1:  # Meaning we are moving onto a bench spot
+                if self.benchHeroes[x] is None:  # Making sure bench spot is open
+                    self.benchHeroes[x] = self.heroToMove
+                    self.resetLabel(self.heroToMove)
+                    self.heroToMove.coords = (x, -1)
+                    self.updateHeroLabel(self.heroToMove)
+                    self.heroToMove = None
+
+                else:
+                    print("Bench Spot Taken!")
+                    return -1
+            else:  # Meaning we are moving onto a board spot
+                if self.boardHeroes[x][y] is None:  # Making sure board spot is open
+                    print("calling board move")
+                    self.boardHeroes[x][y] = self.heroToMove
+                    self.resetLabel(self.heroToMove)
+                    self.heroToMove.coords = (x, y)
+                    self.updateHeroLabel(self.heroToMove)
+                    self.heroToMove = None
+
+                else:
+                    print("Board Spot Taken!")
+                    return -1
+        else:  # Meaning a hero has not yet been selected for movement, mark this hero as one to move
+            if y == -1:  # Meaning we are moving onto a bench spot
+                if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
+                    self.heroToMove = self.benchHeroes[x]
+                else:
+                    print("No Hero On This Bench!")
+                    return -1
+            else:
+                if self.boardHeroes[x][y] is not None:  # Making sure board spot has a hero
+                    self.heroToMove = self.boardHeroes[x][y]
+                else:
+                    print("No Hero On This Board!")
+                    return -1
+
+        return 1
+
+    def resetLabel(self, hero):
+
+        x, y = hero.coords
+        if y == -1:
+            self.benchLabels[x].config(text="None", bg='black', image=self.profilePics['None'])
+            self.benchHeroes[x] = None
+        else:
+            self.boardLabels[x][y].config(text="None", bg='black', image=self.profilePics['None'])
+            self.boardHeroes[x][y] = None
+
+    def updateHeroLabel(self, hero):
+
+        x, y = hero.coords
+        color = 'black'
+
+        if hero.tier == 2:
+            color = 'blue'
+        elif hero.tier == 3:
+            color = 'yellow'
+
+        if y == -1:  # Meaning we are working with bench
+            self.benchLabels[x].config(image=hero.image, text=hero.name, bg=color)
+        else:
+
+            self.boardLabels[x][y].config(
+                image=hero.image,
+                text=hero.name,
+                bg=color)
 
     def buy(self, xPos=350, idx=0):
 
@@ -249,22 +330,24 @@ class ShopThread(Thread):
             board["tierOneHeroes"][0].tier += 1
 
             board["tierTwoHeroes"].append(board["tierOneHeroes"][0])
+            self.updateHeroLabel(board["tierOneHeroes"][0])  # Updating label to for color to indicate tier
             board["tierTwo"] += 1
             board["tieredUp"] = True
 
             for x in range(1, len(board["tierOneHeroes"])):
                 specificHero = board["tierOneHeroes"][x]
-                self.boardHeroes[specificHero.coords[0]][specificHero.coords[1]] = None
+                self.resetLabel(specificHero)
 
         if board["tierTwo"] == levThresh:  # If there is enough tier ones to make a tier 2,
             # first instance hero levels up, the rest should be removed from reference and update labels?
 
             board["tierTwoHeroes"][0].tier += 1
+            self.updateHeroLabel(board["tierTwoHeroes"][0])  # Updating label to for color to indicate tier
             board["tieredUp"] = True
 
             for x in range(1, len(board["tierTwoHeroes"])):
                 specificHero = board["tierTwoHeroes"][x]
-                self.boardHeroes[specificHero.coords[0]][specificHero.coords[1]] = None
+                self.resetLabel(specificHero)
 
         return board
 
@@ -304,8 +387,9 @@ class ShopThread(Thread):
 
             bench["tierOneHeroes"][0].tier += 1
 
-            if bench["tierOneHeroes"][0].coords[1] == -1:
-                self.benchLabels[bench["tierOneHeroes"][0].coords[0]].config(bg="blue")
+            # if bench["tierOneHeroes"][0].coords[1] == -1:
+            #     self.benchLabels[bench["tierOneHeroes"][0].coords[0]].config(bg="blue")
+            self.updateHeroLabel(bench["tierOneHeroes"][0])  # Updating label to for color to indicate tier
 
             bench["tierTwoHeroes"].append(bench["tierOneHeroes"][0])
             bench["tierTwo"] += 1
@@ -314,31 +398,23 @@ class ShopThread(Thread):
             for x in range(1, len(bench["tierOneHeroes"])):
 
                 specificHero = bench["tierOneHeroes"][x]
+                self.resetLabel(specificHero)
 
-                if specificHero.coords[1] == -1:  # Only if this hero is located on the bench!
-                    self.benchHeroes[specificHero.coords[0]] = None
-                    self.benchLabels[specificHero.coords[0]].config(text="Tiered Up")
-                else:
-                    self.boardHeroes[specificHero.coords[0]][specificHero.coords[1]] = None
 
         if bench["tierTwo"] == levThresh:
 
             bench["tierTwoHeroes"][0].tier += 1
 
-            if bench["tierTwoHeroes"][0].coords[1] == -1:
-                self.benchLabels[bench["tierTwoHeroes"][0].coords[0]].config(bg="yellow")
+            # if bench["tierTwoHeroes"][0].coords[1] == -1:
+            #     self.benchLabels[bench["tierTwoHeroes"][0].coords[0]].config(bg="yellow")
+            self.updateHeroLabel(bench["tierTwoHeroes"][0])  # Updating label to for color to indicate tier
 
             tieredUp = True
 
             for x in range(1, len(bench["tierTwoHeroes"])):
 
                 specificHero = bench["tierTwoHeroes"][x]
-
-                if specificHero.coords[1] == -1:  # Only if this hero is located on the bench!
-                    self.benchHeroes[specificHero.coords[0]] = None
-                    self.benchLabels[specificHero.coords[0]].config(text="Tiered Up", bg='black')
-                else:
-                    self.boardHeroes[specificHero.coords[0]][specificHero.coords[1]] = None
+                self.resetLabel(specificHero)
 
         return tieredUp
 
