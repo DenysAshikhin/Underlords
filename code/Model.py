@@ -51,8 +51,8 @@ def loadData(batchSize):
     # Split into train and validation
     np.random.seed(1)  # Fixed numpy random seed for reproducible shuffling
     np.random.shuffle(relevantIndices)
-    split1 = int(len(relevantIndices) * 0.85)  # split at 85%
-    split2 = int(len(relevantIndices) * 0.86)  # split at 95%
+    split1 = int(len(relevantIndices) * 0.7)  # split at 85%
+    split2 = int(len(relevantIndices) * 0.71)  # split at 95%
 
     # split into training and validation indices
     training, validation = relevantIndices[:split1], relevantIndices[split2:]
