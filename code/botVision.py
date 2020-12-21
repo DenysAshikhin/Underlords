@@ -27,7 +27,7 @@ def loadProfiles():
 
 
 class ShopThread(Thread):
-    def __init__(self, event, rootWindow):
+    def __init__(self, event, rootWindow, training=False):
         Thread.__init__(self)
         self.stopped = event
         self.rootWindow = rootWindow
@@ -96,17 +96,18 @@ class ShopThread(Thread):
             label = Label(master=shopFrame, foreground='white', background='black', image=tempImage,
                           text=f"{classes[statesList[i]]} {value[i] * 100:.1f}%", compound='top')
             label.grid(row=0, column=i + 1, padx=5, pady=5)
-            self.shopLabels.append(label)
-            button = tkinter.Button(
-                master=shopFrame,
-                text="Purchase",
-                width=10,
-                height=1,
-                bg="blue",
-                fg="yellow",
-                command=lambda pos=self.storeMap[i], idx=i: self.buy(xPos=pos, idx=idx)
-            )
-            button.grid(row=1, column=i + 1)
+            if not training:
+                self.shopLabels.append(label)
+                button = tkinter.Button(
+                    master=shopFrame,
+                    text="Purchase",
+                    width=10,
+                    height=1,
+                    bg="blue",
+                    fg="yellow",
+                    command=lambda pos=self.storeMap[i], idx=i: self.buy(xPos=pos, idx=idx)
+                )
+                button.grid(row=1, column=i + 1)
 
         hudRow = 14
 
@@ -116,9 +117,10 @@ class ShopThread(Thread):
                              text=f"None", compound='top')
             newLabel.grid(row=hudRow + 1, column=x, padx=5, pady=5)
             self.benchLabels.append(newLabel)
-            tempButton = tkinter.Button(master=shopFrame, text="Move", width=4, height=1,
-                                        command=lambda pos=x, idx=-1: self.moveUnit(x=pos, y=idx))
-            tempButton.grid(row=hudRow + 2, column=x)
+            if not training:
+                tempButton = tkinter.Button(master=shopFrame, text="Move", width=4, height=1,
+                                            command=lambda pos=x, idx=-1: self.moveUnit(x=pos, y=idx))
+                tempButton.grid(row=hudRow + 2, column=x)
 
         # shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
         self.hudLabel = Label(master=shopFrame, foreground='white', background='black',
@@ -137,6 +139,17 @@ class ShopThread(Thread):
         )
         self.rerollButton.grid(row=hudRow, column=1)
 
+        self.sellButton = tkinter.Button(
+            master=shopFrame,
+            text="Sell",
+            width=10,
+            height=1,
+            bg="blue",
+            fg="yellow",
+            command=self.sellHero
+        )
+        self.sellButton.grid(row=hudRow, column=4)
+
         self.clickUpButton = tkinter.Button(
             master=shopFrame,
             text="Click Up",
@@ -154,9 +167,11 @@ class ShopThread(Thread):
                                  text=f"None", compound='top')
                 newLabel.grid(row=3 + (2 * i), column=j, padx=3, pady=2)
                 self.boardLabels[i][j] = newLabel
-                tempButton = tkinter.Button(master=shopFrame, text="Move", width=4, height=1,
-                                            command=lambda pos=i, idx=j: self.moveUnit(x=pos, y=idx))
-                tempButton.grid(row=4 + (2 * i), column=j)
+
+                if not training:
+                    tempButton = tkinter.Button(master=shopFrame, text="Move", width=4, height=1,
+                                                command=lambda pos=i, idx=j: self.moveUnit(x=pos, y=idx))
+                    tempButton.grid(row=4 + (2 * i), column=j)
 
         shopFrame.pack()
 
@@ -200,6 +215,47 @@ class ShopThread(Thread):
                 else:
                     self.updateShop = False
 
+    def sellHero(self, x=-1, y=-1):
+
+        if x == -1:
+            if self.heroToMove is None:
+                print("No Hero Selected to Sell")
+                return -1
+            else:
+                x, y = self.heroToMove.coords
+        else:
+            if y == -1:
+                if self.benchHeroes[x] is None:
+                    print(f"No hero on bench spot {x + 1} to sell!")
+                    return -1
+            elif self.boardheroes[x][y] is None:
+                print(f"No hero on board spot {x + 1}-{y + 1} to sell!")
+                return -1
+
+        if y == -1:
+            mouse1.position = (self.benchX + (self.benchXOffset * x), self.benchY)
+            self.resetLabel(self.benchHeroes[x])
+            self.heroToMove = None
+        else:
+            mouse1.position = (self.boardX + (self.boardXOffset * y), self.boardY + (self.boardYOffset * x))
+            self.resetLabel(self.boardHeroes[x][y])
+            self.heroToMove = None
+        # print(f"Moving to board {mouse1.position}")
+
+        self.updateWindowCoords()
+
+        mouse1.press(Button.left)
+
+        time.sleep(0.25)
+
+        mouse1.position = (self.x + 50, self.y + 800)
+
+        time.sleep(0.25)
+
+        mouse1.release(Button.left)
+
+        return -1
+
     def moveGameHero(self, hero, newX, newY):
 
         self.updateWindowCoords()
@@ -210,7 +266,7 @@ class ShopThread(Thread):
             mouse1.position = (self.benchX + (self.benchXOffset * heroX), self.benchY)
         else:
             mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
-           # print(f"Moving to board {mouse1.position}")
+        # print(f"Moving to board {mouse1.position}")
 
         mouse1.press(Button.left)
 
@@ -218,11 +274,11 @@ class ShopThread(Thread):
 
         if newY == -1:  # Moving onto the bench
             mouse1.position = (self.benchX + (self.benchXOffset * newX), self.benchY)
-           # print(f"Moving to bench {mouse1.position}")
+        # print(f"Moving to bench {mouse1.position}")
 
         else:
             mouse1.position = (self.boardX + (self.boardXOffset * newY), self.boardY + (self.boardYOffset * newX))
-           # print(f"Moving to board {mouse1.position}")
+        # print(f"Moving to board {mouse1.position}")
         time.sleep(0.25)
         mouse1.release(Button.left)
 
