@@ -1,5 +1,4 @@
 import os
-
 import MTM
 import cv2
 import numpy
@@ -19,7 +18,9 @@ class Underlords:
         for underlord in underlords:
             underlordName = self.detectUnderlord(underlord)
             underlordsList.append(underlordName)
-            print("Item: %s" % underlordName)
+            # print("Item: %s" % underlordName)
+
+        print(underlordsList)
 
         return underlordsList
 
@@ -54,7 +55,7 @@ class Underlords:
                                   maxOverlap=0,
                                   searchBox=None)
 
-        print(hits)
+        # print(hits)
 
         if len(hits['TemplateName']) > 0:
             underlordName = hits['TemplateName'].iloc[0]
