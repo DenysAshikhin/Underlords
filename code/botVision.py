@@ -55,6 +55,10 @@ class ShopThread(Thread):
         self.boardYOffset = 20
         self.lockInX = self.shopX - 500
         self.lockInY = self.shopY + 75
+        self.itemX = self.shopX + 60
+        self.itemXOffset = 20
+        self.itemY = self.shopY + 60
+        self.itemYOffset = 20
         self.updateWindowCoords()
 
         self.heroToMove = None
@@ -78,6 +82,9 @@ class ShopThread(Thread):
         self.benchHeroes = [None, None, None, None, None, None, None, None]
         self.boardLabels = numpy.full((4, 8), None)
         self.boardHeroes = numpy.full((4, 8), None)
+        self.itemObjects = numpy.full((3, 4), None)
+        self.itemlabels = numpy.full((3, 4), None)
+
         # self.boardHeroes = numpy.empty((4, 8))
         # self.boardHeroes[:] = None
         self.boardHeroes = self.boardHeroes.tolist()
@@ -111,6 +118,30 @@ class ShopThread(Thread):
                     command=lambda pos=self.storeMap[i], idx=i: self.buy(xPos=pos, idx=idx)
                 )
                 button.grid(row=1, column=i + 1)
+
+        self.itemFrame = Frame(master=shopFrame, relief=tkinter.RAISED, borderwidth=1)
+        self.itemFrame.grid(row=0, column=6)
+
+        for i in range(3):
+            for j in range(4):
+
+                label = Label(master=self.itemFrame, foreground='white', background='black',
+                              text=f"temp item #{i}-{j}", compound='top')
+                label.grid(row=2*i, column=j, padx=5, pady=5)
+
+                self.itemlabels[i][j] = label
+
+                if not training:
+                    button = tkinter.Button(
+                        master=self.itemFrame,
+                        text="Move",
+                        width=10,
+                        height=1,
+                        bg="blue",
+                        fg="yellow",
+                        command=lambda X=i, y=j: self.moveItem(x=X, y=y)
+                    )
+                    button.grid(row=2*i+1, column=j)
 
         hudRow = 14
 
@@ -309,7 +340,6 @@ class ShopThread(Thread):
         mouse1.position = (self.lockInX, self.lockInY)
         mouse1.click(Button.left, 1)
 
-
     def rerollStore(self):
         self.openStore()
         mouse1.position = (self.rerollX, self.rerollY)
@@ -352,6 +382,10 @@ class ShopThread(Thread):
         self.boardYOffset = 20
         self.lockInX = self.shopX - 650
         self.lockInY = self.rerollY + 80
+        self.itemX = self.shopX + 60
+        self.itemXOffset = 20
+        self.itemY = self.shopY + 60
+        self.itemYOffset = 20
 
     def moveUnit(self, x=-1, y=-1):
 
