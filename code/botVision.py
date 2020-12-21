@@ -126,7 +126,7 @@ class ShopThread(Thread):
             for j in range(4):
 
                 label = Label(master=self.itemFrame, foreground='white', background='black',
-                              text=f"temp item #{i}-{j}", compound='top')
+                              text=f"item #{i}-{j}", compound='top')
                 label.grid(row=2*i, column=j, padx=5, pady=5)
 
                 self.itemlabels[i][j] = label
