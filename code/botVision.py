@@ -53,6 +53,9 @@ class ShopThread(Thread):
         self.boardXOffset = 40
         self.boardY = 300
         self.boardYOffset = 20
+        self.lockInX = self.shopX - 500
+        self.lockInY = self.shopY + 75
+        self.updateWindowCoords()
 
         self.heroToMove = None
 
@@ -149,6 +152,17 @@ class ShopThread(Thread):
             command=self.sellHero
         )
         self.sellButton.grid(row=hudRow, column=4)
+
+        self.lockIn = tkinter.Button(
+            master=shopFrame,
+            text="Lock in",
+            width=10,
+            height=1,
+            bg="blue",
+            fg="yellow",
+            command=self.lockIn
+        )
+        self.lockIn.grid(row=hudRow, column=5)
 
         self.clickUpButton = tkinter.Button(
             master=shopFrame,
@@ -289,6 +303,13 @@ class ShopThread(Thread):
         self.shopChoices = self.shop.labelShop()
         self.updateShop = True
 
+    def lockIn(self):
+
+        self.openStore()
+        mouse1.position = (self.lockInX, self.lockInY)
+        mouse1.click(Button.left, 1)
+
+
     def rerollStore(self):
         self.openStore()
         mouse1.position = (self.rerollX, self.rerollY)
@@ -309,7 +330,7 @@ class ShopThread(Thread):
 
     def updateWindowCoords(self):
         self.hwnd = win32gui.FindWindow(None, 'Dota Underlords')
-        win32gui.SetForegroundWindow(self.hwnd)
+        #        win32gui.SetForegroundWindow(self.hwnd)
 
         rect = win32gui.GetWindowRect(self.hwnd)
         self.x = rect[0]
@@ -322,14 +343,15 @@ class ShopThread(Thread):
         self.rerollY = self.shopY + 82
         self.clickUpX = self.rerollX
         self.clickUpY = self.rerollY + 70
-
-        self.benchX = self.x + 260
-        self.benchXOffset = 88
-        self.benchY = self.y + 820
-        self.boardX = self.x + 330
-        self.boardXOffset = 73
-        self.boardY = self.y + 420
-        self.boardYOffset = 70
+        self.benchX = 200
+        self.benchXOffset = 40
+        self.benchY = 600
+        self.boardX = 210
+        self.boardXOffset = 40
+        self.boardY = 300
+        self.boardYOffset = 20
+        self.lockInX = self.shopX - 650
+        self.lockInY = self.rerollY + 80
 
     def moveUnit(self, x=-1, y=-1):
 
