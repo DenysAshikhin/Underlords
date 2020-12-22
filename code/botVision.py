@@ -139,7 +139,7 @@ class ShopThread(Thread):
                         height=1,
                         bg="blue",
                         fg="yellow",
-                        command=lambda X=i, y=j: self.moveItem(x=X, y=y)
+                        command=lambda X=i, y=j: self.selectItem(x=X, y=y)
                     )
                     button.grid(row=2*i+1, column=j)
 
