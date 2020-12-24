@@ -168,7 +168,6 @@ class HUD:
                 digitsList.append((str(i), img))
         return digitsList
 
-
 def binarySearch(arr, value):
     low, high = 0, len(arr) - 1
     while low <= high:
@@ -180,6 +179,3 @@ def binarySearch(arr, value):
         else:
             return mid
     return -(low + 1)
-
-s = HUD()
-print(s.countEXP(s.cropEXP(imageGrab())))
