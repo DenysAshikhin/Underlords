@@ -63,4 +63,3 @@ class Underlords:
 
         return None
 
-h = Underlords().checkUnderlords()

@@ -26,7 +26,7 @@ class HUD:
         self.gold = self.countHUD(self.cropGold(gameScreen), self.goldTemplates)
         self.health = self.countHUD(self.cropHealth(gameScreen), self.healthTemplates)
         self.units = self.countHUD(self.cropUnit(gameScreen), self.unitTemplates)
-        self.currExp, self.poolExp = self.cropEXP(self.countEXP(gameScreen))
+        self.currExp, self.poolExp = self.countEXP(self.cropEXP(gameScreen))
         allImage = self.cropHUD(gameScreen)
 
         return [self.gold, self.health, self.units, self.currExp, self.poolExp], allImage
