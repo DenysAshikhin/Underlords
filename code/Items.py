@@ -10,6 +10,7 @@ class Items:
     def __init__(self):
         super().__init__()
         self.itemTemplates = self.loadItems()
+        #print(self.itemTemplates)
 
     def checkItems(self):
         gameScreen = imageGrab()
@@ -18,25 +19,27 @@ class Items:
         for item in items:
             itemName = self.detectItem(item)
             itemList.append(itemName)
-            print("Item: %s" % itemName)
+           # print("Item: %s" % itemName)
 
-        return  itemList
+        return itemList
 
     def loadItems(self):
         root = os.path.join(os.path.dirname(os.getcwd()), "items")
         templateList = []
-        print(root)
+      #  print(root)
         for file in os.listdir(root):
-            img = cv2.imread(os.path.join(root,file))
-            templatename = file[0:len(file)-4]
+            img = cv2.imread(os.path.join(root, file))
+            print(file)
+            templatename = file[0:len(file) - 4]
             templateList.append((templatename, img))
 
         return templateList
 
     def cropItems(self, gameScreen):
-        item1 = (gameScreen.crop((315, 350) + (390, 480)))
-        item2 = gameScreen.crop((540, 350) + (615, 480))
-        item3 = gameScreen.crop((765, 350) + (840, 480))
+        item1 = (gameScreen.crop((315, 340) + (390, 480)))
+        #item1.show()
+        item2 = gameScreen.crop((540, 340) + (615, 480))
+        item3 = gameScreen.crop((765, 340) + (840, 480))
         return [item1, item2, item3]
 
     def detectItem(self, img):
@@ -50,7 +53,7 @@ class Items:
                                   img_cv,
                                   method=cv2.TM_CCOEFF_NORMED,
                                   N_object=float("inf"),
-                                  score_threshold=0.85,
+                                  score_threshold=0.1,
                                   maxOverlap=0,
                                   searchBox=None)
 

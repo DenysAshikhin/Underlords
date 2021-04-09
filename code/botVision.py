@@ -11,6 +11,8 @@ from HUD import HUD
 from Shop import Shop
 
 from hero import Hero
+from Items import Items
+from Underlords import Underlords
 from pynput.mouse import Button, Controller as MouseController
 
 mouse1 = MouseController()
@@ -46,25 +48,30 @@ class ShopThread(Thread):
         self.rerollY = self.shopY + 82
         self.clickUpX = self.rerollX
         self.clickUpY = self.rerollY + 70
-        self.benchX = 200
-        self.benchXOffset = 40
-        self.benchY = 600
-        self.boardX = 210
-        self.boardXOffset = 40
-        self.boardY = 300
-        self.boardYOffset = 20
+        self.benchX = self.x + 250
+        self.benchXOffset = 90
+        self.benchY = self.y + 800
+        self.boardX = self.x + 300
+        self.boardXOffset = 80
+        self.boardY = self.y + 400
+        self.boardYOffset = 70
         self.lockInX = self.shopX - 500
         self.lockInY = self.shopY + 75
         self.itemX = self.shopX + 60
         self.itemXOffset = 20
         self.itemY = self.shopY + 60
         self.itemYOffset = 20
+        self.itemSelectY = self.y + 394
+        self.itemSelectX = self.x + 260
+        self.itemSelectXOffset = 270
         self.updateWindowCoords()
 
         self.heroToMove = None
 
         self.shop = Shop()
         self.HUD = HUD()
+        self.items = Items()
+        self.underlords = Underlords()
         self.bench = numpy.zeros([1, 8])
         self.board = numpy.zeros([4, 8])
         self.profilePics = loadProfiles()
@@ -89,7 +96,7 @@ class ShopThread(Thread):
         # self.boardHeroes[:] = None
         self.boardHeroes = self.boardHeroes.tolist()
 
-        self.levelThresh = 2
+        self.levelThresh = 3 #level threshold for tiering up a unit
 
         self.hudLabel = None
         self.toBuy = None
@@ -127,7 +134,7 @@ class ShopThread(Thread):
 
                 label = Label(master=self.itemFrame, foreground='white', background='black',
                               text=f"item #{i}-{j}", compound='top')
-                label.grid(row=2*i, column=j, padx=5, pady=5)
+                label.grid(row=2 * i, column=j, padx=5, pady=5)
 
                 self.itemlabels[i][j] = label
 
@@ -141,7 +148,7 @@ class ShopThread(Thread):
                         fg="yellow",
                         command=lambda X=i, y=j: self.selectItem(x=X, y=y)
                     )
-                    button.grid(row=2*i+1, column=j)
+                    button.grid(row=2 * i + 1, column=j)
 
         hudRow = 14
 
@@ -149,18 +156,18 @@ class ShopThread(Thread):
         for x in range(8):
             newLabel = Label(master=shopFrame, foreground='white', background='black',
                              text=f"None", compound='top')
-            newLabel.grid(row=hudRow + 1, column=x, padx=5, pady=5)
+            newLabel.grid(row=hudRow + 2, column=x, padx=5, pady=5)
             self.benchLabels.append(newLabel)
             if not training:
                 tempButton = tkinter.Button(master=shopFrame, text="Move", width=4, height=1,
                                             command=lambda pos=x, idx=-1: self.moveUnit(x=pos, y=idx))
-                tempButton.grid(row=hudRow + 2, column=x)
+                tempButton.grid(row=hudRow + 3, column=x)
 
         # shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
         self.hudLabel = Label(master=shopFrame, foreground='white', background='black',
                               text="Hi", compound='top')
 
-        self.hudLabel.grid(row=hudRow, column=3, padx=5, pady=5)
+        self.hudLabel.grid(row=hudRow, column=4, padx=5, pady=5)
 
         self.rerollButton = tkinter.Button(
             master=shopFrame,
@@ -171,7 +178,48 @@ class ShopThread(Thread):
             fg="yellow",
             command=self.rerollStore
         )
-        self.rerollButton.grid(row=hudRow, column=1)
+        self.rerollButton.grid(row=hudRow, column=3)
+
+        self.buyItem1 = tkinter.Button(
+            master=shopFrame,
+            text="buyItem1",
+            width=10,
+            height=1,
+            bg="blue",
+            fg="yellow",
+            command=lambda pos=0: self.selectItem(selection=pos)
+        )
+        self.buyItem1.grid(row=hudRow + 1, column=0)
+        self.buyItem2 = tkinter.Button(
+            master=shopFrame,
+            text="buyItem2",
+            width=10,
+            height=1,
+            bg="blue",
+            fg="yellow",
+            command=lambda pos=1: self.selectItem(selection=pos)
+        )
+        self.buyItem2.grid(row=hudRow + 1, column=1)
+        self.buyItem3 = tkinter.Button(
+            master=shopFrame,
+            text="buyItem3",
+            width=10,
+            height=1,
+            bg="blue",
+            fg="yellow",
+            command=lambda pos=2: self.selectItem(selection=pos)
+        )
+        self.buyItem3.grid(row=hudRow + 1, column=2)
+        self.buyItem4 = tkinter.Button(
+            master=shopFrame,
+            text="buyItem4",
+            width=10,
+            height=1,
+            bg="blue",
+            fg="yellow",
+            command=lambda pos=3: self.selectItem(selection=pos)
+        )
+        self.buyItem4.grid(row=hudRow + 1, column=3)
 
         self.sellButton = tkinter.Button(
             master=shopFrame,
@@ -182,7 +230,7 @@ class ShopThread(Thread):
             fg="yellow",
             command=self.sellHero
         )
-        self.sellButton.grid(row=hudRow, column=4)
+        self.sellButton.grid(row=hudRow, column=2)
 
         self.lockIn = tkinter.Button(
             master=shopFrame,
@@ -193,7 +241,7 @@ class ShopThread(Thread):
             fg="yellow",
             command=self.lockIn
         )
-        self.lockIn.grid(row=hudRow, column=5)
+        self.lockIn.grid(row=hudRow, column=1)
 
         self.clickUpButton = tkinter.Button(
             master=shopFrame,
@@ -204,7 +252,7 @@ class ShopThread(Thread):
             fg="yellow",
             command=self.clickUp
         )
-        self.clickUpButton.grid(row=hudRow, column=2)
+        self.clickUpButton.grid(row=hudRow, column=0)
 
         for i in range(4):
             for j in range(8):
@@ -219,6 +267,41 @@ class ShopThread(Thread):
                     tempButton.grid(row=4 + (2 * i), column=j)
 
         shopFrame.pack()
+
+    def selectItem(self, selection):
+
+        items = self.items.checkItems()
+        print(items)
+
+        if items[0] is None:
+
+            underlords = self.underlords.checkUnderlords()
+            print(underlords)
+
+            if underlords[0] is None:
+
+                print("No Underlord or item available for selection!")
+                return -1
+
+            else:
+                self.buyUnderlord(selection)
+        else:
+
+            self.buyItem(self, selection)
+
+    def buyItem(self, selection):
+
+        if selection == 3:
+            raise RuntimeError("Rerolling item logic not implemented!")
+
+        else:
+            mouse1.position = (self.itemSelectX + (self.itemSelectXOffset*selection), self.itemSelectY)
+
+
+
+    def buyUnderlord(self, selection):
+
+        raise RuntimeError("Not implemented!")
 
     def run(self):
         while not self.stopped.wait(1):
@@ -373,19 +456,23 @@ class ShopThread(Thread):
         self.rerollY = self.shopY + 82
         self.clickUpX = self.rerollX
         self.clickUpY = self.rerollY + 70
-        self.benchX = 200
-        self.benchXOffset = 40
-        self.benchY = 600
-        self.boardX = 210
-        self.boardXOffset = 40
-        self.boardY = 300
-        self.boardYOffset = 20
+        self.benchX = self.x + 250
+        self.benchXOffset = 90
+        self.benchY = self.y + 800
+        self.boardX = self.x + 300
+        self.boardXOffset = 80
+        self.boardY = self.y + 400
+        self.boardYOffset = 70
         self.lockInX = self.shopX - 650
         self.lockInY = self.rerollY + 80
         self.itemX = self.shopX + 60
         self.itemXOffset = 20
         self.itemY = self.shopY + 60
         self.itemYOffset = 20
+        self.itemYOffset = 20
+        self.itemSelectY = self.y + 394
+        self.itemSelectX = self.x + 260
+        self.itemSelectXOffset = 270
 
     def moveUnit(self, x=-1, y=-1):
 
