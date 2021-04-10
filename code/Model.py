@@ -36,7 +36,7 @@ def loadData(batchSize):
 
     # print(root)
     classes = listdirs(root)
-    # print(classes)
+    print(classes)
 
     sets = []
     for transform in transformSet:
@@ -274,11 +274,11 @@ def train(config):
                                                          validationLoader, writer, classStatsEpoch)
         calculateF1(None, None, classStatsEpoch, update=False)  # Calculate # Incorrect, # Correct and # False Positives
         classStats.append(classStatsEpoch[0])
-        # print(classStatsEpoch[0])
+        print(classStatsEpoch[0])
         print(classStatsEpoch[2])
-        tune.report(score=accuracy)
+        # tune.report(score=accuracy)
 
-    torch.save(model.state_dict(), "model.pth")
+    # torch.save(model.state_dict(), "model.pth")
     # cpu_model = model.to('cpu')
     # torch.save(model.state_dict(), "model_CPU.pth")
 
@@ -304,11 +304,11 @@ def tunerTrain():
 # train()
 # tunerTrain()
 
-# #
-# train({'lr': 0.0126767,
-#        'finalOutput': 7,
-#        'stride1': 1,
-#        'stride2': 1,
-#        'batchSize': 256,
-#        'finalChannel': 47
-#        })
+
+train({'lr': 0.0126767,
+       'finalOutput': 7,
+       'stride1': 1,
+       'stride2': 1,
+       'batchSize': 256,
+       'finalChannel': 47
+       })
