@@ -31,7 +31,6 @@ def loadData(batchSize):
     lastSlash = int(os.path.dirname(os.path.realpath(__file__)).rindex('\\'))
 
     # print(lastSlash)
-
     root = os.path.dirname(os.path.realpath(__file__))[: lastSlash] + "\\Pics"
 
     # print(root)
@@ -41,28 +40,26 @@ def loadData(batchSize):
     sets = []
     for transform in transformSet:
         set_iter = datasets.ImageFolder(root=root, transform=transform)
-        # print(set_iter)
         sets.append(set_iter)
     trainSet = torch.utils.data.ConcatDataset(sets)
 
-    # Get the list of indices to sample from
     relevantIndices = list(range(0, len(trainSet)))
-
-    # Split into train and validation
-    np.random.seed(1)  # Fixed numpy random seed for reproducible shuffling
-    np.random.shuffle(relevantIndices)
     split1 = int(len(relevantIndices) * 0.7)  # split at 85%
-    split2 = int(len(relevantIndices) * 0.71)  # split at 95%
+    split2 = int(len(relevantIndices) * 0.3)  # split at 95%
+
+    train_set, val_set = torch.utils.data.random_split(trainSet, [split1+1, split2])
 
     # split into training and validation indices
-    training, validation = relevantIndices[:split1], relevantIndices[split2:]
+    print(split1)
+    print (type (trainSet))
 
-    trainingSampler = SubsetRandomSampler(training)
-    trainingLoader = torch.utils.data.DataLoader(trainSet, batch_size=batchSize, num_workers=0, sampler=trainingSampler)
+    # training, validation = relevantIndices[:split1], relevantIndices[split2:]
+    # trainingSampler = SubsetRandomSampler(training)
+    trainingLoader = torch.utils.data.DataLoader(train_set, batch_size=batchSize, num_workers=0,  shuffle= True)
 
-    validationSampler = SubsetRandomSampler(validation)
-    validationLoader = torch.utils.data.DataLoader(trainSet, batch_size=batchSize, num_workers=0,
-                                                   sampler=validationSampler)
+    # validationSampler = SubsetRandomSampler(validation)
+    validationLoader = torch.utils.data.DataLoader(val_set, batch_size=batchSize, num_workers=0,
+                                                   shuffle= True)
     return trainingLoader, validationLoader, classes
 
 
@@ -133,11 +130,7 @@ class Net(nn.Module):
 def calculateF1(predictions, labels, classStats, update=True):
     # classStats [0] = # of correct
     # classStats [1] = # of incorrect
-
-
-    print(torch.flatten(predictions).detach().numpy())
-    print('hi')
-    print(labels.detach().numpy())
+    # classStats [2] = # of false Positives
 
     if update:
         predictions = torch.flatten(predictions)
