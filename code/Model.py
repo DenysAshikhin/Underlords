@@ -133,6 +133,12 @@ class Net(nn.Module):
 def calculateF1(predictions, labels, classStats, update=True):
     # classStats [0] = # of correct
     # classStats [1] = # of incorrect
+
+
+    print(torch.flatten(predictions).detach().numpy())
+    print('hi')
+    print(labels.detach().numpy())
+
     if update:
         predictions = torch.flatten(predictions)
         for label, i in enumerate(labels):
