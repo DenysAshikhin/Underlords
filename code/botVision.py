@@ -252,7 +252,7 @@ class ShopThread(Thread):
             fg='yellow',
             command=lambda underlor='healing_tank', selecty=3: self.buyUnderlord(underlord=underlor, selection=selecty)
         )
-        self.testButton.grid(row=hudRow + 1, column = 5)
+        self.testButton.grid(row=hudRow + 1, column=5)
 
         self.sellButton = tkinter.Button(
             master=shopFrame,
@@ -310,8 +310,6 @@ class ShopThread(Thread):
             if items[0] is None:
 
                 underlords = self.underlords.checkUnderlords()
-                print('underlords:')
-                print(underlords)
 
                 if underlords[0] is None:
 
@@ -369,9 +367,9 @@ class ShopThread(Thread):
         mouse1.click(Button.left, 1)
         print(f"We tried to buy Underlord: {underlord}")
         AnnaPreferences = [(2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7)]
-        JullPreferences= [(0,3),(0,4),(0,5),(0,6),(0,7),(3,0),(0,3),(0,4),(0,5),(0,6),(0,7)]
+        JullPreferences = [(0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (3, 0), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7)]
         HobPreferences = [(2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7)]
-        FurPreferences = [(1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (0,0),(0,1),(0,2),(0,3),(0,4)]
+        FurPreferences = [(1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (0, 0), (0, 1), (0, 2), (0, 3), (0, 4)]
 
         preferences = []
 
@@ -589,7 +587,6 @@ class ShopThread(Thread):
                     return -1
             else:  # Meaning we are moving onto a board spot
                 if self.boardHeroes[x][y] is None:  # Making sure board spot is open
-                    print("calling board move")
                     self.boardHeroes[x][y] = self.heroToMove
                     self.resetLabel(self.heroToMove)
                     self.moveGameHero(self.heroToMove, x, y)
@@ -770,8 +767,9 @@ class ShopThread(Thread):
             # untouched - NOTE - note - make sure bench labels are not updated as a result of this in future
             # make seperate function to update board labels!
 
-        bench = {"tierTwo": boardScan["tierTwo"], "tierOne": boardScan["tierOne"], "tierTwoHeroes": [],
-                 "tierOneHeroes": []}
+        bench = {"tierTwo": boardScan["tierTwo"], "tierOne": boardScan["tierOne"],
+                 "tierTwoHeroes": boardScan["tierTwoHeroes"],
+                 "tierOneHeroes": boardScan["tierOneHeroes"]}
 
         for i in range(8):
 
