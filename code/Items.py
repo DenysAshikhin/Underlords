@@ -65,7 +65,7 @@ class Items:
                                   img_cv,
                                   method=cv2.TM_CCOEFF_NORMED,
                                   N_object=float("inf"),
-                                  score_threshold=0.6,
+                                  score_threshold=0.55,
                                   maxOverlap=0,
                                   searchBox=None)
 

@@ -29,9 +29,16 @@ def loadProfiles():
         profileMap[file[: -4]] = img
     return profileMap
 
-def loadUnderlodProfiles():
 
-    raise RuntimeError("Underlord profile loading has not been implemented!")
+def loadUnderlodProfiles():
+    root = os.path.join(os.path.dirname(os.getcwd()), "underlord profile pics")
+    profileMap = {}
+    for file in os.listdir(root):
+        img = Image.open(os.path.join(root, file))
+        img = ImageTk.PhotoImage(img)
+        profileMap[file[: -4]] = img
+    return profileMap
+
 
 class ShopThread(Thread):
     def __init__(self, event, rootWindow, training=False):
@@ -68,7 +75,7 @@ class ShopThread(Thread):
         self.itemYOffset = 20
         self.itemSelectY = self.y + 394
         self.itemSelectX = self.x + 350
-        self.itemSelectXOffset = 170
+        self.itemSelectXOffset = 220
         self.itemRerollX = self.itemSelectX + self.itemSelectXOffset
         self.itemRerollY = self.itemSelectY + 200
 
@@ -88,6 +95,7 @@ class ShopThread(Thread):
         self.bench = numpy.zeros([1, 8])
         self.board = numpy.zeros([4, 8])
         self.profilePics = loadProfiles()
+        self.underlordPics = loadUnderlodProfiles()
         self.bought = None
         self.shopChoices = None
         self.storeMap = [350, 450, 575, 700, 800]
@@ -110,7 +118,7 @@ class ShopThread(Thread):
         # self.boardHeroes[:] = None
         self.boardHeroes = self.boardHeroes.tolist()
 
-        self.levelThresh = 3  # level threshold for tiering up a unit
+        self.levelThresh = 2  # level threshold for tiering up a unit
 
         self.hudLabel = None
         self.toBuy = None
@@ -235,6 +243,17 @@ class ShopThread(Thread):
         )
         self.buyItem4.grid(row=hudRow + 1, column=3)
 
+        self.testButton = tkinter.Button(
+            master=shopFrame,
+            text='Test Button',
+            width=10,
+            height=1,
+            bg='blue',
+            fg='yellow',
+            command=lambda underlor='healing_tank', selecty=3: self.buyUnderlord(underlord=underlor, selection=selecty)
+        )
+        self.testButton.grid(row=hudRow + 1, column = 5)
+
         self.sellButton = tkinter.Button(
             master=shopFrame,
             text="Sell",
@@ -287,8 +306,6 @@ class ShopThread(Thread):
         if selection != -1:
 
             items = self.items.checkItems()
-            print('items:')
-            print(items)
 
             if items[0] is None:
 
@@ -302,7 +319,7 @@ class ShopThread(Thread):
                     return -1
 
                 else:
-                    self.buyUnderlord(underlords[selection])
+                    self.buyUnderlord(underlords[selection], selection)
             else:
                 self.buyItem(selection, items)
 
@@ -324,16 +341,20 @@ class ShopThread(Thread):
             if self.rerolledItem:
                 raise RuntimeError("Can't reroll an item twice - Was this properly implemented?")
             else:
+                self.updateWindowCoords()
                 mouse1.position = (self.itemRerollX, self.itemRerollY)
                 mouse1.click(Button.left, 1)
                 self.rerolledItem = True
                 self.choseItem = False
+                self.selected = False
 
         else:
+            self.updateWindowCoords()
             mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
             mouse1.click(Button.left, 1)
             self.rerolledItem = False
             self.choseItem = True
+            self.selected = True
             for i in range(3):
                 for j in range(4):
                     if self.itemObjects[i][j] is None:
@@ -341,18 +362,37 @@ class ShopThread(Thread):
                         self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
                         return
 
-    def buyUnderlord(self, underlord):
+    def buyUnderlord(self, underlord, selection):
 
+        self.updateWindowCoords()
+        mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
+        mouse1.click(Button.left, 1)
         print(f"We tried to buy Underlord: {underlord}")
-        preferences = [(1, 4), (1, 5), (1, 6), (1, 7), (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7)]
+        AnnaPreferences = [(2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7)]
+        JullPreferences= [(0,3),(0,4),(0,5),(0,6),(0,7),(3,0),(0,3),(0,4),(0,5),(0,6),(0,7)]
+        HobPreferences = [(2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7)]
+        FurPreferences = [(1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (0,0),(0,1),(0,2),(0,3),(0,4)]
+
+        preferences = []
+
+        if 'tank' in underlord:
+            print('bought jull')
+            preferences = JullPreferences
+        elif 'stealing' in underlord or 'rapid' in underlord:
+            print('but enno')
+            preferences = FurPreferences
+        else:
+            print('either Hobgen or Annesix')
+            preferences = AnnaPreferences
 
         for x, y in preferences:
 
             if self.boardHeroes[x][y] is None:
                 print(f"Found a spot for underlord at: {x}-{y}")
-                self.underlord = Hero(underlord, (x,y), None, True)
-
-            break
+                self.underlord = Hero(underlord, (x, y), self.underlordPics[underlord], True)
+                self.updateHeroLabel(self.underlord)
+                self.boardHeroes[x][y] = self.underlord
+                return
 
     def run(self):
         while not self.stopped.wait(1):
@@ -523,7 +563,7 @@ class ShopThread(Thread):
         self.itemYOffset = 20
         self.itemSelectY = self.y + 394
         self.itemSelectX = self.x + 350
-        self.itemSelectXOffset = 270
+        self.itemSelectXOffset = 220
         self.itemRerollX = self.itemSelectX + self.itemSelectXOffset
         self.itemRerollY = self.itemSelectY + 200
 
@@ -531,7 +571,12 @@ class ShopThread(Thread):
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
-                if self.benchHeroes[x] is None:  # Making sure bench spot is open
+
+                if self.heroToMove.underlord:
+                    print("Can't place an underlord onto a bench!")
+                    return -1
+
+                elif self.benchHeroes[x] is None:  # Making sure bench spot is open
                     self.benchHeroes[x] = self.heroToMove
                     self.resetLabel(self.heroToMove)
                     self.moveGameHero(self.heroToMove, x, -1)
@@ -567,6 +612,9 @@ class ShopThread(Thread):
                     return -1
             else:
                 if self.boardHeroes[x][y] is not None:  # Making sure board spot has a hero
+                    if self.boardHeroes[x][y].underlord:
+                        print("Can't attach items to Underlords!")
+                        return -1
                     self.updateHeroItem(self.boardHeroes[x][y])
 
                 else:
@@ -601,8 +649,8 @@ class ShopThread(Thread):
 
         hero.item = self.itemToMove
         self.itemToMove.hero = hero
-
         self.updateHeroLabel(hero)
+        self.itemToMove = None
 
     def resetLabel(self, hero):
 
@@ -623,6 +671,8 @@ class ShopThread(Thread):
             color = 'blue'
         elif hero.tier == 3:
             color = 'yellow'
+        elif hero.underlord:
+            color = 'green'
 
         if y == -1:  # Meaning we are working with bench
             if hero.item is not None:
