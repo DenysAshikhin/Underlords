@@ -10,7 +10,19 @@ class Items:
     def __init__(self):
         super().__init__()
         self.itemTemplates = self.loadItems()
-        #print(self.itemTemplates)
+        self.shortForms = {
+            'arcane boots': 'A.B.',
+            'armlet of mordiggian': "A.o.M",
+            'barricade': 'Barr',
+            'battlefury': 'bat.F',
+            'black king bar': 'B.K.B',
+            'blademail':'Blade.M',
+            'blink dagger': 'B.D',
+            'blood horn': 'blood. H',
+            'butterfly': 'butter',
+
+        }
+        # print(self.itemTemplates)
 
     def checkItems(self):
         gameScreen = imageGrab()
@@ -19,17 +31,17 @@ class Items:
         for item in items:
             itemName = self.detectItem(item)
             itemList.append(itemName)
-           # print("Item: %s" % itemName)
+        # print("Item: %s" % itemName)
 
         return itemList
 
     def loadItems(self):
         root = os.path.join(os.path.dirname(os.getcwd()), "items")
         templateList = []
-      #  print(root)
+        #  print(root)
         for file in os.listdir(root):
             img = cv2.imread(os.path.join(root, file))
-            print(file)
+            # print(file)
             templatename = file[0:len(file) - 4]
             templateList.append((templatename, img))
 
@@ -37,7 +49,7 @@ class Items:
 
     def cropItems(self, gameScreen):
         item1 = (gameScreen.crop((315, 340) + (390, 480)))
-        #item1.show()
+        # item1.show()
         item2 = gameScreen.crop((540, 340) + (615, 480))
         item3 = gameScreen.crop((765, 340) + (840, 480))
         return [item1, item2, item3]
@@ -53,11 +65,11 @@ class Items:
                                   img_cv,
                                   method=cv2.TM_CCOEFF_NORMED,
                                   N_object=float("inf"),
-                                  score_threshold=0.1,
+                                  score_threshold=0.6,
                                   maxOverlap=0,
                                   searchBox=None)
 
-        print(hits)
+        # print(hits)
 
         if len(hits['TemplateName']) > 0:
             itemName = hits['TemplateName'].iloc[0]

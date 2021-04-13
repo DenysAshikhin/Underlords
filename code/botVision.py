@@ -15,6 +15,8 @@ from Items import Items
 from Underlords import Underlords
 from pynput.mouse import Button, Controller as MouseController
 
+from item import Item
+
 mouse1 = MouseController()
 
 
@@ -62,11 +64,19 @@ class ShopThread(Thread):
         self.itemY = self.shopY + 60
         self.itemYOffset = 20
         self.itemSelectY = self.y + 394
-        self.itemSelectX = self.x + 260
-        self.itemSelectXOffset = 270
+        self.itemSelectX = self.x + 350
+        self.itemSelectXOffset = 170
+        self.itemRerollX = self.itemSelectX + self.itemSelectXOffset
+        self.itemRerollY = self.itemSelectY + 200
+
         self.updateWindowCoords()
 
+        self.choseItem = False
+        self.rerolledItem = False
+        self.selected = False
+
         self.heroToMove = None
+        self.itemToMove = None
 
         self.shop = Shop()
         self.HUD = HUD()
@@ -96,7 +106,7 @@ class ShopThread(Thread):
         # self.boardHeroes[:] = None
         self.boardHeroes = self.boardHeroes.tolist()
 
-        self.levelThresh = 3 #level threshold for tiering up a unit
+        self.levelThresh = 3  # level threshold for tiering up a unit
 
         self.hudLabel = None
         self.toBuy = None
@@ -268,36 +278,64 @@ class ShopThread(Thread):
 
         shopFrame.pack()
 
-    def selectItem(self, selection):
+    def selectItem(self, x=-1, y=-1, selection=-1):
 
-        items = self.items.checkItems()
-        print(items)
+        if selection != -1:
 
-        if items[0] is None:
+            items = self.items.checkItems()
+            print('items:')
+            print(items)
 
-            underlords = self.underlords.checkUnderlords()
-            print(underlords)
+            if items[0] is None:
 
-            if underlords[0] is None:
+                underlords = self.underlords.checkUnderlords()
+                print('underlords:')
+                print(underlords)
 
-                print("No Underlord or item available for selection!")
+                if underlords[0] is None:
+
+                    print("No Underlord or item available for selection!")
+                    return -1
+
+                else:
+                    self.buyUnderlord(selection)
+            else:
+                self.buyItem(selection, items)
+
+        else:
+
+            if self.heroToMove:
+                print("You have a hero selected to move, move it first!")
                 return -1
 
+            print('Selecting Item')
+            if self.itemObjects[x][y] is None:
+                print("there is no item to select here!")
             else:
-                self.buyUnderlord(selection)
-        else:
+                self.itemToMove = self.itemObjects[x][y]
 
-            self.buyItem(self, selection)
-
-    def buyItem(self, selection):
+    def buyItem(self, selection, itemList):
 
         if selection == 3:
-            raise RuntimeError("Rerolling item logic not implemented!")
+            if self.rerolledItem:
+                raise RuntimeError("Can't reroll an item twice - Was this properly implemented?")
+            else:
+                mouse1.position = (self.itemRerollX, self.itemRerollY)
+                # mouse1.click(Button.left, 1)
+                self.rerolledItem = True
+                self.choseItem = False
 
         else:
-            mouse1.position = (self.itemSelectX + (self.itemSelectXOffset*selection), self.itemSelectY)
-
-
+            mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
+            # mouse1.click(Button.left, 1)
+            self.rerolledItem = False
+            self.choseItem = True
+            for i in range(3):
+                for j in range(4):
+                    if self.itemObjects[i][j] is None:
+                        self.itemObjects[i][j] = Item(itemList[selection], (i, j))
+                        self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
+                        return
 
     def buyUnderlord(self, selection):
 
@@ -471,8 +509,10 @@ class ShopThread(Thread):
         self.itemYOffset = 20
         self.itemYOffset = 20
         self.itemSelectY = self.y + 394
-        self.itemSelectX = self.x + 260
+        self.itemSelectX = self.x + 350
         self.itemSelectXOffset = 270
+        self.itemRerollX = self.itemSelectX + self.itemSelectXOffset
+        self.itemRerollY = self.itemSelectY + 200
 
     def moveUnit(self, x=-1, y=-1):
 
@@ -502,6 +542,26 @@ class ShopThread(Thread):
                 else:
                     print("Board Spot Taken!")
                     return -1
+
+        elif self.itemToMove:  # Meaning we are trying to attach an item to a hero
+
+            if y == -1:  # Meaning we are attaching an item to a unit on bench
+                if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
+                    self.updateHeroItem(self.benchHeroes[x])
+
+                else:
+                    print("No Hero On This Bench!")
+                    return -1
+            else:
+                if self.boardHeroes[x][y] is not None:  # Making sure board spot has a hero
+                    self.updateHeroItem(self.boardHeroes[x][y])
+
+                else:
+                    print("No Hero On This Board!")
+                    return -1
+
+
+
         else:  # Meaning a hero has not yet been selected for movement, mark this hero as one to move
             if y == -1:  # Meaning we are moving onto a bench spot
                 if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
@@ -517,6 +577,19 @@ class ShopThread(Thread):
                     return -1
 
         return 1
+
+    def updateHeroItem(self, hero):
+
+        originalHero = self.itemToMove.hero
+
+        if originalHero is not None:
+            originalHero.item = None
+            self.updateHeroLabel(originalHero)
+
+        hero.item = self.itemToMove
+        self.itemToMove.hero = hero
+
+        self.updateHeroLabel(hero)
 
     def resetLabel(self, hero):
 
@@ -539,13 +612,22 @@ class ShopThread(Thread):
             color = 'yellow'
 
         if y == -1:  # Meaning we are working with bench
-            self.benchLabels[x].config(image=hero.image, text=hero.name, bg=color)
+            if hero.item is not None:
+                self.benchLabels[x].config(image=hero.image, text=hero.name + ' - ' + hero.item.name, bg=color)
+            else:
+                self.benchLabels[x].config(image=hero.image, text=hero.name, bg=color)
         else:
 
-            self.boardLabels[x][y].config(
-                image=hero.image,
-                text=hero.name,
-                bg=color)
+            if hero.item is not None:
+                self.boardLabels[x][y].config(
+                    image=hero.image,
+                    text=hero.name + ' - ' + hero.item.name,
+                    bg=color)
+            else:
+                self.boardLabels[x][y].config(
+                    image=hero.image,
+                    text=hero.name,
+                    bg=color)
 
     def buy(self, xPos=350, idx=0):
 
@@ -677,7 +759,7 @@ class ShopThread(Thread):
 
 def openVision():
     root = Tk()
-
+    print('wtf')
     # root.geometry("600x105")
     root.resizable(0, 0)
     stopFlag = Event()
