@@ -29,6 +29,9 @@ def loadProfiles():
         profileMap[file[: -4]] = img
     return profileMap
 
+def loadUnderlodProfiles():
+
+    raise RuntimeError("Underlord profile loading has not been implemented!")
 
 class ShopThread(Thread):
     def __init__(self, event, rootWindow, training=False):
@@ -101,6 +104,7 @@ class ShopThread(Thread):
         self.boardHeroes = numpy.full((4, 8), None)
         self.itemObjects = numpy.full((3, 4), None)
         self.itemlabels = numpy.full((3, 4), None)
+        self.underlord = None
 
         # self.boardHeroes = numpy.empty((4, 8))
         # self.boardHeroes[:] = None
@@ -298,7 +302,7 @@ class ShopThread(Thread):
                     return -1
 
                 else:
-                    self.buyUnderlord(selection)
+                    self.buyUnderlord(underlords[selection])
             else:
                 self.buyItem(selection, items)
 
@@ -321,13 +325,13 @@ class ShopThread(Thread):
                 raise RuntimeError("Can't reroll an item twice - Was this properly implemented?")
             else:
                 mouse1.position = (self.itemRerollX, self.itemRerollY)
-                # mouse1.click(Button.left, 1)
+                mouse1.click(Button.left, 1)
                 self.rerolledItem = True
                 self.choseItem = False
 
         else:
             mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
-            # mouse1.click(Button.left, 1)
+            mouse1.click(Button.left, 1)
             self.rerolledItem = False
             self.choseItem = True
             for i in range(3):
@@ -337,9 +341,18 @@ class ShopThread(Thread):
                         self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
                         return
 
-    def buyUnderlord(self, selection):
+    def buyUnderlord(self, underlord):
 
-        raise RuntimeError("Not implemented!")
+        print(f"We tried to buy Underlord: {underlord}")
+        preferences = [(1, 4), (1, 5), (1, 6), (1, 7), (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7)]
+
+        for x, y in preferences:
+
+            if self.boardHeroes[x][y] is None:
+                print(f"Found a spot for underlord at: {x}-{y}")
+                self.underlord = Hero(underlord, (x,y), None, True)
+
+            break
 
     def run(self):
         while not self.stopped.wait(1):
