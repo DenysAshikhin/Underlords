@@ -78,6 +78,10 @@ class ShopThread(Thread):
         self.itemSelectXOffset = 220
         self.itemRerollX = self.itemSelectX + self.itemSelectXOffset
         self.itemRerollY = self.itemSelectY + 200
+        self.itemMoveX = self.x + 965
+        self.itemMoveXOffset = 40
+        self.itemMoveY = self.y + 290
+        self.itemMoveYOffset = 35
 
         self.updateWindowCoords()
 
@@ -250,7 +254,8 @@ class ShopThread(Thread):
             height=1,
             bg='blue',
             fg='yellow',
-            command=lambda underlor='healing_tank', selecty=3: self.buyUnderlord(underlord=underlor, selection=selecty)
+            # command=lambda underlor='healing_tank', selecty=3: self.buyUnderlord(underlord=underlor, selection=selecty)
+            command=lambda x=3, y=2: self.testFunction(x, y)
         )
         self.testButton.grid(row=hudRow + 1, column=5)
 
@@ -301,6 +306,24 @@ class ShopThread(Thread):
 
         shopFrame.pack()
 
+    def testFunction(self, param1, param2):
+        # self.updateWindowCoords()
+        #
+        # testX = self.x + 965
+        # testXOffest = 40
+        #
+        # testY = self.y + 145
+        # testYOffset = 35
+        #
+        # mouse1.position = (testX + (testXOffest * param1), testY + (testYOffset * param2))
+
+        for i in range(3):
+            for j in range(4):
+                if self.itemObjects[i][j] is None:
+                    self.itemObjects[i][j] = Item(f"temp item: {i} - {j}", (i, j))
+                    self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
+                    return
+
     def selectItem(self, x=-1, y=-1, selection=-1):
 
         if selection != -1:
@@ -327,7 +350,6 @@ class ShopThread(Thread):
                 print("You have a hero selected to move, move it first!")
                 return -1
 
-            print('Selecting Item')
             if self.itemObjects[x][y] is None:
                 print("there is no item to select here!")
             else:
@@ -564,6 +586,10 @@ class ShopThread(Thread):
         self.itemSelectXOffset = 220
         self.itemRerollX = self.itemSelectX + self.itemSelectXOffset
         self.itemRerollY = self.itemSelectY + 200
+        self.itemMoveX = self.x + 965
+        self.itemMoveXOffest = 40
+        self.itemMoveY = self.y + 290
+        self.itemMoveYOffset = 35
 
     def moveUnit(self, x=-1, y=-1):
 
@@ -618,8 +644,6 @@ class ShopThread(Thread):
                     print("No Hero On This Board!")
                     return -1
 
-
-
         else:  # Meaning a hero has not yet been selected for movement, mark this hero as one to move
             if y == -1:  # Meaning we are moving onto a bench spot
                 if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
@@ -638,7 +662,25 @@ class ShopThread(Thread):
 
     def updateHeroItem(self, hero):
 
+        self.updateWindowCoords()
+
         originalHero = self.itemToMove.hero
+
+        mouse1.position = (self.itemMoveX + (self.itemMoveXOffset * self.itemToMove.coords[1]),
+                           self.itemMoveY + (self.itemMoveYOffset * self.itemToMove.coords[0]))
+
+        mouse1.press(Button.left)
+        time.sleep(0.25)
+
+        heroX, heroY = hero.coords
+
+        if heroY == -1:
+            mouse1.position = (self.benchX + (self.benchXOffset * heroX), self.benchY)
+        else:
+            mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
+
+        time.sleep(0.25)
+        mouse1.release(Button.left)
 
         if originalHero is not None:
             originalHero.item = None
@@ -693,6 +735,16 @@ class ShopThread(Thread):
 
         if idx in self.purchaseHistory:  # Note - note - still need to implement the validation logic at some point
             print("Invalid attempt to buy a unit!")
+            return -1
+
+        freeSpace = False
+
+        for i in self.benchHeroes:
+            if i is None:
+                freeSpace = True
+
+        if not freeSpace:
+            print("There is no space on bench to buy units!")
             return -1
 
         self.openStore()
