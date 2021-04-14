@@ -9,19 +9,8 @@ from main import imageGrab
 class Items:
     def __init__(self):
         super().__init__()
+        self.itemIDMap = {}
         self.itemTemplates = self.loadItems()
-        self.shortForms = {
-            'arcane boots': 'A.B.',
-            'armlet of mordiggian': "A.o.M",
-            'barricade': 'Barr',
-            'battlefury': 'bat.F',
-            'black king bar': 'B.K.B',
-            'blademail':'Blade.M',
-            'blink dagger': 'B.D',
-            'blood horn': 'blood. H',
-            'butterfly': 'butter',
-
-        }
         # print(self.itemTemplates)
 
     def checkItems(self):
@@ -39,11 +28,14 @@ class Items:
         root = os.path.join(os.path.dirname(os.getcwd()), "items")
         templateList = []
         #  print(root)
+        i = 0
         for file in os.listdir(root):
             img = cv2.imread(os.path.join(root, file))
             # print(file)
             templatename = file[0:len(file) - 4]
             templateList.append((templatename, img))
+            self.itemIDMap[file[: -4]] = i
+            i += 1
 
         return templateList
 

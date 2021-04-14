@@ -23,10 +23,14 @@ mouse1 = MouseController()
 def loadProfiles():
     root = os.path.join(os.path.dirname(os.getcwd()), "final profile pics")
     profileMap = {}
+    itemIDMap = {}
+    i = 0
     for file in os.listdir(root):
         img = Image.open(os.path.join(root, file))
         img = ImageTk.PhotoImage(img)
         profileMap[file[: -4]] = img
+        itemIDMap[file[: -4]] = i
+        i+=1
     return profileMap
 
 
@@ -95,6 +99,7 @@ class ShopThread(Thread):
         self.shop = Shop()
         self.HUD = HUD()
         self.items = Items()
+        self.itemIDmap = self.items.itemIDMap
         self.underlords = Underlords()
         self.bench = numpy.zeros([1, 8])
         self.board = numpy.zeros([4, 8])
@@ -378,7 +383,7 @@ class ShopThread(Thread):
             for i in range(3):
                 for j in range(4):
                     if self.itemObjects[i][j] is None:
-                        self.itemObjects[i][j] = Item(itemList[selection], (i, j))
+                        self.itemObjects[i][j] = Item(itemList[selection], (i, j), ID = self.itemIDmap[itemList[selection]])
                         self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
                         return
 
@@ -394,22 +399,50 @@ class ShopThread(Thread):
         FurPreferences = [(1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (0, 0), (0, 1), (0, 2), (0, 3), (0, 4)]
 
         preferences = []
+        ID = None
 
-        if 'tank' in underlord:
-            print('bought jull')
+        if underlord == 'aggressive_tank':
+            print('aggressive_tank')
             preferences = JullPreferences
-        elif 'stealing' in underlord or 'rapid' in underlord:
-            print('but enno')
-            preferences = FurPreferences
-        else:
-            print('either Hobgen or Annesix')
+            ID = 63
+        elif underlord == 'healing_tank':
+            print('healing_tank')
+            preferences = JullPreferences
+            ID = 64
+        elif underlord == 'damage_support':
+            print('damage_support')
             preferences = AnnaPreferences
+            ID = 65
+        elif underlord == 'healing_support':
+            print('healing_support')
+            preferences = AnnaPreferences
+            ID = 66
+        elif underlord == 'healing_stealing':
+            print('healing_stealing')
+            preferences = FurPreferences
+            ID = 67
+        elif underlord == 'rapid_furbal':
+            print('rapid_furball')
+            preferences = FurPreferences
+            ID = 68
+        elif underlord == 'high_damage_dealer':
+            print('high_damage_dealer')
+            preferences = AnnaPreferences
+            ID = 69
+        elif underlord == 'support_damage_dealer':
+            print('support_damage_dealer')
+            preferences = AnnaPreferences
+            ID = 70
+
+        else:
+            print('No clue what underlord that is!')
+            return -1
 
         for x, y in preferences:
 
             if self.boardHeroes[x][y] is None:
                 print(f"Found a spot for underlord at: {x}-{y}")
-                self.underlord = Hero(underlord, (x, y), self.underlordPics[underlord], True)
+                self.underlord = Hero(underlord, (x, y), self.underlordPics[underlord], True, ID=ID)
                 self.updateHeroLabel(self.underlord)
                 self.boardHeroes[x][y] = self.underlord
                 return
@@ -444,7 +477,8 @@ class ShopThread(Thread):
 
                         if self.benchHeroes[x] is None:
                             self.benchHeroes[x] = Hero(classes[statesList[self.bought]], (x, -1),
-                                                       self.profilePics[classes[statesList[self.bought]]])
+                                                       self.profilePics[classes[statesList[self.bought]]],
+                                                       ID=statesList[self.bought])
 
                             self.bought = None
                             self.benchLabels[x].config(text=f"{self.benchHeroes[x].name}",
