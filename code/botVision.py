@@ -30,7 +30,7 @@ def loadProfiles():
         img = ImageTk.PhotoImage(img)
         profileMap[file[: -4]] = img
         itemIDMap[file[: -4]] = i
-        i+=1
+        i += 1
     return profileMap
 
 
@@ -44,10 +44,10 @@ def loadUnderlodProfiles():
     return profileMap
 
 
-class ShopThread(Thread):
-    def __init__(self, event, rootWindow, training=False):
-        Thread.__init__(self)
-        self.stopped = event
+class ShopThread():
+    def __init__(self, rootWindow, training=False):
+        # Thread.__init__(self)
+        # self.stopped = event
         self.rootWindow = rootWindow
 
         self.hwnd = win32gui.FindWindow(None, 'Dota Underlords')
@@ -96,6 +96,9 @@ class ShopThread(Thread):
         self.heroToMove = None
         self.itemToMove = None
 
+        self.shopSleepTime = 0.4
+        self.mouseSleepTime = 0.25
+
         self.shop = Shop()
         self.HUD = HUD()
         self.items = Items()
@@ -105,11 +108,12 @@ class ShopThread(Thread):
         self.board = numpy.zeros([4, 8])
         self.profilePics = loadProfiles()
         self.underlordPics = loadUnderlodProfiles()
-        self.bought = None
         self.shopChoices = None
         self.storeMap = [350, 450, 575, 700, 800]
         self.purchaseHistory = []
-        self.updateShop = False
+        self.gold = -1
+        self.health = -1
+        self.level = -1
 
         shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -383,7 +387,8 @@ class ShopThread(Thread):
             for i in range(3):
                 for j in range(4):
                     if self.itemObjects[i][j] is None:
-                        self.itemObjects[i][j] = Item(itemList[selection], (i, j), ID = self.itemIDmap[itemList[selection]])
+                        self.itemObjects[i][j] = Item(itemList[selection], (i, j),
+                                                      ID=self.itemIDmap[itemList[selection]])
                         self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
                         return
 
@@ -392,7 +397,7 @@ class ShopThread(Thread):
         self.updateWindowCoords()
         mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
         mouse1.click(Button.left, 1)
-        print(f"We tried to buy Underlord: {underlord}")
+
         AnnaPreferences = [(2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7)]
         JullPreferences = [(0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (3, 0), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7)]
         HobPreferences = [(2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7)]
@@ -402,35 +407,27 @@ class ShopThread(Thread):
         ID = None
 
         if underlord == 'aggressive_tank':
-            print('aggressive_tank')
             preferences = JullPreferences
             ID = 63
         elif underlord == 'healing_tank':
-            print('healing_tank')
             preferences = JullPreferences
             ID = 64
         elif underlord == 'damage_support':
-            print('damage_support')
             preferences = AnnaPreferences
             ID = 65
         elif underlord == 'healing_support':
-            print('healing_support')
             preferences = AnnaPreferences
             ID = 66
         elif underlord == 'healing_stealing':
-            print('healing_stealing')
             preferences = FurPreferences
             ID = 67
         elif underlord == 'rapid_furbal':
-            print('rapid_furball')
             preferences = FurPreferences
             ID = 68
         elif underlord == 'high_damage_dealer':
-            print('high_damage_dealer')
             preferences = AnnaPreferences
             ID = 69
         elif underlord == 'support_damage_dealer':
-            print('support_damage_dealer')
             preferences = AnnaPreferences
             ID = 70
 
@@ -447,46 +444,30 @@ class ShopThread(Thread):
                 self.boardHeroes[x][y] = self.underlord
                 return
 
-    def run(self):
-        while not self.stopped.wait(1):
-            #  print("Updating store")
-            if self.shopChoices is not None and self.bought is not None or self.updateShop:
+    def updateShop(self, bought=False):
 
-                if self.updateShop:
-                    self.shopChoices = self.shop.labelShop()
+        time.sleep(self.shopSleepTime)
 
-                shopImages, classes, value, inspect, statesList = self.shopChoices
+        self.shopChoices = self.shop.labelShop()
 
-                itemCounts, itemImage = self.HUD.getHUD()
+        shopImages, classes, value, inspect, statesList = self.shopChoices
 
-                for i in range(5):
-                    tempImage = ImageTk.PhotoImage(shopImages[i])
-                    self.shopImages.append(tempImage)
-                    self.shopLabels[i].config(image=tempImage,
-                                              text=f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
-                    # print(f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
+        itemCounts, itemImage = self.HUD.getHUD()
 
-                # itemImage = ImageTk.PhotoImage(itemImage)
-                tempString = "\nUnit Count %d" % itemCounts[2] + "\nGold Count: %d" % itemCounts[
-                    0] + "\nHealth Count: %d" % \
-                             itemCounts[1]
-                self.hudLabel.config(text=tempString)
+        for i in range(5):
+            tempImage = ImageTk.PhotoImage(shopImages[i])
+            self.shopImages.append(tempImage)
+            self.shopLabels[i].config(image=tempImage,
+                                      text=f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
+            # print(f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
 
-                if self.bought is not None:
-                    for x in range(8):
-
-                        if self.benchHeroes[x] is None:
-                            self.benchHeroes[x] = Hero(classes[statesList[self.bought]], (x, -1),
-                                                       self.profilePics[classes[statesList[self.bought]]],
-                                                       ID=statesList[self.bought])
-
-                            self.bought = None
-                            self.benchLabels[x].config(text=f"{self.benchHeroes[x].name}",
-                                                       image=self.benchHeroes[x].image)
-                            self.updateShop = True
-                            break
-                else:
-                    self.updateShop = False
+        # itemImage = ImageTk.PhotoImage(itemImage)
+        tempString = "\nUnit Count %d" % itemCounts[2] + "\nGold Count: %d" % itemCounts[0] \
+                     + "\nHealth Count: %d" % itemCounts[1]
+        self.hudLabel.config(text=tempString)
+        self.gold = itemCounts[0]
+        self.level = itemCounts[2]
+        self.health = itemCounts[1]
 
     def sellHero(self, x=-1, y=-1):
 
@@ -519,11 +500,11 @@ class ShopThread(Thread):
 
         mouse1.press(Button.left)
 
-        time.sleep(0.25)
+        time.sleep(self.mouseSleepTime)
 
         mouse1.position = (self.x + 50, self.y + 800)
 
-        time.sleep(0.25)
+        time.sleep(self.mouseSleepTime)
 
         mouse1.release(Button.left)
 
@@ -543,7 +524,7 @@ class ShopThread(Thread):
 
         mouse1.press(Button.left)
 
-        time.sleep(0.25)
+        time.sleep(self.mouseSleepTime)
 
         if newY == -1:  # Moving onto the bench
             mouse1.position = (self.benchX + (self.benchXOffset * newX), self.benchY)
@@ -552,7 +533,7 @@ class ShopThread(Thread):
         else:
             mouse1.position = (self.boardX + (self.boardXOffset * newY), self.boardY + (self.boardYOffset * newX))
         # print(f"Moving to board {mouse1.position}")
-        time.sleep(0.25)
+        time.sleep(self.mouseSleepTime)
         mouse1.release(Button.left)
 
     def clickUp(self):
@@ -560,7 +541,7 @@ class ShopThread(Thread):
         mouse1.position = (self.clickUpX, self.clickUpY)
         mouse1.click(Button.left, 1)
         self.shopChoices = self.shop.labelShop()
-        self.updateShop = True
+        self.updateShop()
 
     def lockIn(self):
 
@@ -572,9 +553,8 @@ class ShopThread(Thread):
         self.openStore()
         mouse1.position = (self.rerollX, self.rerollY)
         mouse1.click(Button.left, 1)
-        time.sleep(0.5)
         self.shopChoices = self.shop.labelShop()
-        self.updateShop = True
+        self.updateShop()
 
     def openStore(self):
 
@@ -583,7 +563,7 @@ class ShopThread(Thread):
         if not self.shop.shopOpen():
             mouse1.position = (self.shopX, self.shopY)
             mouse1.click(Button.left, 1)
-            time.sleep(1)
+
         self.shopChoices = self.shop.labelShop()
 
     def updateWindowCoords(self):
@@ -704,7 +684,7 @@ class ShopThread(Thread):
                            self.itemMoveY + (self.itemMoveYOffset * self.itemToMove.coords[0]))
 
         mouse1.press(Button.left)
-        time.sleep(0.25)
+        time.sleep(self.mouseSleepTime)
 
         heroX, heroY = hero.coords
 
@@ -713,7 +693,7 @@ class ShopThread(Thread):
         else:
             mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
 
-        time.sleep(0.25)
+        time.sleep(self.mouseSleepTime)
         mouse1.release(Button.left)
 
         if originalHero is not None:
@@ -787,10 +767,21 @@ class ShopThread(Thread):
         mouse1.click(Button.left, 1)
 
         if self.benchLevelUp(idx):
-            self.bought = None
             return 1
 
-        self.bought = idx
+        shopImages, classes, value, inspect, statesList = self.shopChoices
+
+        for x in range(8):
+
+            if self.benchHeroes[x] is None:
+                self.benchHeroes[x] = Hero(classes[statesList[idx]], (x, -1),
+                                           self.profilePics[classes[statesList[idx]]],
+                                           ID=statesList[idx])
+
+                self.benchLabels[x].config(text=f"{self.benchHeroes[x].name}",
+                                           image=self.benchHeroes[x].image)
+                self.updateShop()
+                return
 
     def boardLevelUp(self, idx):
 
@@ -906,12 +897,11 @@ class ShopThread(Thread):
 
 def openVision():
     root = Tk()
-    print('wtf')
     # root.geometry("600x105")
     root.resizable(0, 0)
     stopFlag = Event()
-    thread = ShopThread(stopFlag, root)
-    thread.start()
+    thread = ShopThread(root)
+    # thread.start()
     # this will stop the timer
     # stopFlag.set()
     # shopFrame.pack()
