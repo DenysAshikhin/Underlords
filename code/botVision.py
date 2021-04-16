@@ -268,6 +268,18 @@ class ShopThread():
         )
         self.testButton.grid(row=hudRow + 1, column=5)
 
+        self.refreshStore = tkinter.Button(
+            master=shopFrame,
+            text='Refresh Store',
+            width=10,
+            height=1,
+            bg='blue',
+            fg='yellow',
+            # command=lambda underlor='healing_tank', selecty=3: self.buyUnderlord(underlord=underlor, selection=selecty)
+            command=self.updateShop
+        )
+        self.refreshStore.grid(row=hudRow + 1, column=5)
+
         self.sellButton = tkinter.Button(
             master=shopFrame,
             text="Sell",
@@ -314,6 +326,8 @@ class ShopThread():
                     tempButton.grid(row=4 + (2 * i), column=j)
 
         shopFrame.pack()
+
+
 
     def testFunction(self, param1, param2):
         # self.updateWindowCoords()
@@ -444,7 +458,9 @@ class ShopThread():
                 self.boardHeroes[x][y] = self.underlord
                 return
 
-    def updateShop(self, bought=False):
+    def updateShop(self):
+
+        self.openStore()
 
         time.sleep(self.shopSleepTime)
 
