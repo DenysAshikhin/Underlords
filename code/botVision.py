@@ -330,6 +330,7 @@ class ShopThread():
 
 
     def testFunction(self, param1, param2):
+        print(self.HUD.getRound())
         # self.updateWindowCoords()
         #
         # testX = self.x + 965
@@ -340,12 +341,12 @@ class ShopThread():
         #
         # mouse1.position = (testX + (testXOffest * param1), testY + (testYOffset * param2))
 
-        for i in range(3):
-            for j in range(4):
-                if self.itemObjects[i][j] is None:
-                    self.itemObjects[i][j] = Item(f"temp item: {i} - {j}", (i, j))
-                    self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
-                    return
+        # for i in range(3):
+        #     for j in range(4):
+        #         if self.itemObjects[i][j] is None:
+        #             self.itemObjects[i][j] = Item(f"temp item: {i} - {j}", (i, j))
+        #             self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
+        #             return
 
     def selectItem(self, x=-1, y=-1, selection=-1):
 
@@ -468,7 +469,7 @@ class ShopThread():
 
         shopImages, classes, value, inspect, statesList = self.shopChoices
 
-        itemCounts, itemImage = self.HUD.getHUD()
+        itemCounts = self.HUD.getHUD()
 
         for i in range(5):
             tempImage = ImageTk.PhotoImage(shopImages[i])

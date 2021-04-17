@@ -11,25 +11,51 @@ class HUD:
         self.gold = 0
         self.health = 0
         self.units = 3
+        self.round = 1
         self.goldTemplates = self.loadDigits("gold")
         self.healthTemplates = self.loadDigits("health")
         self.unitTemplates = self.loadDigits("unit")
         self.expTemplates = self.loadDigits("exp")
+        self.roundTemplates = self.loadDigits("round")
         self.expSlash = [("Slash", cv2.imread("../digits/exp_slash.jpg"))]
         self.currExp = 0
         self.poolExp = 0
         self.hero = False
 
+    def getRound(self):
+        gameScreen = imageGrab()
+        roundTemp = self.countHUD(self.cropRound(gameScreen), self.roundTemplates)
+        if roundTemp != -1:
+            self.round = roundTemp
+
+        return self.round
+
     def getHUD(self):
         # Capture screen once, and crop it as needed
         gameScreen = imageGrab()
-        self.gold = self.countHUD(self.cropGold(gameScreen), self.goldTemplates)
-        self.health = self.countHUD(self.cropHealth(gameScreen), self.healthTemplates)
-        self.units = self.countHUD(self.cropUnit(gameScreen), self.unitTemplates)
-        self.currExp, self.poolExp = self.countEXP(self.cropEXP(gameScreen))
-        allImage = self.cropHUD(gameScreen)
 
-        return [self.gold, self.health, self.units, self.currExp, self.poolExp], allImage
+        goldTemp = self.countHUD(self.cropGold(gameScreen), self.goldTemplates)
+        healthTemp = self.countHUD(self.cropHealth(gameScreen), self.healthTemplates)
+        unitsTemp = self.countHUD(self.cropUnit(gameScreen), self.unitTemplates)
+        currExpTemp, poolExpTemp = self.countEXP(self.cropEXP(gameScreen))
+
+        if goldTemp != -1:
+            self.gold = goldTemp
+
+        if healthTemp != -1:
+            self.health = healthTemp
+
+        if unitsTemp != -1:
+            self.units = unitsTemp
+
+        if currExpTemp != -1:
+            self.currExp = currExpTemp
+            self.poolExp = poolExpTemp
+
+
+        # allImage = self.cropHUD(gameScreen)
+
+        return [self.gold, self.health, self.units, self.currExp, self.poolExp]
 
     def cropHealth(self, gameScreen):
         crop = gameScreen.crop((1010, 810) + (1100, 870))
@@ -49,6 +75,10 @@ class HUD:
 
     def cropEXP(self, gameScreen):
         crop = gameScreen.crop((875, 235) + (935, 275))
+        return crop
+
+    def cropRound (self, gamesScreen):
+        crop = gamesScreen.crop((480,37) + (680,65))
         return crop
 
     def countEXP(self, img):

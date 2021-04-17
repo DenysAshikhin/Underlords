@@ -55,11 +55,15 @@ class Items:
     Depending on number of alliances you have, the location of your backpack of items
     shifts down or up. We need to know this offset when assigning items to units
     """
-    def findItemListOffset(self, gameScreen):
+    def findItemListOffset(self):
+        gameScreen = imageGrab()
         imageToSearch = gameScreen.crop((940,170) + (1010,400))
         imageToSearch.show()
+
+        img_cv = cv2.cvtColor(numpy.asarray(imageToSearch), cv2.COLOR_RGB2BGR)
+
         hits = MTM.matchTemplates(self.itemPlacementTemplate,
-                                  imageToSearch,
+                                  img_cv,
                                   method=cv2.TM_CCOEFF_NORMED,
                                   N_object=float("inf"),
                                   score_threshold=0.55,
