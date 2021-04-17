@@ -50,10 +50,16 @@ class Shop:
 
         for i, img in enumerate(inspect):
             state = img.item()
+
+            if (value[i] < 0.99):
+                imageList[i].save("../WIP/" + classes[state] + str(datetime.now()).replace(":", "") + ".jpg")
+
             if (value[i] <= 0.5):
+                # No idea what the fuck this is, paint red
                 imageList[i] = self.red
                 statesList.append(len(classes) - 1)
             elif state == len(classes) - 1:
+                # Slot appears empty xnull, paint it gray
                 imageList[i] = self.gray
                 statesList.append(state)
             else:
