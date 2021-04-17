@@ -732,7 +732,6 @@ class ShopThread():
             self.boardHeroes[x][y] = None
 
     def updateHeroLabel(self, hero):
-
         x, y = hero.coords
         color = 'black'
 
@@ -762,7 +761,6 @@ class ShopThread():
                     bg=color)
 
     def buy(self, xPos=350, idx=0):
-
         if idx in self.purchaseHistory:  # Note - note - still need to implement the validation logic at some point
             print("Invalid attempt to buy a unit!")
             return -1
