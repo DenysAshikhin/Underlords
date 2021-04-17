@@ -11,6 +11,7 @@ class Items:
         super().__init__()
         self.itemIDMap = {}
         self.itemTemplates = self.loadItems()
+        self.itemPlacementTemplate = [("text", cv2.imread("../Header Texts/item.jpg"))]
         # print(self.itemTemplates)
 
     def checkItems(self):
@@ -39,12 +40,38 @@ class Items:
 
         return templateList
 
+    """
+    Crops the three images from the choose an item round
+    """
     def cropItems(self, gameScreen):
         item1 = (gameScreen.crop((315, 340) + (390, 480)))
         # item1.show()
         item2 = gameScreen.crop((540, 340) + (615, 480))
         item3 = gameScreen.crop((765, 340) + (840, 480))
         return [item1, item2, item3]
+
+
+    """
+    Depending on number of alliances you have, the location of your backpack of items
+    shifts down or up. We need to know this offset when assigning items to units
+    """
+    def findItemListOffset(self, gameScreen):
+        imageToSearch = gameScreen.crop((940,170) + (1010,400))
+        imageToSearch.show()
+        hits = MTM.matchTemplates(self.itemPlacementTemplate,
+                                  imageToSearch,
+                                  method=cv2.TM_CCOEFF_NORMED,
+                                  N_object=float("inf"),
+                                  score_threshold=0.55,
+                                  maxOverlap=0,
+                                  searchBox=None)
+
+        if len(hits['TemplateName']) > 0:
+            _, y_offset, _, _ = hits['BBox'].iloc[0]
+            return y_offset
+
+        return None
+
 
     def detectItem(self, img):
         # Convert from PIL image type to cv2
