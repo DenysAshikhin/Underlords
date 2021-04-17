@@ -266,7 +266,7 @@ class ShopThread():
             # command=lambda underlor='healing_tank', selecty=3: self.buyUnderlord(underlord=underlor, selection=selecty)
             command=lambda x=3, y=2: self.testFunction(x, y)
         )
-        self.testButton.grid(row=hudRow + 1, column=5)
+        self.testButton.grid(row=hudRow + 1, column=4)
 
         self.refreshStore = tkinter.Button(
             master=shopFrame,
