@@ -7,6 +7,8 @@ from tkinter import Frame, Tk, Label
 import numpy
 import win32gui
 from PIL import ImageTk, Image
+
+from Game_State import state
 from HUD import HUD
 from Shop import Shop
 
@@ -86,6 +88,8 @@ class ShopThread():
         self.itemMoveXOffset = 40
         self.itemMoveY = self.y + 290
         self.itemMoveYOffset = 35
+        self.gameState = None
+        self.gameStateLoader = state()
 
         self.updateWindowCoords()
 
@@ -330,7 +334,7 @@ class ShopThread():
 
 
     def testFunction(self, param1, param2):
-        print(self.HUD.getRound())
+        print(self.gameStateLoader.cropScreen())
         # self.updateWindowCoords()
         #
         # testX = self.x + 965
