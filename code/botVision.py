@@ -341,58 +341,24 @@ class ShopThread():
 
     def testFunction(self, param1, param2):
 
-        # self.updateWindowCoords()
-        #
-        # testX = self.x + 965
-        # testXOffest = 40
-        #
-        # testY = self.y + 145
-        # testYOffset = 35
-        #
-        # mouse1.position = (testX + (testXOffest * param1), testY + (testYOffset * param2))
+        self.updateWindowCoords()
 
-        # for i in range(3):
-        #     for j in range(4):
-        #         if self.itemObjects[i][j] is None:
-        #             self.itemObjects[i][j] = Item(f"temp item: {i} - {j}", (i, j))
-        #             self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
-        #             return
-        #
-        found = False
-        i = 0
-        bannedItems = []
-        notBannedItems = []
+        testX = self.x + 965
+        testXOffest = 40
 
-        fullItemList = itemNameList()
+        testY = self.y + 145
+        testYOffset = 35
 
-        print(fullItemList)
+        mouse1.position = (testX + (testXOffest * param1), testY + (testYOffset * param2))
 
-        self.shopChoices = self.shop.labelShop()
-
-        shopImages, classes, value, inspect, statesList = self.shopChoices
-
-        for underlord in classes:
-
-            for item in fullItemList:
-
-                self.itemToMove = Item(item, (0, 0), ID=0)
-                hero = Hero(underlord, (0, 0), None, False, 0)
-
-                if self.updateHeroItem(hero) == -1:
-                    if item not in bannedItems:
-                        bannedItems.append(item)
+        for i in range(3):
+            for j in range(4):
+                if self.itemObjects[i][j] is None:
+                    self.itemObjects[i][j] = Item(f"temp item: {i} - {j}", (i, j))
+                    self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
+                    return
 
 
-        print(f"Items that were banned:")
-        print(bannedItems)
-
-        print(f"Items that should be banned:")
-        print(self.items.banned)
-        print("dragon lance, refresher orb, battle fury")
-        self.itemToMove = Item('refresher orb', (0, 0), ID=0)
-        hero = Hero('slark', (0, 0), None, False, 0)
-        hero.tier = 2
-        print(f"result of test: {self.updateHeroItem(hero)}")
 
     def selectItem(self, x=-1, y=-1, selection=-1):
 
