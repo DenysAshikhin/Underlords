@@ -17,18 +17,24 @@ class HUD:
         self.unitTemplates = self.loadDigits("unit")
         self.expTemplates = self.loadDigits("exp")
         self.roundTemplates = self.loadDigits("round")
+        self.clockTemplates = self.loadDigits("clock")
         self.expSlash = [("Slash", cv2.imread("../digits/exp_slash.jpg"))]
         self.currExp = 0
         self.poolExp = 0
         self.hero = False
+        self.clock = 0
 
     def getRound(self):
         gameScreen = imageGrab()
         roundTemp = self.countHUD(self.cropRound(gameScreen), self.roundTemplates)
         if roundTemp != -1:
             self.round = roundTemp
-
         return self.round
+
+    def getClockTimeLeft(self):
+        gameScreen = imageGrab()
+        self.clock = self.countHUD(self.cropClock(gameScreen), self.clockTemplates)
+        return self.clock
 
     def getHUD(self):
         # Capture screen once, and crop it as needed
@@ -51,7 +57,6 @@ class HUD:
         if currExpTemp != -1:
             self.currExp = currExpTemp
             self.poolExp = poolExpTemp
-
 
         # allImage = self.cropHUD(gameScreen)
 
@@ -78,7 +83,11 @@ class HUD:
         return crop
 
     def cropRound (self, gamesScreen):
-        crop = gamesScreen.crop((480,37) + (680,65))
+        crop = gamesScreen.crop((480,32) + (680,65))
+        return crop
+
+    def cropClock (self, gameScreen):
+        crop = gameScreen.crop((555,42) + (600,95))
         return crop
 
     def countEXP(self, img):

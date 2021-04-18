@@ -348,7 +348,7 @@ class ShopThread():
 
     def testFunction(self, param1, param2):
 
-        print(self.gameStateLoader.getPhase())
+        print(self.HUD.getClockTimeLeft())
 
 
 
