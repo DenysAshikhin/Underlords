@@ -359,7 +359,6 @@ class ShopThread():
         shopFrame.pack()
 
     def testFunction(self, param1, param2):
-
         # print(self.gameStateLoader.getPhase())
         print(self.closeStore())
 
