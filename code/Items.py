@@ -78,7 +78,6 @@ class Items:
     def findItemListOffset(self):
         gameScreen = imageGrab()
         imageToSearch = gameScreen.crop((940, 170) + (1010, 400))
-        imageToSearch.show()
 
         img_cv = cv2.cvtColor(numpy.asarray(imageToSearch), cv2.COLOR_RGB2BGR)
 

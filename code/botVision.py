@@ -60,6 +60,8 @@ class ShopThread():
         # self.stopped = event
         self.rootWindow = rootWindow
 
+        self.items = Items()
+
         self.hwnd = win32gui.FindWindow(None, 'Dota Underlords')
         #        win32gui.SetForegroundWindow(self.hwnd)
 
@@ -94,7 +96,7 @@ class ShopThread():
         self.itemRerollY = self.itemSelectY + 200
         self.itemMoveX = self.x + 965
         self.itemMoveXOffset = 40
-        self.itemMoveY = self.y + 290
+        self.itemMoveY = self.y + 190
         self.itemMoveYOffset = 35
         self.gameState = None
         self.gameStateLoader = state()
@@ -113,7 +115,6 @@ class ShopThread():
 
         self.shop = Shop()
         self.HUD = HUD()
-        self.items = Items()
         self.itemIDmap = self.items.itemIDMap
         self.underlords = Underlords()
         self.bench = numpy.zeros([1, 8])
@@ -276,7 +277,7 @@ class ShopThread():
             bg='blue',
             fg='yellow',
             # command=lambda underlor='healing_tank', selecty=3: self.buyUnderlord(underlord=underlor, selection=selecty)
-            command=lambda x=3, y=2: self.testFunction(x, y)
+            command=lambda x=0, y=0: self.testFunction(x, y)
         )
         self.testButton.grid(row=hudRow + 1, column=4)
 
@@ -287,7 +288,6 @@ class ShopThread():
             height=1,
             bg='blue',
             fg='yellow',
-            # command=lambda underlor='healing_tank', selecty=3: self.buyUnderlord(underlord=underlor, selection=selecty)
             command=self.updateShop
         )
         self.refreshStore.grid(row=hudRow + 1, column=5)
@@ -341,24 +341,24 @@ class ShopThread():
 
     def testFunction(self, param1, param2):
 
-        self.updateWindowCoords()
-
-        testX = self.x + 965
-        testXOffest = 40
-
-        testY = self.y + 145
-        testYOffset = 35
-
-        mouse1.position = (testX + (testXOffest * param1), testY + (testYOffset * param2))
-
         for i in range(3):
             for j in range(4):
                 if self.itemObjects[i][j] is None:
                     self.itemObjects[i][j] = Item(f"temp item: {i} - {j}", (i, j))
                     self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
-                    return
 
+        self.updateWindowCoords()
 
+        param1 = 1
+
+        testX = self.x + 965
+        testXOffest = 40
+
+        testY = self.y + self.items.findItemListOffset() + 190
+        testYOffset = 35
+
+        mouse1.position = (testX + (testXOffest * param1), testY + (testYOffset * param2))
+        return
 
     def selectItem(self, x=-1, y=-1, selection=-1):
 
@@ -631,7 +631,12 @@ class ShopThread():
         self.itemRerollY = self.itemSelectY + 200
         self.itemMoveX = self.x + 965
         self.itemMoveXOffest = 40
-        self.itemMoveY = self.y + 290
+
+        offset = self.items.findItemListOffset()
+        if offset is None:
+            offset = 0
+
+        self.itemMoveY = self.y + offset + 190
         self.itemMoveYOffset = 35
 
     def moveUnit(self, x=-1, y=-1):
@@ -713,29 +718,30 @@ class ShopThread():
             if hero.name in self.items.bannedUnderlords[self.itemToMove.name]:
                 # print('This item cannot be equipped on this hero')
 
-                if hero.name in self.items.bannedUnderlords['t3 refresher orb'] and self.itemToMove.name == 'refresher orb' and hero.tier == 3:
+                if hero.name in self.items.bannedUnderlords[
+                    't3 refresher orb'] and self.itemToMove.name == 'refresher orb' and hero.tier == 3:
                     return
                 return -1
 
-        # self.updateWindowCoords()
-        #
+        self.updateWindowCoords()
+
         originalHero = self.itemToMove.hero
-        #
-        # mouse1.position = (self.itemMoveX + (self.itemMoveXOffset * self.itemToMove.coords[1]),
-        #                    self.itemMoveY + (self.itemMoveYOffset * self.itemToMove.coords[0]))
-        #
-        # mouse1.press(Button.left)
-        # time.sleep(self.mouseSleepTime)
+
+        mouse1.position = (self.itemMoveX + (self.itemMoveXOffset * self.itemToMove.coords[1]),
+                           self.itemMoveY + (self.itemMoveYOffset * self.itemToMove.coords[0]))
+
+        mouse1.press(Button.left)
+        time.sleep(self.mouseSleepTime)
 
         heroX, heroY = hero.coords
 
-        # if heroY == -1:
-        #     mouse1.position = (self.benchX + (self.benchXOffset * heroX), self.benchY)
-        # else:
-        #     mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
-        #
-        # time.sleep(self.mouseSleepTime)
-        # mouse1.release(Button.left)
+        if heroY == -1:
+            mouse1.position = (self.benchX + (self.benchXOffset * heroX), self.benchY)
+        else:
+            mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
+
+        time.sleep(self.mouseSleepTime)
+        mouse1.release(Button.left)
 
         if originalHero is not None:
             originalHero.item = None
@@ -802,6 +808,7 @@ class ShopThread():
 
         self.openStore()
 
+        time.sleep(self.mouseSleepTime*2)
         mouse1.position = (self.x + xPos, self.y + 130)
         mouse1.click(Button.left, 1)
 
