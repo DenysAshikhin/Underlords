@@ -17,9 +17,9 @@ class state:
         gameScreen = imageGrab()
 
         combatCrop = gameScreen.crop((480,35) + (600,60))
-        combatCrop.show()
+        # combatCrop.show()
         selectionCrop = gameScreen.crop((240,235) + (580,340))
-        selectionCrop.show()
+        # selectionCrop.show()
 
         combatPhase = self.detectPhase(combatCrop, self.combatPhases)
         selectionPhase = self.detectPhase(selectionCrop, self.selectionPhases)

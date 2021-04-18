@@ -98,17 +98,26 @@ class ShopThread():
         self.itemMoveXOffset = 40
         self.itemMoveY = self.y + 190
         self.itemMoveYOffset = 35
-        self.gameState = None
+        self.gamePhase = None
         self.gameStateLoader = state()
 
-        #make sure to close store before getting state!
-        #possible states:
-            #select: selecting an item
-            #choose: choose an underlord
-            #preparing: full control in between combat rounds
-            #combat: fight is happening
-            #countdown: same as preparing - assuming its not SELECT or CHOOSE so check for those first
+        # Punishments to be received at reward calculation if previously did illegal actions.
+        self.smallPunish = False
+        self.mediumPunish = False
+        self.strongPunish = False
 
+        # make sure to close store before getting state!
+        # possible states:
+        # select: selecting an item
+        # choose: choose an underlord
+        # preparing: full control in between combat rounds
+        # combat: fight is happening
+        # countdown: same as preparing - assuming its not SELECT or CHOOSE so check for those first
+
+        self.UnitItemMove = ['preparing', 'countdown']  # Note, might need to remove COUNTDOWN if it delays too much
+        self.StoreInteract = ['preparing', 'combat', 'countdown']
+        self.SelectUnderlord = ['choose']
+        self.SelectItem = ['select']
 
         self.choseItem = False
         self.rerolledItem = False
@@ -129,7 +138,8 @@ class ShopThread():
         self.profilePics = loadProfiles()
         self.underlordPics = loadUnderlodProfiles()
         self.shopChoices = None
-        self.storeMap = [350, 450, 575, 700, 800]
+        self.storeMap = [350, 450, 575, 700, 800]  # super dumb and outdated to get X offset for purchase unit. change
+        # later if I ever feel like it
         self.purchaseHistory = []
         self.gold = -1
         self.health = -1
@@ -146,6 +156,8 @@ class ShopThread():
         self.itemObjects = numpy.full((3, 4), None)
         self.itemlabels = numpy.full((3, 4), None)
         self.underlord = None
+
+        self.checkState = True  # note make sure to enable this for production
 
         # self.boardHeroes = numpy.empty((4, 8))
         # self.boardHeroes[:] = None
@@ -177,7 +189,7 @@ class ShopThread():
                     height=1,
                     bg="blue",
                     fg="yellow",
-                    command=lambda pos=self.storeMap[i], idx=i: self.buy(xPos=pos, idx=idx)
+                    command=lambda idx=i: self.buy(idx=idx)
                 )
                 button.grid(row=1, column=i + 1)
 
@@ -310,7 +322,7 @@ class ShopThread():
         )
         self.sellButton.grid(row=hudRow, column=2)
 
-        self.lockIn = tkinter.Button(
+        self.lockInButton = tkinter.Button(
             master=shopFrame,
             text="Lock in",
             width=10,
@@ -319,7 +331,7 @@ class ShopThread():
             fg="yellow",
             command=self.lockIn
         )
-        self.lockIn.grid(row=hudRow, column=1)
+        self.lockInButton.grid(row=hudRow, column=1)
 
         self.clickUpButton = tkinter.Button(
             master=shopFrame,
@@ -348,9 +360,16 @@ class ShopThread():
 
     def testFunction(self, param1, param2):
 
-        print(self.gameStateLoader.getPhase())
+        # print(self.gameStateLoader.getPhase())
+        print(self.closeStore())
 
+    def getGamePhase(self):
 
+        self.closeStore()
+        time.sleep(self.shopSleepTime)
+        # self.gamePhase = self.gameStateLoader.getPhase()
+
+        return self.gameStateLoader.getPhase()
 
     def selectItem(self, x=-1, y=-1, selection=-1):
 
@@ -467,10 +486,6 @@ class ShopThread():
 
         self.openStore()
 
-        time.sleep(self.shopSleepTime)
-
-        self.shopChoices = self.shop.labelShop()
-
         shopImages, classes, value, inspect, statesList = self.shopChoices
 
         itemCounts = self.HUD.getHUD()
@@ -557,25 +572,71 @@ class ShopThread():
         time.sleep(self.mouseSleepTime)
         mouse1.release(Button.left)
 
+    def getPunishment(self):
+
+        if self.smalLPunish:
+            self.smallPunish = False
+            return 1
+        elif self.mediumPunish:
+            self.mediumPunish = False
+            return 10
+        elif self.strongPunish:
+            self.strongPunish = False
+            return 100
+
     def clickUp(self):
+
+        if self.getGamePhase() not in self.StoreInteract and not self.checkState:
+            self.strongPunish = True
+            return -1
+
+        if self.gold < 5:
+            self.mediumPunish = True
+            return -1
+
+        if self.level == 10:
+            self.smallPunish = True
+            return -1
+
         self.openStore()
         mouse1.position = (self.clickUpX, self.clickUpY)
         mouse1.click(Button.left, 1)
-        self.shopChoices = self.shop.labelShop()
+        time.sleep(self.mouseSleepTime)
         self.updateShop()
 
     def lockIn(self):
+
+        if self.getGamePhase() not in self.StoreInteract and not self.checkState:
+            self.mediumPunish = True
+            return -1
 
         self.openStore()
         mouse1.position = (self.lockInX, self.lockInY)
         mouse1.click(Button.left, 1)
 
     def rerollStore(self):
+
+        if self.getGamePhase() not in self.StoreInteract and not self.checkState:
+            self.mediumPunish = True
+            return -1
+
+        if self.gold < 2:
+            self.mediumPunish = True
+            return -1
+
         self.openStore()
         mouse1.position = (self.rerollX, self.rerollY)
         mouse1.click(Button.left, 1)
-        self.shopChoices = self.shop.labelShop()
         self.updateShop()
+
+    def closeStore(self):
+
+        self.updateWindowCoords()
+
+        if self.shop.shopOpen():
+            mouse1.position = (self.shopX, self.shopY)
+            mouse1.click(Button.left, 1)
+            time.sleep(2 * self.mouseSleepTime)
 
     def openStore(self):
 
@@ -584,7 +645,7 @@ class ShopThread():
         if not self.shop.shopOpen():
             mouse1.position = (self.shopX, self.shopY)
             mouse1.click(Button.left, 1)
-            time.sleep(2 * self.mouseSleepTime)
+            time.sleep(self.shopSleepTime)
 
         self.shopChoices = self.shop.labelShop()
 
@@ -784,9 +845,24 @@ class ShopThread():
                     text=hero.name,
                     bg=color)
 
-    def buy(self, xPos=350, idx=0):
+    def buy(self, idx=0):
+
+        if self.getGamePhase() not in self.StoreInteract and not self.checkState:
+            self.strongPunish = True
+            return -1
+
+        print('got past game phase')
+
+        validIDX = [0, 1, 2, 3, 4]
+
+        if idx not in validIDX:
+            self.smallPunish = True
+            return -1
+
+        # purchase history is never used, probably for xnull, which is already implemented so should never be raised
         if idx in self.purchaseHistory:  # Note - note - still need to implement the validation logic at some point
             print("Invalid attempt to buy a unit!")
+            raise RuntimeError("if idx in ---- find this error and figure out why this got triggered when it shouldn't")
             return -1
 
         freeSpace = False
@@ -797,17 +873,25 @@ class ShopThread():
 
         if not freeSpace:
             print("There is no space on bench to buy units!")
+            self.mediumPunish = True
             return -1
 
         self.openStore()
+        shopImages, classes, value, inspect, statesList = self.shopChoices
 
-        mouse1.position = (self.x + xPos, self.y + 130)
-        mouse1.click(Button.left, 1)
+        print(classes)  # note remove later
+        result = self.benchLevelUp(idx)
 
-        if self.benchLevelUp(idx):
+        if result == -1:  # not hopefully this doesn't break things
+            return -1
+        elif result:
             return 1
 
-        shopImages, classes, value, inspect, statesList = self.shopChoices
+        mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
+        mouse1.click(Button.left, 1)
+
+        time.sleep(self.mouseSleepTime)
+
 
         for x in range(8):
 
@@ -872,10 +956,22 @@ class ShopThread():
 
         tieredUp = False
         shopImages, classes, value, inspect, statesList = self.shopChoices
+
+        if classes[statesList[idx]] == 'xnull':
+            self.mediumPunish = True
+            return -1
+        else:
+            print(f"bought: {classes[statesList[idx]]}")
+
+        if self.underlords.prices[classes[statesList[idx]]] > self.gold:
+            self.mediumPunish = True
+            return -1
+
         boardScan = self.boardLevelUp(idx)
 
         if statesList[idx] == len(classes) - 1:
-            return True
+            raise RuntimeError("Wtf is this even. Note to come back to later?")
+            return -1
 
         if boardScan["tieredUp"] == True:
             return True  # The shop unit will be consumed to tier up the units strictly on the board, bench is
