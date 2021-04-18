@@ -46,6 +46,14 @@ def loadUnderlodProfiles():
     return profileMap
 
 
+def itemNameList():
+    root = os.path.join(os.path.dirname(os.getcwd()), "items")
+    itemList = []
+    for file in os.listdir(root):
+        itemList.append(file[: -4])
+    return itemList
+
+
 class ShopThread():
     def __init__(self, rootWindow, training=False):
         # Thread.__init__(self)
@@ -331,10 +339,8 @@ class ShopThread():
 
         shopFrame.pack()
 
-
-
     def testFunction(self, param1, param2):
-        print(self.gameStateLoader.cropScreen())
+
         # self.updateWindowCoords()
         #
         # testX = self.x + 965
@@ -351,6 +357,42 @@ class ShopThread():
         #             self.itemObjects[i][j] = Item(f"temp item: {i} - {j}", (i, j))
         #             self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
         #             return
+        #
+        found = False
+        i = 0
+        bannedItems = []
+        notBannedItems = []
+
+        fullItemList = itemNameList()
+
+        print(fullItemList)
+
+        self.shopChoices = self.shop.labelShop()
+
+        shopImages, classes, value, inspect, statesList = self.shopChoices
+
+        for underlord in classes:
+
+            for item in fullItemList:
+
+                self.itemToMove = Item(item, (0, 0), ID=0)
+                hero = Hero(underlord, (0, 0), None, False, 0)
+
+                if self.updateHeroItem(hero) == -1:
+                    if item not in bannedItems:
+                        bannedItems.append(item)
+
+
+        for item in bannedItems:
+            print(f"Items that were banned: {item}")
+
+        print(f"Items that should be banned:")
+        print(self.items.banned)
+        print("dragon lance, refresher orb, battle fury")
+        self.itemToMove = Item('refresher orb', (0, 0), ID=0)
+        hero = Hero('slark', (0, 0), None, False, 0)
+        hero.tier = 2
+        print(f"result of test: {self.updateHeroItem(hero)}")
 
     def selectItem(self, x=-1, y=-1, selection=-1):
 
@@ -697,25 +739,37 @@ class ShopThread():
 
     def updateHeroItem(self, hero):
 
-        self.updateWindowCoords()
+        if self.itemToMove.name in self.items.banned:
+            # print('This item is not allowed to be used')
+            return -1
+        elif self.itemToMove.name in self.items.unique:
 
+            if hero.name in self.items.bannedUnderlords[self.itemToMove.name]:
+                # print('This item cannot be equipped on this hero')
+
+                if hero.name in self.items.bannedUnderlords['t3 refresher orb'] and self.itemToMove.name == 'refresher orb' and hero.tier == 3:
+                    return
+                return -1
+
+        # self.updateWindowCoords()
+        #
         originalHero = self.itemToMove.hero
-
-        mouse1.position = (self.itemMoveX + (self.itemMoveXOffset * self.itemToMove.coords[1]),
-                           self.itemMoveY + (self.itemMoveYOffset * self.itemToMove.coords[0]))
-
-        mouse1.press(Button.left)
-        time.sleep(self.mouseSleepTime)
+        #
+        # mouse1.position = (self.itemMoveX + (self.itemMoveXOffset * self.itemToMove.coords[1]),
+        #                    self.itemMoveY + (self.itemMoveYOffset * self.itemToMove.coords[0]))
+        #
+        # mouse1.press(Button.left)
+        # time.sleep(self.mouseSleepTime)
 
         heroX, heroY = hero.coords
 
-        if heroY == -1:
-            mouse1.position = (self.benchX + (self.benchXOffset * heroX), self.benchY)
-        else:
-            mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
-
-        time.sleep(self.mouseSleepTime)
-        mouse1.release(Button.left)
+        # if heroY == -1:
+        #     mouse1.position = (self.benchX + (self.benchXOffset * heroX), self.benchY)
+        # else:
+        #     mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
+        #
+        # time.sleep(self.mouseSleepTime)
+        # mouse1.release(Button.left)
 
         if originalHero is not None:
             originalHero.item = None

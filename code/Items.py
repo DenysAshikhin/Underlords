@@ -13,6 +13,25 @@ class Items:
         self.itemTemplates = self.loadItems()
         self.itemPlacementTemplate = [("text", cv2.imread("../Header Texts/item.jpg"))]
         # print(self.itemTemplates)
+        self.banned = ['mango tree', 'divine rapier', 'barricade']
+        self.unique = ['battle fury', 'dragon lance', 'refresher orb']
+        self.bannedUnderlords = {  # Making this list sucks :c
+            'battle fury': ['bat rider', 'crystal maiden', 'dazzle', 'death prophet', 'drow ranger', 'enchantress',
+                            'keeper of the light', 'lich', 'lina', 'lone druid', 'luna', 'medusa', 'mirana',
+                            'nature prophet', 'puck', 'queen of pain', 'rubick', 'shadow demon', 'shadow shaman',
+                            'snap fire', 'storm spirit', 'templar assassin', 'troll warrior', 'vengeful spirit',
+                            'venomancer', 'viper', 'wind ranger', ],
+            'dragon lance': ['abbadon', 'alchemist', 'anti mage', 'axe', 'beastmaster', 'bounty hunter', 'bristle back',
+                             'chaos knight', 'earth spirit', 'ember spirit', 'faceless void', 'juggernaut', 'kunka',
+                             'legion commander', 'life stealer', 'lycan', 'magnus', 'meepo', 'pangolier',
+                             'phantom assassin', 'pudge', 'slardar', 'spectre', 'spirit breaker', 'terror blade',
+                             'slark', 'tidehunter', 'treant protector', 'tusk', 'sven', 'wraith king', 'doom',
+                             'dragon knight', 'omniknight', 'void spirit'
+                             ],
+            'refresher orb': ['anti mage', 'drow ranger', 'luna', 'phantom assassin',
+                              'slark', 'troll warrior'],
+            't3 refresher orb': ['luna', 'slark']
+        }
 
     def checkItems(self):
         gameScreen = imageGrab()
@@ -43,6 +62,7 @@ class Items:
     """
     Crops the three images from the choose an item round
     """
+
     def cropItems(self, gameScreen):
         item1 = (gameScreen.crop((315, 340) + (390, 480)))
         # item1.show()
@@ -50,14 +70,14 @@ class Items:
         item3 = gameScreen.crop((765, 340) + (840, 480))
         return [item1, item2, item3]
 
-
     """
     Depending on number of alliances you have, the location of your backpack of items
     shifts down or up. We need to know this offset when assigning items to units
     """
+
     def findItemListOffset(self):
         gameScreen = imageGrab()
-        imageToSearch = gameScreen.crop((940,170) + (1010,400))
+        imageToSearch = gameScreen.crop((940, 170) + (1010, 400))
         imageToSearch.show()
 
         img_cv = cv2.cvtColor(numpy.asarray(imageToSearch), cv2.COLOR_RGB2BGR)
@@ -75,7 +95,6 @@ class Items:
             return y_offset
 
         return None
-
 
     def detectItem(self, img):
         # Convert from PIL image type to cv2
