@@ -13,7 +13,7 @@ class Items:
         self.itemTemplates = self.loadItems()
         self.itemPlacementTemplate = [("text", cv2.imread("../Header Texts/item.jpg"))]
         # print(self.itemTemplates)
-        self.banned = ['mango tree', 'divine rapier', 'barricade']
+        self.banned = ['mango tree', 'divine rapier', 'barricade', 'vesture of the tyrant']
         self.unique = ['battle fury', 'dragon lance', 'refresher orb']
         self.bannedUnderlords = {  # Making this list sucks :c
             'battle fury': ['bat rider', 'crystal maiden', 'dazzle', 'death prophet', 'drow ranger', 'enchantress',

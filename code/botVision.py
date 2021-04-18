@@ -383,8 +383,8 @@ class ShopThread():
                         bannedItems.append(item)
 
 
-        for item in bannedItems:
-            print(f"Items that were banned: {item}")
+        print(f"Items that were banned:")
+        print(bannedItems)
 
         print(f"Items that should be banned:")
         print(self.items.banned)
