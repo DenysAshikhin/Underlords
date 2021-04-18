@@ -13,14 +13,16 @@ class state:
         self.combatPhases, self.selectionPhases = self.loadPhases()
         self.currentPhase = None
 
-    def cropScreen(self):
+    def getPhase(self):
         gameScreen = imageGrab()
-        combatCrop = gameScreen.crop((480,39) + (600,60))
-        selectionCrop = gameScreen.crop((240,240) + (580,340))
+
+        combatCrop = gameScreen.crop((480,35) + (600,60))
+        combatCrop.show()
+        selectionCrop = gameScreen.crop((240,235) + (580,340))
+        selectionCrop.show()
 
         combatPhase = self.detectPhase(combatCrop, self.combatPhases)
         selectionPhase = self.detectPhase(selectionCrop, self.selectionPhases)
-
 
         if selectionPhase is not None:
             self.currentPhase = selectionPhase

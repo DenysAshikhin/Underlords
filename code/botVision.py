@@ -101,7 +101,14 @@ class ShopThread():
         self.gameState = None
         self.gameStateLoader = state()
 
-        self.updateWindowCoords()
+        #make sure to close store before getting state!
+        #possible states:
+            #select: selecting an item
+            #choose: choose an underlord
+            #preparing: full control in between combat rounds
+            #combat: fight is happening
+            #countdown: same as preparing - assuming its not SELECT or CHOOSE so check for those first
+
 
         self.choseItem = False
         self.rerolledItem = False
@@ -341,24 +348,9 @@ class ShopThread():
 
     def testFunction(self, param1, param2):
 
-        for i in range(3):
-            for j in range(4):
-                if self.itemObjects[i][j] is None:
-                    self.itemObjects[i][j] = Item(f"temp item: {i} - {j}", (i, j))
-                    self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
+        print(self.gameStateLoader.getPhase())
 
-        self.updateWindowCoords()
 
-        param1 = 1
-
-        testX = self.x + 965
-        testXOffest = 40
-
-        testY = self.y + self.items.findItemListOffset() + 190
-        testYOffset = 35
-
-        mouse1.position = (testX + (testXOffest * param1), testY + (testYOffset * param2))
-        return
 
     def selectItem(self, x=-1, y=-1, selection=-1):
 
@@ -592,6 +584,7 @@ class ShopThread():
         if not self.shop.shopOpen():
             mouse1.position = (self.shopX, self.shopY)
             mouse1.click(Button.left, 1)
+            time.sleep(2 * self.mouseSleepTime)
 
         self.shopChoices = self.shop.labelShop()
 
@@ -808,7 +801,6 @@ class ShopThread():
 
         self.openStore()
 
-        time.sleep(self.mouseSleepTime*2)
         mouse1.position = (self.x + xPos, self.y + 130)
         mouse1.click(Button.left, 1)
 
