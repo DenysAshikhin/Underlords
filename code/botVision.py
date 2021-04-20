@@ -149,7 +149,7 @@ class ShopThread():
         self.freeRerollUsed = False
         self.lockedIn = False
 
-        shopImages, classes, value, inspect, statesList = self.shop.labelShop()
+        # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
         self.shopLabels = []
         self.shopImages = []
@@ -176,13 +176,13 @@ class ShopThread():
             relief=tkinter.RAISED,
             borderwidth=1
         )
-        tempImage = ImageTk.PhotoImage(shopImages[0])
+        # tempImage = ImageTk.PhotoImage(shopImages[0])
 
         # Initialize 5 pictures for shop, 5 purchase buttons
         for i in range(5):
             # print(f"Confidence {statesList[i] * 100}")
-            label = Label(master=shopFrame, foreground='white', background='black', image=tempImage,
-                          text=f"{classes[statesList[i]]} {value[i] * 100:.1f}%", compound='top')
+            label = Label(master=shopFrame, foreground='white', background='black',
+                          text=f"Ignore", compound='top')
             label.grid(row=0, column=i + 1, padx=5, pady=5)
             if not training:
                 self.shopLabels.append(label)
@@ -361,7 +361,6 @@ class ShopThread():
                     tempButton.grid(row=4 + (2 * i), column=j)
 
         shopFrame.pack()
-        self.updateShop()
 
     def testFunction(self, param1, param2):
         # print(self.gameStateLoader.getPhase())
@@ -713,7 +712,7 @@ class ShopThread():
             self.smallPunish = True
             return -1
 
-        self.openStore()
+        self.openStore(update=False)
         mouse1.position = (self.clickUpX, self.clickUpY)
         mouse1.click(Button.left, 1)
         time.sleep(self.mouseSleepTime)
@@ -725,7 +724,7 @@ class ShopThread():
             self.mediumPunish = True
             return -1
 
-        self.openStore()
+        self.openStore(update=False)
 
         if self.lockedIn:
             self.lockedIn = False
@@ -751,7 +750,7 @@ class ShopThread():
             self.mediumPunish = True
             return -1
 
-        self.openStore()
+        self.openStore(update=False)
         mouse1.position = (self.rerollX, self.rerollY)
         mouse1.click(Button.left, 1)
         self.lockedIn = False
@@ -767,7 +766,7 @@ class ShopThread():
             mouse1.click(Button.left, 1)
             time.sleep(2 * self.mouseSleepTime)
 
-    def openStore(self):
+    def openStore(self, update=True):
 
         self.updateWindowCoords()
 
@@ -775,8 +774,8 @@ class ShopThread():
             mouse1.position = (self.shopX, self.shopY)
             mouse1.click(Button.left, 1)
             time.sleep(self.shopSleepTime)
-
-        self.shopChoices = self.shop.labelShop()
+        if update:
+            self.shopChoices = self.shop.labelShop()
 
     def updateWindowCoords(self):
         self.hwnd = win32gui.FindWindow(None, 'Dota Underlords')
@@ -826,8 +825,6 @@ class ShopThread():
 
         print(f"base cords: {x} - {y}")
 
-
-
         if x < -1:
             print('moveUnit wrong x')
             self.mediumPunish = True
@@ -841,11 +838,6 @@ class ShopThread():
             self.mediumPunish = True
             print('invalid phase move unit')
             return -1
-
-
-
-
-
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
@@ -888,7 +880,7 @@ class ShopThread():
                         if self.boardHeroes[i][j] is not None:
                             numHeroes += 1
 
-                if numHeroes >= self.level: # Meaning we have no space on the board for more heroes
+                if numHeroes >= self.level:  # Meaning we have no space on the board for more heroes
                     self.mediumPunish = True
                     self.heroToMove = None
                     return -1
@@ -1070,7 +1062,7 @@ class ShopThread():
             raise RuntimeError("if idx in ---- find this error and figure out why this got triggered when it shouldn't")
             return -1
 
-        self.openStore()
+        # self.openStore() #note might need to enable this if it causes bugs
         shopImages, classes, value, inspect, statesList = self.shopChoices
 
         result = self.benchLevelUp(idx)
@@ -1078,14 +1070,12 @@ class ShopThread():
         if result == -1:  # not hopefully this doesn't break things
             return -1
 
-
-
         mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
         mouse1.click(Button.left, 1)
 
         time.sleep(self.mouseSleepTime)
 
-        if result == 10: # meaning it tiered up, no need to create a new underlord on bench
+        if result == 10:  # meaning it tiered up, no need to create a new underlord on bench
             self.updateShop()
             return 1
 
@@ -1244,7 +1234,6 @@ class ShopThread():
             for x in range(1, len(bench["tierTwoHeroes"])):
                 specificHero = bench["tierTwoHeroes"][x]
                 self.resetLabel(specificHero)
-
 
         if tieredUp != 10:
             freeSpace = False
