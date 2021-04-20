@@ -1,6 +1,5 @@
 class Hero:
-    def __init__(self, name, coords, image, underlord=False, ID = None):
-
+    def __init__(self, name, coords, image, underlord=False, ID=None, gold=-1, melee=False, ranged=False, preventMana=False):
         self.name = name
         self.coords = coords
         self.image = image
@@ -8,4 +7,7 @@ class Hero:
         self.item = None
         self.underlord = underlord
         self.id = ID
-
+        self.melee = melee
+        self.ranged = ranged
+        self.preventMana = preventMana
+        self.gold = gold

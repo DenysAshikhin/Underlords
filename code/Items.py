@@ -4,6 +4,7 @@ import MTM
 import cv2
 import numpy
 from main import imageGrab
+import json
 
 
 class Items:
@@ -13,8 +14,17 @@ class Items:
         self.itemTemplates = self.loadItems()
         self.itemPlacementTemplate = [("text", cv2.imread("../Header Texts/item.jpg"))]
         # print(self.itemTemplates)
-        self.banned = ['mango tree', 'divine rapier', 'barricade', 'vesture of the tyrant']
-        self.unique = ['battle fury', 'dragon lance', 'refresher orb']
+
+        self.itemData = None
+
+        with open('../items.json') as f:
+            self.itemData = json.load(f)
+
+        self.itemData = self.itemData['set_balance']
+
+
+        self.banned = ['mango_tree', 'divine_rapier', 'barricade', 'vesture_of_the_tyrant']  # might allow them later
+        self.unique = ['battle fury', 'dragon lance', 'refresher orb', 'void stone']
         self.bannedUnderlords = {  # Making this list sucks :c
             'battle fury': ['bat rider', 'crystal maiden', 'dazzle', 'death prophet', 'drow ranger', 'enchantress',
                             'keeper of the light', 'lich', 'lina', 'lone druid', 'luna', 'medusa', 'mirana',
@@ -28,9 +38,18 @@ class Items:
                              'slark', 'tidehunter', 'treant protector', 'tusk', 'sven', 'wraith king', 'doom',
                              'dragon knight', 'omniknight', 'void spirit'
                              ],
-            'refresher orb': ['anti mage', 'drow ranger', 'luna', 'phantom assassin',
+            'refresher orb': ['anti mage', 'drow ranger', 'life stealer', 'luna', 'phantom assassin',
                               'slark', 'troll warrior'],
-            't3 refresher orb': ['luna', 'slark']
+            't3 refresher orb': ['life stealer', 'luna', 'slark'],
+            'octarine essence': ['anti mage', 'drow ranger', 'life stealer', 'luna', 'phantom assassin',
+                              'slark', 'troll warrior'],
+            't3 refresher orb': ['life stealer', 'luna', 'slark'],
+            'refresher orb': ['anti mage', 'drow ranger', 'life stealer', 'luna', 'phantom assassin',
+                              'slark', 'troll warrior'],
+            't3 refresher orb': ['life stealer', 'luna', 'slark'],
+            'refresher orb': ['anti mage', 'drow ranger', 'life stealer', 'luna', 'phantom assassin',
+                              'slark', 'troll warrior'],
+            't3 refresher orb': ['life stealer', 'luna', 'slark'],
         }
 
     def checkItems(self):

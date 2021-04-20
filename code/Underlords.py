@@ -4,12 +4,20 @@ import cv2
 import numpy
 
 from main import imageGrab
-
+import json
 
 class Underlords:
     def __init__(self):
         super().__init__()
         self.underlordTemplates = self.loadUnderlords()
+
+        self.underlordData = None
+
+        with open('../underlords.json') as f:
+            self.underlordData = json.load(f)
+
+        self.underlordData = self.underlordData['set_balance']
+
         self.prices = {'abbadon': 3,
                        'alchemist': 3,
                        'anti mage': 1,
@@ -72,7 +80,7 @@ class Underlords:
                        'void spirit': 4,
                        'wind ranger': 2,
                        'wraith king': 5
-                       }#note need to populate this with all the costs
+                       }
 
     def checkUnderlords(self):
         gameScreen = imageGrab()

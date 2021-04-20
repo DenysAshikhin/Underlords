@@ -90,13 +90,13 @@ class ShopThread():
         self.itemY = self.shopY + 60
         self.itemYOffset = 20
         self.itemSelectY = self.y + 394
-        self.itemSelectX = self.x + 350
+        self.itemSelectX = self.x + 290
         self.itemSelectXOffset = 220
         self.itemRerollX = self.itemSelectX + self.itemSelectXOffset
         self.itemRerollY = self.itemSelectY + 200
         self.itemMoveX = self.x + 965
         self.itemMoveXOffset = 40
-        self.itemMoveY = self.y + 190
+        self.itemMoveY = self.y + 185
         self.itemMoveYOffset = 35
         self.gamePhase = None
         self.gameStateLoader = state()
@@ -126,8 +126,10 @@ class ShopThread():
         self.heroToMove = None
         self.itemToMove = None
 
-        self.shopSleepTime = 0.4
-        self.mouseSleepTime = 0.25
+        self.speedUpFactor = 1
+
+        self.shopSleepTime = 0.4 / self.speedUpFactor
+        self.mouseSleepTime = 0.25 / self.speedUpFactor
 
         self.shop = Shop()
         self.HUD = HUD()
@@ -144,6 +146,8 @@ class ShopThread():
         self.gold = -1
         self.health = -1
         self.level = -1
+        self.freeRerollUsed = False
+        self.lockedIn = False
 
         shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -357,10 +361,53 @@ class ShopThread():
                     tempButton.grid(row=4 + (2 * i), column=j)
 
         shopFrame.pack()
+        self.updateShop()
 
     def testFunction(self, param1, param2):
         # print(self.gameStateLoader.getPhase())
-        print(self.closeStore())
+        # print(self.closeStore())
+        # list = itemNameList()
+        #
+        # for item in list:
+        #     if "melee_only" in self.items.itemData[item]:
+        #         print(item)
+        #     if "ranged_only" in self.items.itemData[item]:
+        #         print(item)
+        #     if "requires_ability" in self.items.itemData[item]:
+        #         print(item)
+        # print(self.shop.classes)
+        # #
+        # for profile in self.profilePics.keys() :
+        #     print(self.underlords.underlordData[profile])
+        # tempHeroName = 'luna'
+        # fullHero = self.underlords.underlordData[tempHeroName]
+        #
+        # melee = False
+        # ranged = False
+        # preventMana = False
+        # gold = fullHero['goldCost']
+        #
+        # if fullHero['attackRange'] == 1:
+        #     melee = True
+        # else:
+        #     ranged = True
+        #
+        # if 'prevent_mana_items' in fullHero:
+        #     preventMana = fullHero['prevent_mana_items']
+        #
+        # tempHero = Hero(tempHeroName, (-1, -1),
+        #                 self.profilePics[tempHeroName],
+        #                 ID=123,
+        #                 gold=gold,
+        #                 melee=melee,
+        #                 ranged=ranged,
+        #                 preventMana=preventMana)
+        #
+        # self.itemToMove = Item("dragon_lance", (0, 0), ID=123)
+        #
+        # self.updateHeroItem(tempHero)
+        self.health = self.health - 1
+        self.freeRerollUsed = False
 
     def getGamePhase(self):
 
@@ -372,40 +419,79 @@ class ShopThread():
 
     def selectItem(self, x=-1, y=-1, selection=-1):
 
-        if selection != -1:
+        gamePhase = self.getGamePhase()
+
+        print(f"gamePhase: {gamePhase}")
+
+        if gamePhase in self.SelectItem:
+
+            if selection < -1 or selection > 3:
+                print('break 1')
+                self.mediumPunish = True
+                return -1
 
             items = self.items.checkItems()
 
             if items[0] is None:
+                raise RuntimeError("item select Uh Oh")
+                return -1
 
-                underlords = self.underlords.checkUnderlords()
+            self.buyItem(selection, items)
 
-                if underlords[0] is None:
+        elif gamePhase in self.SelectUnderlord:
 
-                    print("No Underlord or item available for selection!")
-                    return -1
+            underlords = self.underlords.checkUnderlords()
 
-                else:
-                    self.buyUnderlord(underlords[selection], selection)
-            else:
-                self.buyItem(selection, items)
+            if underlords[0] is None:
+                print("No Underlord or item available for selection!")
+                raise RuntimeError("Underlord Uh Oh")
+                return -1
+
+            if selection < -1 or selection > 3:
+                self.mediumPunish = True
+                print('break 2')
+                return -1
+
+            self.buyUnderlord(underlords[selection], selection)
 
         else:
 
             if self.heroToMove:
-                print("You have a hero selected to move, move it first!")
+                # print("You have a hero selected to move, move it first!")
+                self.smallPunish = True
+                print('break 3')
                 return -1
 
             if self.itemObjects[x][y] is None:
-                print("there is no item to select here!")
+                # print("there is no item to select here!")
+                self.mediumPunish = True
+                print('break 4')
+                return -1
             else:
+                if y < 0 or y > 3:
+                    self.mediumPunish = True
+                    print('break 5')
+                    return -1
+                if x < 0 or x > 2:
+                    self.mediumPunish = True
+                    print('break 5')
+                    return -1
+                if self.itemObjects[x][y] is None:
+                    self.smallPunish = True
+                    print('break 6')
+                    return -1
+
                 self.itemToMove = self.itemObjects[x][y]
 
     def buyItem(self, selection, itemList):
 
         if selection == 3:
             if self.rerolledItem:
-                raise RuntimeError("Can't reroll an item twice - Was this properly implemented?")
+
+                self.strongPunish = True
+                print('break 7')
+                return -1
+
             else:
                 self.updateWindowCoords()
                 mouse1.position = (self.itemRerollX, self.itemRerollY)
@@ -424,8 +510,24 @@ class ShopThread():
             for i in range(3):
                 for j in range(4):
                     if self.itemObjects[i][j] is None:
-                        self.itemObjects[i][j] = Item(itemList[selection], (i, j),
-                                                      ID=self.itemIDmap[itemList[selection]])
+
+                        name = itemList[selection]
+                        melee = False
+                        ranged = False
+                        preventMana = False
+
+                        if "melee_only" in self.items.itemData[name]:
+                            melee = True
+                        if "ranged_only" in self.items.itemData[name]:
+                            ranged = True
+                        if "requires_ability" in self.items.itemData[name]:
+                            preventMana = True
+
+                        self.itemObjects[i][j] = Item(name, (i, j),
+                                                      ID=self.itemIDmap[name],
+                                                      melee=melee,
+                                                      ranged=ranged,
+                                                      preventMana=preventMana)
                         self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
                         return
 
@@ -458,7 +560,7 @@ class ShopThread():
         elif underlord == 'healing_stealing':
             preferences = FurPreferences
             ID = 67
-        elif underlord == 'rapid_furbal':
+        elif underlord == 'rapid_furball':
             preferences = FurPreferences
             ID = 68
         elif underlord == 'high_damage_dealer':
@@ -506,19 +608,35 @@ class ShopThread():
 
     def sellHero(self, x=-1, y=-1):
 
+        if self.getGamePhase() not in self.UnitItemMove and not self.checkState:
+            self.mediumPunish = True
+            return -1
+
+        if x < -1 or x > 7:
+            print('wrong x')
+            self.mediumPunish = True
+            return -1
+        if y < -1 or y > 3:
+            print('wrong y')
+            self.mediumPunish = True
+            return -1
+
         if x == -1:
             if self.heroToMove is None:
-                print("No Hero Selected to Sell")
+                # print("No Hero Selected to Sell")
+                self.mediumPunish = True
                 return -1
             else:
                 x, y = self.heroToMove.coords
         else:
             if y == -1:
                 if self.benchHeroes[x] is None:
-                    print(f"No hero on bench spot {x + 1} to sell!")
+                    # print(f"No hero on bench spot {x + 1} to sell!")
+                    self.mediumPunish = True
                     return -1
             elif self.boardheroes[x][y] is None:
-                print(f"No hero on board spot {x + 1}-{y + 1} to sell!")
+                # print(f"No hero on board spot {x + 1}-{y + 1} to sell!")
+                self.mediumPunish = True
                 return -1
 
         if y == -1:
@@ -542,8 +660,6 @@ class ShopThread():
         time.sleep(self.mouseSleepTime)
 
         mouse1.release(Button.left)
-
-        return -1
 
     def moveGameHero(self, hero, newX, newY):
 
@@ -610,6 +726,12 @@ class ShopThread():
             return -1
 
         self.openStore()
+
+        if self.lockedIn:
+            self.lockedIn = False
+        else:
+            self.lockedIn = True
+
         mouse1.position = (self.lockInX, self.lockInY)
         mouse1.click(Button.left, 1)
 
@@ -619,13 +741,21 @@ class ShopThread():
             self.mediumPunish = True
             return -1
 
-        if self.gold < 2:
+        currHealth = self.health
+
+        self.updateShop()
+
+        if currHealth < self.health:  # Meaning we lost, so we have a free reroll
+            self.freeRerollUsed = True
+        elif self.gold < 2:
             self.mediumPunish = True
             return -1
 
         self.openStore()
         mouse1.position = (self.rerollX, self.rerollY)
         mouse1.click(Button.left, 1)
+        self.lockedIn = False
+
         self.updateShop()
 
     def closeStore(self):
@@ -678,7 +808,7 @@ class ShopThread():
         self.itemYOffset = 20
         self.itemYOffset = 20
         self.itemSelectY = self.y + 394
-        self.itemSelectX = self.x + 350
+        self.itemSelectX = self.x + 290
         self.itemSelectXOffset = 220
         self.itemRerollX = self.itemSelectX + self.itemSelectXOffset
         self.itemRerollY = self.itemSelectY + 200
@@ -689,16 +819,45 @@ class ShopThread():
         if offset is None:
             offset = 0
 
-        self.itemMoveY = self.y + offset + 190
+        self.itemMoveY = self.y + offset + 185
         self.itemMoveYOffset = 35
 
     def moveUnit(self, x=-1, y=-1):
 
+        print(f"base cords: {x} - {y}")
+
+
+
+        if x < -1:
+            print('moveUnit wrong x')
+            self.mediumPunish = True
+            return -1
+        if y < -1:
+            print('moveUnit wrong y')
+            self.mediumPunish = True
+            return -1
+
+        if self.getGamePhase() not in self.UnitItemMove and not self.checkState:
+            self.mediumPunish = True
+            print('invalid phase move unit')
+            return -1
+
+
+
+
+
+
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
 
+                if x > 7:
+                    self.mediumPunish = True
+                    return -1
+
                 if self.heroToMove.underlord:
                     print("Can't place an underlord onto a bench!")
+                    self.mediumPunish = True
+                    self.heroToMove = None
                     return -1
 
                 elif self.benchHeroes[x] is None:  # Making sure bench spot is open
@@ -711,8 +870,29 @@ class ShopThread():
 
                 else:
                     print("Bench Spot Taken!")
+                    self.mediumPunish = True
+                    self.heroToMove = None
                     return -1
+
             else:  # Meaning we are moving onto a board spot
+
+                if x > 3 or y > 7:
+                    print('the new wrong')
+                    self.mediumPunish = True
+                    return -1
+
+                numHeroes = 0
+
+                for i in range(3):
+                    for j in range(7):
+                        if self.boardHeroes[i][j] is not None:
+                            numHeroes += 1
+
+                if numHeroes >= self.level: # Meaning we have no space on the board for more heroes
+                    self.mediumPunish = True
+                    self.heroToMove = None
+                    return -1
+
                 if self.boardHeroes[x][y] is None:  # Making sure board spot is open
                     self.boardHeroes[x][y] = self.heroToMove
                     self.resetLabel(self.heroToMove)
@@ -723,6 +903,8 @@ class ShopThread():
 
                 else:
                     print("Board Spot Taken!")
+                    self.mediumPunish = True
+                    self.heroToMove = None
                     return -1
 
         elif self.itemToMove:  # Meaning we are trying to attach an item to a hero
@@ -732,17 +914,24 @@ class ShopThread():
                     self.updateHeroItem(self.benchHeroes[x])
 
                 else:
-                    print("No Hero On This Bench!")
+                    # print("No Hero On This Bench!")
+                    self.mediumPunish = True
+                    self.itemToMove = None
                     return -1
             else:
                 if self.boardHeroes[x][y] is not None:  # Making sure board spot has a hero
                     if self.boardHeroes[x][y].underlord:
-                        print("Can't attach items to Underlords!")
+                        # print("Can't attach items to Underlords!")
+                        self.mediumPunish = True
+                        self.itemToMove = None
                         return -1
+
                     self.updateHeroItem(self.boardHeroes[x][y])
 
                 else:
                     print("No Hero On This Board!")
+                    self.mediumPunish = True
+                    self.itemToMove = None
                     return -1
 
         else:  # Meaning a hero has not yet been selected for movement, mark this hero as one to move
@@ -751,12 +940,16 @@ class ShopThread():
                     self.heroToMove = self.benchHeroes[x]
                 else:
                     print("No Hero On This Bench!")
+                    self.mediumPunish = True
+                    self.heroToMove = None
                     return -1
             else:
                 if self.boardHeroes[x][y] is not None:  # Making sure board spot has a hero
                     self.heroToMove = self.boardHeroes[x][y]
                 else:
                     print("No Hero On This Board!")
+                    self.mediumPunish = True
+                    self.heroToMove = None
                     return -1
 
         return 1
@@ -766,15 +959,28 @@ class ShopThread():
         if self.itemToMove.name in self.items.banned:
             # print('This item is not allowed to be used')
             return -1
-        elif self.itemToMove.name in self.items.unique:
-
-            if hero.name in self.items.bannedUnderlords[self.itemToMove.name]:
-                # print('This item cannot be equipped on this hero')
-
-                if hero.name in self.items.bannedUnderlords[
-                    't3 refresher orb'] and self.itemToMove.name == 'refresher orb' and hero.tier == 3:
-                    return
+        elif "melee_only" in self.items.itemData[self.itemToMove.name]:
+            if not hero.melee:
+                # print(f"{hero.name} is not melee!")
+                self.mediumPunish = True
                 return -1
+        elif "ranged_only" in self.items.itemData[self.itemToMove.name]:
+            if not hero.ranged:
+                # print(f"{hero.name} is not ranged!")
+                self.mediumPunish = True
+                return -1
+        elif "requires_ability" in self.items.itemData[self.itemToMove.name]:
+            if hero.preventMana != False:
+                # print(f"{hero.name} has mana ban?!")
+
+                if hero.preventMana == 1:
+                    # print('perma mana ban')
+                    self.mediumPunish = True
+                    return -1
+                elif hero.preventMana[hero.tier - 1] != 0:
+                    # print('mana ban til t3')
+                    self.mediumPunish = True
+                    return -1
 
         self.updateWindowCoords()
 
@@ -864,40 +1070,51 @@ class ShopThread():
             raise RuntimeError("if idx in ---- find this error and figure out why this got triggered when it shouldn't")
             return -1
 
-        freeSpace = False
-
-        for i in self.benchHeroes:
-            if i is None:
-                freeSpace = True
-
-        if not freeSpace:
-            print("There is no space on bench to buy units!")
-            self.mediumPunish = True
-            return -1
-
         self.openStore()
         shopImages, classes, value, inspect, statesList = self.shopChoices
 
-        print(classes)  # note remove later
         result = self.benchLevelUp(idx)
 
         if result == -1:  # not hopefully this doesn't break things
             return -1
-        elif result:
-            return 1
+
+
 
         mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
         mouse1.click(Button.left, 1)
 
         time.sleep(self.mouseSleepTime)
 
+        if result == 10: # meaning it tiered up, no need to create a new underlord on bench
+            self.updateShop()
+            return 1
 
         for x in range(8):
 
             if self.benchHeroes[x] is None:
+
+                fullHero = self.underlords.underlordData[classes[statesList[idx]]]
+
+                melee = False
+                ranged = False
+                preventMana = False
+                gold = fullHero['goldCost']
+
+                if fullHero['attackRange'] == 1:
+                    melee = True
+                else:
+                    ranged = True
+
+                if 'prevent_mana_items' in fullHero:
+                    preventMana = fullHero['prevent_mana_items']
+
                 self.benchHeroes[x] = Hero(classes[statesList[idx]], (x, -1),
                                            self.profilePics[classes[statesList[idx]]],
-                                           ID=statesList[idx])
+                                           ID=statesList[idx],
+                                           gold=gold,
+                                           melee=melee,
+                                           ranged=ranged,
+                                           preventMana=preventMana)
 
                 self.benchLabels[x].config(text=f"{self.benchHeroes[x].name}",
                                            image=self.benchHeroes[x].image)
@@ -958,12 +1175,14 @@ class ShopThread():
 
         if classes[statesList[idx]] == 'xnull':
             self.mediumPunish = True
+            print('fuck 1')
             return -1
         else:
             print(f"bought: {classes[statesList[idx]]}")
 
-        if self.underlords.prices[classes[statesList[idx]]] > self.gold:
+        if self.underlords.underlordData[classes[statesList[idx]]]['goldCost'] > self.gold:
             self.mediumPunish = True
+            print('fuck 2')
             return -1
 
         boardScan = self.boardLevelUp(idx)
@@ -973,7 +1192,8 @@ class ShopThread():
             return -1
 
         if boardScan["tieredUp"] == True:
-            return True  # The shop unit will be consumed to tier up the units strictly on the board, bench is
+            print('fuck 3')
+            return 10  # The shop unit will be consumed to tier up the units strictly on the board, bench is
             # untouched - NOTE - note - make sure bench labels are not updated as a result of this in future
             # make seperate function to update board labels!
 
@@ -1005,7 +1225,7 @@ class ShopThread():
 
             bench["tierTwoHeroes"].append(bench["tierOneHeroes"][0])
             bench["tierTwo"] += 1
-            tieredUp = True
+            tieredUp = 10
 
             for x in range(1, len(bench["tierOneHeroes"])):
                 specificHero = bench["tierOneHeroes"][x]
@@ -1019,11 +1239,24 @@ class ShopThread():
             #     self.benchLabels[bench["tierTwoHeroes"][0].coords[0]].config(bg="yellow")
             self.updateHeroLabel(bench["tierTwoHeroes"][0])  # Updating label to for color to indicate tier
 
-            tieredUp = True
+            tieredUp = 10
 
             for x in range(1, len(bench["tierTwoHeroes"])):
                 specificHero = bench["tierTwoHeroes"][x]
                 self.resetLabel(specificHero)
+
+
+        if tieredUp != 10:
+            freeSpace = False
+
+            for i in self.benchHeroes:
+                if i is None:
+                    freeSpace = True
+
+            if not freeSpace:
+                print("There is no space on bench to buy units!")
+                self.mediumPunish = True
+                return -1
 
         return tieredUp
 
