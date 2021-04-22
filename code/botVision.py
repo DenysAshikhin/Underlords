@@ -54,7 +54,7 @@ def itemNameList():
     return itemList
 
 
-class ShopThread():
+class UnderlordInteract():
     def __init__(self, rootWindow, training=False):
         # Thread.__init__(self)
         # self.stopped = event
@@ -1255,7 +1255,7 @@ def openVision():
     # root.geometry("600x105")
     root.resizable(0, 0)
     stopFlag = Event()
-    thread = ShopThread(root)
+    thread = UnderlordInteract(root)
     # thread.start()
     # this will stop the timer
     # stopFlag.set()
