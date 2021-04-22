@@ -106,6 +106,9 @@ class UnderlordInteract():
         self.mediumPunish = False
         self.strongPunish = False
 
+        self.localHeroID=1
+        self.localItemID=1
+
         # make sure to close store before getting state!
         # possible states:
         # select: selecting an item
@@ -146,6 +149,7 @@ class UnderlordInteract():
         self.gold = -1
         self.health = -1
         self.level = -1
+        self.round = -1
         self.freeRerollUsed = False
         self.lockedIn = False
 
@@ -408,6 +412,10 @@ class UnderlordInteract():
         self.health = self.health - 1
         self.freeRerollUsed = False
 
+    def getObservation(self):
+        
+        raise RuntimeError("not yet implemented lmao")
+
     def getGamePhase(self):
 
         self.closeStore()
@@ -526,7 +534,9 @@ class UnderlordInteract():
                                                       ID=self.itemIDmap[name],
                                                       melee=melee,
                                                       ranged=ranged,
-                                                      preventMana=preventMana)
+                                                      preventMana=preventMana,
+                                                      localID=self.localItemID)
+                        self.localItemID += 1
                         self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
                         return
 
@@ -577,7 +587,9 @@ class UnderlordInteract():
 
             if self.boardHeroes[x][y] is None:
                 print(f"Found a spot for underlord at: {x}-{y}")
-                self.underlord = Hero(underlord, (x, y), self.underlordPics[underlord], True, ID=ID)
+                self.underlord = Hero(underlord, (x, y), self.underlordPics[underlord], True, ID=ID,
+                                      localID=self.localHeroID)
+                self.localHeroID += 1
                 self.updateHeroLabel(self.underlord)
                 self.boardHeroes[x][y] = self.underlord
                 return
@@ -1104,7 +1116,9 @@ class UnderlordInteract():
                                            gold=gold,
                                            melee=melee,
                                            ranged=ranged,
-                                           preventMana=preventMana)
+                                           preventMana=preventMana,
+                                           localID=self.localHeroID)
+                self.localHeroID += 1
 
                 self.benchLabels[x].config(text=f"{self.benchHeroes[x].name}",
                                            image=self.benchHeroes[x].image)

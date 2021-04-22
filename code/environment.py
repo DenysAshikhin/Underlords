@@ -24,6 +24,7 @@ from item import Item
 
 from botVision import UnderlordInteract
 
+
 class UnderlordEnv(gym.Env):
 
     def __init__(self):
@@ -31,8 +32,23 @@ class UnderlordEnv(gym.Env):
 
         root = Tk()
         root.resizable(0, 0)
-        thread = UnderlordInteract(root)
+        underlord = UnderlordInteract(root)
 
         root.mainloop()
 
-        self.observation_space = spaces.tuple()
+        # note to make sure 0's are reserved for n/a -> adding +1 to some values ( marked with a *)
+        self.observation_space = spaces.Tuple(
+            spaces.Discrete(100),  # health
+            spaces.Discrete(999),  # gold
+            spaces.Discrete(10),  # level
+            spaces.Discrete(50),  # round
+            spaces.Discrete(2),  # locked in
+            spaces.Discrete(6),  # gamePhase *
+            spaces.MultiDiscrete([64, 4, 6, 14, 9, 9]),
+            # heroToMove: id *, tier *, gold * , item(id) *, x *, y * Note: add stats like melee/ranged?
+            spaces.MultiDiscrete([61, 4, 5, 200])  # itemToMove: id *, x *, y *, heroID
+        )
+
+    def getObservation(self):
+
+        vals = self.underlord.getObservation()
