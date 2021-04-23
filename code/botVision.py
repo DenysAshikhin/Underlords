@@ -413,7 +413,7 @@ class UnderlordInteract():
         self.freeRerollUsed = False
 
     def getObservation(self):
-        
+
         raise RuntimeError("not yet implemented lmao")
 
     def getGamePhase(self):
