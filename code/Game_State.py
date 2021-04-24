@@ -5,53 +5,48 @@ import cv2
 import numpy
 from main import imageGrab
 
+
 class state:
     def __init__(self):
         super().__init__()
         # combat Phases > combat, intermission, prepartion
         # selection > item selection, underlord selection
-        self.combatPhases, self.selectionPhases = self.loadPhases()
+        self.combatTemplates = self.loadTemplates("../Header Texts/Combat State/")
+        self.selectionTemplates = self.loadTemplates("../Header Texts/Selection State/")
+        self.placeTemplates = self.loadTemplates("../Header Texts/Place State/")
         self.currentPhase = None
 
     def getPhase(self):
         gameScreen = imageGrab()
 
+        combatCrop = gameScreen.crop((480, 35) + (600, 60))
+        selectionCrop = gameScreen.crop((240, 235) + (580, 340))
+        placeCrop = gameScreen.crop((155, 300) + (350, 420))
         combatCrop = gameScreen.crop((480,35) + (600,60))
-        # combatCrop.show()
         selectionCrop = gameScreen.crop((240,235) + (580,340))
-        # selectionCrop.show()
 
-        combatPhase = self.detectPhase(combatCrop, self.combatPhases)
-        selectionPhase = self.detectPhase(selectionCrop, self.selectionPhases)
+        combatPhase = self.detectPhase(combatCrop, self.combatTemplates)
+        selectionPhase = self.detectPhase(selectionCrop, self.selectionTemplates)
+        placePhase = self.detectPhase(placeCrop, self.placeTemplates)
 
-        if selectionPhase is not None:
+        if placePhase is not None:
+            self.currentPhase = placePhase
+        elif selectionPhase is not None:
             self.currentPhase = selectionPhase
         elif combatPhase is not None:
             self.currentPhase = combatPhase
 
         return self.currentPhase
 
+    def loadTemplates(self, root):
+        templates = []
 
-    def loadPhases(self):
-        root1 = "../Header Texts/Combat State/"
-        root2 = "../Header Texts/Selection State/"
-        combatTemplates = []
-        selectionTemplates = []
-
-        for file in os.listdir(root1):
-            img = cv2.imread(os.path.join(root1, file))
-            # print(file)
+        for file in os.listdir(root):
+            img = cv2.imread(os.path.join(root, file))
             templatename = file[0:len(file) - 4]
-            combatTemplates.append((templatename, img))
+            templates.append((templatename, img))
 
-        for file in os.listdir(root2):
-            img = cv2.imread(os.path.join(root2, file))
-            # print(file)
-            templatename = file[0:len(file) - 4]
-            print(templatename)
-            selectionTemplates.append((templatename, img))
-
-        return combatTemplates, selectionTemplates
+        return templates
 
     def detectPhase(self, img, template):
         # Convert from PIL image type to cv2
