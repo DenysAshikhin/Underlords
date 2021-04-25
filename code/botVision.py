@@ -168,7 +168,7 @@ class UnderlordInteract():
         self.itemlabels = numpy.full((3, 4), None)
         self.underlord = None
 
-        self.checkState = True  # note make sure to enable this for production
+        self.checkState = False  # note make sure to False this for production
 
         # self.boardHeroes = numpy.empty((4, 8))
         # self.boardHeroes[:] = None
@@ -412,12 +412,76 @@ class UnderlordInteract():
         # self.itemToMove = Item("dragon_lance", (0, 0), ID=123)
         #
         # self.updateHeroItem(tempHero)
-        print(self.getObservation())
+        # print(self.getObservation())
+        self.returnToMainScreen()
+        time.sleep(5)
+        self.startNewGame()
+
+    def returnToMainScreen(self):
+        self.updateWindowCoords()
+        mouse1.position = (self.shopX, self.shopY + 100)
+        mouse1.click(Button.left, 1)
+
+        self.gameStateLoader.currentPhase = None
+
+
+    def startNewGame(self):
+        self.updateWindowCoords()
+
+        mouse1.position = (self.shopX, self.shopY + 720)
+        mouse1.click(Button.left, 1)
+
+        time.sleep(self.shopSleepTime)
+
+        mouse1.position = (self.x + 700, self.shopY + 200)
+        mouse1.click(Button.left, 1)
+
+        time.sleep(self.shopSleepTime)
+
+        mouse1.position = (self.shopX, self.shopY + 720)
+        mouse1.click(Button.left, 1)
+        flag = True
+
+        while flag:
+            time.sleep(0.1)
+
+            phase = self.getGamePhase()
+            if phase is not None:
+                flag = False
 
     def getObservation(self):
 
+        position = self.finished()
+
+        if position != -1:
+            obs = (
+                position, 0, 0, 0, 0, 0, 0, 0,
+                [0, 0], 0, 0, 0,
+                # store heros
+                [0, 0, 0, 0, 0],
+                # bench heroes
+                [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+                # board heroes
+                [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+                # underlords to pick
+                [0,0,0,0],
+                # local Items,
+                [0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],
+                [0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],
+                # items to pick
+                [0,0,0]
+            )
+            return obs
+
+        if position == -1:
+            position = 0
         phase = self.getGamePhase()
-        self.updateShop()
+
+        if phase not in ['select', 'choose']:
+            self.updateShop()
 
         health = None
 
@@ -527,7 +591,7 @@ class UnderlordInteract():
 
         underlordsPick = []
 
-        if gamePhase == 'choose':
+        if gamePhase == 2:
 
             underlords = self.underlords.checkUnderlords()
 
@@ -570,13 +634,13 @@ class UnderlordInteract():
                     if item.hero is not None:
                         heroID = item.hero.localID
 
-                    localItems.append(item.id + 1, heroID, item.coords[0] + 1, item.coords[1] + 1)
+                    localItems.append(item.ID + 1, heroID, item.coords[0] + 1, item.coords[1] + 1)
                 else:
                     localItems.append([0, 0, 0, 0, 0])
 
         itemPick = []
 
-        if gamePhase == 'select':
+        if gamePhase == 1:
 
             items = self.items.checkItems()
 
@@ -586,14 +650,24 @@ class UnderlordInteract():
         else:
             itemPick = [0, 0, 0]
 
-        position = self.finished()
+        reroll = 0
 
-        if position == -1:
-            position = 0
+        if self.freeRerollAvailable:
+            reroll = 1
+
+        lockedIn = 0
+
+        if self.lockedIn:
+            lockedIn = 1
+
+        rerolledItem = 0
+
+        if self.rerolledItem:
+            rerolledItem = 1
 
         obs = (
-            position, health, self.gold, self.level, self.remainingEXP, self.round, self.lockedIn, gamePhase,
-            heroToMove, itemToMove, self.rerolledItem,
+            position, health, self.gold, self.level, self.remainingEXP, self.round, lockedIn, gamePhase,
+            heroToMove, itemToMove, reroll, rerolledItem,
             # store heros
             shopHeros,
             # bench heroes
@@ -611,6 +685,7 @@ class UnderlordInteract():
             itemPick
         )
 
+        print(f"Time left: {self.HUD.getClockTimeLeft()}")
         return obs
 
     def act(self, action, x, y, selection):
@@ -733,7 +808,7 @@ class UnderlordInteract():
         if newRound > self.round:
             self.lockedIn = False
 
-        self.round = self.HUD.getRound()
+        self.round = newRound
         # self.gamePhase = self.gameStateLoader.getPhase()
 
         return self.gameStateLoader.getPhase()
@@ -933,7 +1008,7 @@ class UnderlordInteract():
             if self.lost == False and (itemCounts[1] > self.health):
                 self.lost = True
 
-        # self.freeRerollAvailable = self.shop.freeReroll() # note to do enable later
+        self.freeRerollAvailable = self.shop.freeReroll()  # note to do enable later
 
         newLevel = itemCounts[2]
 
@@ -1082,15 +1157,13 @@ class UnderlordInteract():
 
     def rerollStore(self):
 
-        if self.getGamePhase() not in self.StoreInteract and not self.checkState:
+        gamePhase = self.getGamePhase()
+
+        if gamePhase not in self.StoreInteract and not self.checkState:
             self.mediumPunish = True
             return -1
 
-        currHealth = self.healthcurr  # Health < self.health:  # Meaning we lost, so we have a free reroll
-
-        if self.freeRerollAvailable:
-            self.freeRerollAvailable = False
-        elif self.gold < 2:
+        if self.gold < 2:
             self.mediumPunish = True
             return -1
 
@@ -1619,4 +1692,4 @@ def openVision():
     root.mainloop()
 
 
-openVision()
+# openVision()

@@ -20,11 +20,11 @@ class state:
         gameScreen = imageGrab()
 
         combatCrop = gameScreen.crop((480, 35) + (600, 60))
-        selectionCrop = gameScreen.crop((240, 235) + (580, 340))
+
+        selectionCrop = gameScreen.crop((240, 235) + (580, 390))
 
         combatPhase = self.detectPhase(combatCrop, self.combatTemplates)
         selectionPhase = self.detectPhase(selectionCrop, self.selectionTemplates)
-
 
         if selectionPhase is not None:
             self.currentPhase = selectionPhase
@@ -43,7 +43,7 @@ class state:
 
         return templates
 
-    def detectGameEnd (self):
+    def detectGameEnd(self):
         gameScreen = imageGrab()
         placeCrop = gameScreen.crop((155, 300) + (350, 420))
 
@@ -52,8 +52,6 @@ class state:
             return placePhase
 
         return -1
-
-
 
     def detectPhase(self, img, template):
         # Convert from PIL image type to cv2

@@ -1,26 +1,12 @@
 from gym import spaces
 import gym
 
-import os
-import time
-import tkinter
-from threading import Event, Thread
 from tkinter import Frame, Tk, Label
 
-import numpy
-import win32gui
-from PIL import ImageTk, Image
+from ray.rllib.agents.ppo import DDPPOTrainer, ppo
+from ray.tune import register_env
 
-from Game_State import state
-from HUD import HUD
-from Shop import Shop
-
-from hero import Hero
-from Items import Items
-from Underlords import Underlords
-from pynput.mouse import Button, Controller as MouseController
-
-from item import Item
+from ray import tune
 
 from ray.rllib.utils.typing import EnvActionType, EnvObsType, EnvInfoDict
 import threading
@@ -44,6 +30,8 @@ class UnderlordEnv(threading.Thread):
 
         threading.Thread.__init__(self)
 
+        print("IT STARTED???")
+
         self.daemon = True
         # self.action_space = action_space
         # note to make sure 0's are reserved for n/a -> adding +1 to some values ( marked with a *)
@@ -58,6 +46,7 @@ class UnderlordEnv(threading.Thread):
              spaces.Discrete(6),  # gamePhase *
              spaces.MultiDiscrete([500, 3]),  # heroToMove: heroLocalID, isUnderlord
              spaces.Discrete([500]),  # itemToMove: localID*,
+             spaces.Discrete(2),  # has freeReroll
              spaces.Discrete(2),  # rerolled (item)
              # below are the store heros
              spaces.MultiDiscrete([71, 71, 71, 71, 71]),
@@ -121,9 +110,9 @@ class UnderlordEnv(threading.Thread):
         episode_id = self.start_episode(episode_id=episode_id)
         while True:  # not sure if it should be a literal loop buuuuuut?
             gameObservation = self.underlord.getObservation()  # needs to be implemented
-            gymObservation = self.transformObservation(gameObservation)  # needs to be implemented
+            # gymObservation = self.transformObservation(gameObservation)  # needs to be implemented
 
-            action = self.get_action(episode_id=episode_id, observation=gymObservation)
+            action = self.get_action(episode_id=episode_id, observation=gameObservation)
 
             # also needs to be implemented
             # gameObservation, reward = self.underlord.act(action=action[0], x=action[1], y=action[2],
@@ -135,7 +124,7 @@ class UnderlordEnv(threading.Thread):
             self.log_returns(episode_id=episode_id, reward=reward)
 
             if self.underlord.finished() != -1:
-                self.end_episode(episode_id=episode_id, observation=gymObservation)
+                self.end_episode(episode_id=episode_id, observation=gameObservation)
                 episode_id = self.start_episode(episode_id=None)
 
     def start_episode(self,
@@ -153,6 +142,7 @@ class UnderlordEnv(threading.Thread):
 
         if episode_id is None:
             episode_id = uuid.uuid4().hex
+            self.underlord.startNewGame()
 
         if episode_id in self._finished:
             raise ValueError(
@@ -207,6 +197,7 @@ class UnderlordEnv(threading.Thread):
             observation (obj): Current environment observation.
         """
 
+        self.underlord.returnToMainScreen()
         episode = self._get(episode_id)
         self._finished.add(episode.episode_id)
         episode.done(observation)
@@ -318,3 +309,53 @@ class _ExternalEnvEpisode:
         with self.results_avail_condition:
             self.data_queue.put_nowait(item)
             self.results_avail_condition.notify()
+
+
+register_env("my_env", lambda config: UnderlordEnv(config))
+
+# Adds the following updates to the `PPOTrainer` config in
+# rllib/agents/ppo/ppo.py.
+DEFAULT_CONFIG = ppo.PPOTrainer.merge_trainer_configs(
+    ppo.DEFAULT_CONFIG,
+    {
+        'env': 'my_env',
+        # During the sampling phase, each rollout worker will collect a batch
+        # `rollout_fragment_length * num_envs_per_worker` steps in size.
+        "rollout_fragment_length": 100,
+        # Vectorize the env (should enable by default since each worker has
+        # a GPU).
+        "num_envs_per_worker": 1,
+        # During the SGD phase, workers iterate over minibatches of this size.
+        # The effective minibatch size will be:
+        # `sgd_minibatch_size * num_workers`.
+        "sgd_minibatch_size": 50,
+        # Number of SGD epochs per optimization round.
+        "num_sgd_iter": 25,
+        # Download weights between each training step. This adds a bit of
+        # overhead but allows the user to access the weights from the trainer.
+        "keep_local_weights_in_sync": True,
+
+        # *** WARNING: configs below are DDPPO overrides over PPO; you
+        #     shouldn't need to adjust them. ***
+        # DDPPO requires PyTorch distributed.
+        "framework": "torch",
+        # The communication backend for PyTorch distributed.
+        "torch_distributed_backend": "gloo",
+        # Learning is no longer done on the driver process, so
+        # giving GPUs to the driver does not make sense!
+        "num_gpus": 0,
+        # Each rollout worker gets a GPU.
+        "num_gpus_per_worker": 0,
+        # Require evenly sized batches. Otherwise,
+        # collective allreduce could fail.
+        "truncate_episodes": True,
+        # This is auto set based on sample batch size.
+        "train_batch_size": -1,
+    },
+    _allow_unknown_configs=True,
+)
+
+tune.run(
+    DDPPOTrainer,
+    config=DEFAULT_CONFIG,
+)
