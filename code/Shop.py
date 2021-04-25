@@ -18,7 +18,7 @@ class Shop:
         super().__init__()
         self.classes = self.getClasses()
         self.model = self.createModel()
-        self.storeIconTemplates = self.loadIcons()
+        self.storeIconTemplates, self.freeRerollIcon = self.loadIcons()
         self.red = Image.open("../blank/red.jpg")
         self.gray = Image.open("../blank/gray.jpg")
 
@@ -101,16 +101,36 @@ class Shop:
 
         return False
 
+    def freeReroll(self):
+        gameScreen = imageGrab()
+        crop = gameScreen.crop((880, 120) + (975, 155))
+        crop.show()
+        img_cv = cv2.cvtColor(numpy.asarray(crop), cv2.COLOR_RGB2BGR)
+
+        hits = MTM.matchTemplates(self.freeRerollIcon,
+                                  img_cv,
+                                  method=cv2.TM_CCOEFF_NORMED,
+                                  N_object=1,
+                                  score_threshold=0.9,
+                                  maxOverlap=0,
+                                  searchBox=None)
+
+        if "free" in hits['TemplateName'].iloc[0]:
+            return True
+
+        return False
+
     def loadIcons(self):
         root = "../digits/store/"
-        iconList = []
+        storeStateList = []
 
         openIcon = cv2.imread(root + "open.jpg")
         closeIcon = cv2.imread(root + "close.jpg")
+        freeRerollIcon = cv2.imread(root + "/reroll/free.jpg")
 
-        iconList.append(("open", openIcon))
-        iconList.append(("close", closeIcon))
-        return iconList
+        storeStateList.append(("open", openIcon))
+        storeStateList.append(("close", closeIcon))
+        return storeStateList, ["free", freeRerollIcon]
 
     # Given a list of images, run a forward pass with CNN and return predictions
     def predict(self, imageList):
