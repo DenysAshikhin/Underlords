@@ -58,7 +58,7 @@ class UnderlordEnv(threading.Thread):
              spaces.Discrete(6),  # gamePhase *
              spaces.MultiDiscrete([500, 3]),  # heroToMove: heroLocalID, isUnderlord
              spaces.Discrete([500]),  # itemToMove: localID*,
-             spaces.Discrete(2), # rerolled (item)
+             spaces.Discrete(2),  # rerolled (item)
              # below are the store heros
              spaces.MultiDiscrete([71, 71, 71, 71, 71]),
              # below are the bench heroes
@@ -82,7 +82,7 @@ class UnderlordEnv(threading.Thread):
              spaces.MultiDiscrete([61, 14, 500, 4, 5]), spaces.MultiDiscrete([61, 14, 500, 4, 5]),
              spaces.MultiDiscrete([61, 14, 500, 4, 5]), spaces.MultiDiscrete([61, 14, 500, 4, 5]),
              # below are the items to pick from
-             spaces.MultiDiscrete([61,61,61]))
+             spaces.MultiDiscrete([61, 61, 61]))
         )
 
         self.action_space = spaces.MultiDiscrete(
