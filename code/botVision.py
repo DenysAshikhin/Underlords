@@ -105,9 +105,10 @@ class UnderlordInteract():
         self.smallPunish = False
         self.mediumPunish = False
         self.strongPunish = False
+        self.lost = False
 
-        self.localHeroID=1
-        self.localItemID=1
+        self.localHeroID = 1
+        self.localItemID = 1
 
         # make sure to close store before getting state!
         # possible states:
@@ -148,6 +149,7 @@ class UnderlordInteract():
         self.purchaseHistory = []
         self.gold = -1
         self.health = -1
+        self.remainingEXP = -1
         self.level = -1
         self.round = -1
         self.freeRerollUsed = False
@@ -171,7 +173,7 @@ class UnderlordInteract():
         # self.boardHeroes[:] = None
         self.boardHeroes = self.boardHeroes.tolist()
 
-        self.levelThresh = 2  # level threshold for tiering up a unit
+        self.levelThresh = 3  # level threshold for tiering up a unit
 
         self.hudLabel = None
         self.toBuy = None
@@ -414,12 +416,188 @@ class UnderlordInteract():
 
     def getObservation(self):
 
-        raise RuntimeError("not yet implemented lmao")
+        phase = self.getGamePhase()
+        self.updateShop()
+
+        health = None
+
+        if self.lost == False:
+            health = 100
+        else:
+            health = self.health
+
+        gamePhase = -1
+
+        if phase == 'select':
+            gamePhase = 1
+        elif phase == 'choose':
+            gamePhase = 2
+        elif phase == 'preparing':
+            gamePhase = 3
+        elif gamePhase == 'combat':
+            gamePhase = 4
+        elif gamePhase == 'countdown':
+            gamePhase = 5
+
+        heroToMove = None
+
+        if self.heroToMove is not None:
+
+            isUnderlord = 0
+
+            if self.heroToMove.underlord:
+                isUnderlord = 2
+            else:
+                isUnderlord = 1
+
+            heroToMove = [self.heroToMove.id + 1, isUnderlord]
+        else:
+            heroToMove = [0, 0]
+
+        itemToMove = None
+
+        if self.itemToMove == None:
+            itemToMove = 0
+        else:
+            itemToMove = self.itemToMove.localID
+
+        shopImages, classes, value, inspect, statesList = self.shopChoices
+        shopHeros = []
+
+        for idx in range(5):
+            shopHeros.append(statesList[idx] + 1)
+
+        benchHeros = []
+        for i in range(8):
+            tempHero = None
+
+            if self.benchHeroes[i] is not None:
+
+                isUnderlord = 0
+
+                if self.benchHeroes[i].underlord:
+                    isUnderlord = 2
+                else:
+                    isUnderlord = 1
+
+                tempHero = [self.benchHeroes[i].id + 1, self.benchHeroes[i].localID, self.benchHeroes[i].tier + 1,
+                            self.benchHeroes[i].gold + 1, self.benchHeroes[i].item.localID,
+                            self.benchHeroes[i].coords[0] + 1,
+                            self.benchHeroes[i].coords[1] + 1, isUnderlord]
+            else:
+                tempHero = [0, 0, 0, 0, 0, 0, 0, 0]
+            benchHeros.append(tempHero)
+
+        boardHeroes = []
+        for i in range(4):
+            for j in range(8):
+                tempHero = None
+
+                if self.boardHeroes[i][j] is not None:
+
+                    isUnderlord = 0
+
+                    if self.boardHeroes[i][j].underlord:
+                        isUnderlord = 2
+                    else:
+                        isUnderlord = 1
+
+                    tempHero = [self.boardHeroes[i][j].id + 1, self.boardHeroes[i][j].localID,
+                                self.boardHeroes[i][j].tier + 1, self.boardHeroes[i][j].gold + 1,
+                                self.boardHeroes[i][j].item.localID, self.boardHeroes[i][j].coords[0] + 1,
+                                self.boardHeroes[i][j].coords[1] + 1, isUnderlord]
+                else:
+                    tempHero = [0, 0, 0, 0, 0, 0, 0, 0]
+                boardHeroes.append(tempHero)
+
+        underlordsPick = []
+
+        if gamePhase == 'choose':
+
+            underlords = self.underlords.checkUnderlords()
+
+            for i in range(4):
+                underlord = underlords[0]
+
+                underlordID = None
+
+                if underlord == 'aggressive_tank':
+                    underlordID = 63
+                elif underlord == 'healing_tank':
+                    underlordID = 64
+                elif underlord == 'damage_support':
+                    underlordID = 65
+                elif underlord == 'healing_support':
+                    underlordID = 66
+                elif underlord == 'healing_stealing':
+                    underlordID = 67
+                elif underlord == 'rapid_furball':
+                    underlordID = 68
+                elif underlord == 'high_damage_dealer':
+                    underlordID = 69
+                elif underlord == 'support_damage_dealer':
+                    underlordID = 70
+                else:
+                    raise RuntimeError("Found a no match for underlord in obs!")
+                underlordsPick.append(underlordID)
+
+        else:
+            underlordsPick = [0, 0, 0, 0]
+
+        localItems = []
+
+        for i in range(3):
+            for j in range(4):
+                if self.itemObjects[i][j] is not None:
+                    item = self.itemObjects[i][j]
+                    heroID = 0
+
+                    if item.hero is not None:
+                        heroID = item.hero.localID
+
+                    localItems.append(item.id + 1, heroID, item.coords[0] + 1, item.coords[1] + 1)
+                else:
+                    localItems.append([0, 0, 0, 0, 0])
+
+        itemPick = []
+
+        if gamePhase == 'select':
+
+            items = self.items.checkItems()
+
+            for item in items:
+                itemPick.append(self.itemIDmap[item])
+
+        else:
+            itemPick = [0, 0, 0]
+
+        obs = (
+            0, health, self.gold, self.level, self.remainingEXP, self.round, self.lockedIn, gamePhase,
+            heroToMove, itemToMove, self.rerolledItem,
+            # store heros
+            shopHeros,
+            # bench heroes
+            benchHeros[0], benchHeros[1], benchHeros[2], benchHeros[3], benchHeros[4], benchHeros[5], benchHeros[6],
+            benchHeros[7],
+            # board heroes
+            boardHeroes[0], boardHeroes[1], boardHeroes[2], boardHeroes[3], boardHeroes[4], boardHeroes[5],
+            boardHeroes[6], boardHeroes[7], boardHeroes[8], boardHeroes[9],
+            # underlords to pick
+            underlordsPick,
+            # local Items,
+            localItems[0], localItems[1], localItems[2], localItems[3], localItems[4], localItems[5],
+            localItems[6], localItems[7], localItems[8], localItems[9], localItems[10], localItems[11],
+            # items to pick
+            itemPick
+        )
+
+        return obs
 
     def getGamePhase(self):
 
         self.closeStore()
         time.sleep(self.shopSleepTime)
+        self.round = self.HUD.getRound()
         # self.gamePhase = self.gameStateLoader.getPhase()
 
         return self.gameStateLoader.getPhase()
@@ -611,11 +789,16 @@ class UnderlordInteract():
 
         # itemImage = ImageTk.PhotoImage(itemImage)
         tempString = "\nUnit Count %d" % itemCounts[2] + "\nGold Count: %d" % itemCounts[0] \
-                     + "\nHealth Count: %d" % itemCounts[1]
+                     + "\nHealth Count: %d" % itemCounts[1] + "\nRemaining EXP: %d" % (itemCounts[4] - itemCounts[3])
         self.hudLabel.config(text=tempString)
         self.gold = itemCounts[0]
+
+        if self.lost == False and (itemCounts[1] > self.health):
+            self.lost = True
+
         self.level = itemCounts[2]
         self.health = itemCounts[1]
+        self.remainingEXP = (itemCounts[4] - itemCounts[3])
 
     def sellHero(self, x=-1, y=-1):
 
@@ -1094,36 +1277,40 @@ class UnderlordInteract():
         for x in range(8):
 
             if self.benchHeroes[x] is None:
-
-                fullHero = self.underlords.underlordData[classes[statesList[idx]]]
-
-                melee = False
-                ranged = False
-                preventMana = False
-                gold = fullHero['goldCost']
-
-                if fullHero['attackRange'] == 1:
-                    melee = True
-                else:
-                    ranged = True
-
-                if 'prevent_mana_items' in fullHero:
-                    preventMana = fullHero['prevent_mana_items']
-
-                self.benchHeroes[x] = Hero(classes[statesList[idx]], (x, -1),
-                                           self.profilePics[classes[statesList[idx]]],
-                                           ID=statesList[idx],
-                                           gold=gold,
-                                           melee=melee,
-                                           ranged=ranged,
-                                           preventMana=preventMana,
-                                           localID=self.localHeroID)
+                self.benchHeroes[x] = self.createHero(classes[statesList[idx]], statesList[idx], x, -1,
+                                                      self.localHeroID)
                 self.localHeroID += 1
 
                 self.benchLabels[x].config(text=f"{self.benchHeroes[x].name}",
                                            image=self.benchHeroes[x].image)
                 self.updateShop()
                 return
+
+    def createHero(self, heroName, uniqueID, x, y, localID):
+
+        fullHero = self.underlords.underlordData[heroName]
+
+        melee = False
+        ranged = False
+        preventMana = False
+        gold = fullHero['goldCost']
+
+        if fullHero['attackRange'] == 1:
+            melee = True
+        else:
+            ranged = True
+
+        if 'prevent_mana_items' in fullHero:
+            preventMana = fullHero['prevent_mana_items']
+
+        return Hero(heroName, (x, y),
+                    self.profilePics[heroName],
+                    ID=uniqueID,
+                    gold=gold,
+                    melee=melee,
+                    ranged=ranged,
+                    preventMana=preventMana,
+                    localID=localID)
 
     def boardLevelUp(self, idx):
 
