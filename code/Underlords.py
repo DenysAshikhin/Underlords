@@ -6,6 +6,7 @@ import numpy
 from main import imageGrab
 import json
 
+
 class Underlords:
     def __init__(self):
         super().__init__()
@@ -91,17 +92,17 @@ class Underlords:
             underlordsList.append(underlordName)
             # print("Item: %s" % underlordName)
 
-        #print(underlordsList)
+        # print(underlordsList)
 
         return underlordsList
 
     def loadUnderlords(self):
         root = os.path.join(os.path.dirname(os.getcwd()), "underlords")
         templateList = []
-       # print(root)
+        # print(root)
         for file in os.listdir(root):
             img = cv2.imread(os.path.join(root, file))
-            templatename = file[0:len(file)-4]
+            templatename = file[0:len(file) - 4]
             templateList.append((templatename, img))
 
         return templateList
@@ -133,4 +134,3 @@ class Underlords:
             return underlordName
 
         return None
-
