@@ -480,15 +480,25 @@ class UnderlordInteract():
                 else:
                     isUnderlord = 1
 
-                tempHero = [self.benchHeroes[i].id + 1, self.benchHeroes[i].localID, self.benchHeroes[i].tier + 1,
-                            self.benchHeroes[i].gold + 1, self.benchHeroes[i].item.localID,
-                            self.benchHeroes[i].coords[0] + 1,
-                            self.benchHeroes[i].coords[1] + 1, isUnderlord]
+                itemID = 0
+
+                if self.benchHeroes[i].item is not None:
+                    itemID = self.benchHeroes[i].item.localID
+
+                tempHero = [self.benchHeroes[i].id + 1, self.benchHeroes[i].localID, self.benchHeroes[i].tier,
+                            self.benchHeroes[i].gold, itemID,
+                            self.benchHeroes[i].coords[0],
+                            self.benchHeroes[i].coords[1], isUnderlord]
             else:
                 tempHero = [0, 0, 0, 0, 0, 0, 0, 0]
             benchHeros.append(tempHero)
 
-        boardHeroes = []
+        boardHeroes = [[0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0, 0]]
+        idx = 0
+
         for i in range(4):
             for j in range(8):
                 tempHero = None
@@ -502,13 +512,18 @@ class UnderlordInteract():
                     else:
                         isUnderlord = 1
 
+                    itemID = 0
+
+                    if self.boardHeroes[i][j].item is not None:
+                        itemID = self.boardHeroes[i][j].item.localID
+
                     tempHero = [self.boardHeroes[i][j].id + 1, self.boardHeroes[i][j].localID,
-                                self.boardHeroes[i][j].tier + 1, self.boardHeroes[i][j].gold + 1,
-                                self.boardHeroes[i][j].item.localID, self.boardHeroes[i][j].coords[0] + 1,
-                                self.boardHeroes[i][j].coords[1] + 1, isUnderlord]
-                else:
-                    tempHero = [0, 0, 0, 0, 0, 0, 0, 0]
-                boardHeroes.append(tempHero)
+                                self.boardHeroes[i][j].tier, self.boardHeroes[i][j].gold,
+                                itemID, self.boardHeroes[i][j].coords[0],
+                                self.boardHeroes[i][j].coords[1], isUnderlord]
+
+                    boardHeroes[idx] = tempHero
+                    idx += 1
 
         underlordsPick = []
 
@@ -571,8 +586,13 @@ class UnderlordInteract():
         else:
             itemPick = [0, 0, 0]
 
+        position = self.finished()
+
+        if position == -1:
+            position = 0
+
         obs = (
-            0, health, self.gold, self.level, self.remainingEXP, self.round, self.lockedIn, gamePhase,
+            position, health, self.gold, self.level, self.remainingEXP, self.round, self.lockedIn, gamePhase,
             heroToMove, itemToMove, self.rerolledItem,
             # store heros
             shopHeros,
@@ -684,7 +704,6 @@ class UnderlordInteract():
             elif finished == 8:
                 reward == firstPlace * 0
 
-
         if self.gamePhase in ['select', 'choose']:
             reward -= self.timeRunningOut()
 
@@ -704,7 +723,6 @@ class UnderlordInteract():
             return - 100
         else:
             return 0
-
 
     def getGamePhase(self):
 
@@ -911,10 +929,11 @@ class UnderlordInteract():
         self.hudLabel.config(text=tempString)
         self.gold = itemCounts[0]
 
-        if self.lost == False and (itemCounts[1] > self.health):
-            self.lost = True
+        if self.health != -1:
+            if self.lost == False and (itemCounts[1] > self.health):
+                self.lost = True
 
-        self.freeRerollAvailable = self.shop.freeReroll()
+        # self.freeRerollAvailable = self.shop.freeReroll() # note to do enable later
 
         newLevel = itemCounts[2]
 
@@ -1373,6 +1392,7 @@ class UnderlordInteract():
             self.strongPunish = True
             return -1
 
+        self.openStore()
         validIDX = [0, 1, 2, 3, 4]
 
         if idx not in validIDX:
