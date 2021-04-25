@@ -134,7 +134,7 @@ class UnderlordEnv(threading.Thread):
             reward = self.underlord.act(action=action[0], x=action[1], y=action[2], selection=action[3])
             self.log_returns(episode_id=episode_id, reward=reward)
 
-            if self.underlord.finished != -1:
+            if self.underlord.finished() != -1:
                 self.end_episode(episode_id=episode_id, observation=gymObservation)
                 episode_id = self.start_episode(episode_id=None)
 

@@ -51,7 +51,7 @@ class state:
         if placePhase is not None:
             return placePhase
 
-        return None
+        return -1
 
 
 

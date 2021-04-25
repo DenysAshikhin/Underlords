@@ -154,6 +154,7 @@ class UnderlordInteract():
         self.round = -1
         self.freeRerollAvailable = False
         self.lockedIn = False
+        self.leveledUp = False
 
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -411,8 +412,7 @@ class UnderlordInteract():
         # self.itemToMove = Item("dragon_lance", (0, 0), ID=123)
         #
         # self.updateHeroItem(tempHero)
-        self.health = self.health - 1
-        self.freeRerollAvailable = False
+        print(self.getObservation())
 
     def getObservation(self):
 
@@ -596,6 +596,8 @@ class UnderlordInteract():
     def act(self, action, x, y, selection):
 
         tieredUp = None
+        firstPlace = 1000
+        earnedMoney = -1
 
         if action == 0:
             self.rerollStore()
@@ -606,7 +608,7 @@ class UnderlordInteract():
         elif action == 3:
             tieredUp = self.buy(x)
         elif action == 4:
-            self.sellHero(x, y)
+            earnedMoney = self.sellHero(x, y)
         elif action == 5:
             self.selectItem(x, y, selection)
         elif action == 6:
@@ -616,52 +618,93 @@ class UnderlordInteract():
         elif action == 8:
             self.moveUnit(x, y)
 
-        timeRunOut = self.timeRunningOut()
-
         reward = 0
 
         if self.smallPunish:
             self.smallPunish = False
-            reward -= 10
+            reward -= firstPlace * 0.01
         elif self.mediumPunish:
             self.mediumPunish = False
-            reward -= 100
+            reward -= firstPlace * 0.065
         elif self.strongPunish:
             self.strongPunish = False
-            reward -= 500
+            reward -= firstPlace * 0.1
 
         numHeroes = 0
 
-        for i in range(4):
-            for j in range(8):
-                if self.boardHeroes[i][j] is not None:
-                    numHeroes += 1
+        if not self.leveledUp:
+            for i in range(4):
+                for j in range(8):
+                    if self.boardHeroes[i][j] is not None:
+                        numHeroes += 1
 
-        reward -= (self.level - numHeroes) * 20
+            reward -= (self.level - numHeroes) * (firstPlace * 0.05)
 
-        if self.gold > 35:
-            reward -= 100
-        elif self.gold >= 30:
-            reward += 30
-        elif self.gold >= 20:
-            reward += 20
-        elif self.gold >= 10:
-            reward += 10
+        if action in [0, 2, 3]:
+            if self.gold > 40:
+                reward -= 0.05
+            elif self.gold >= 30:
+                reward += firstPlace * 0.02
+            elif self.gold >= 20:
+                reward += firstPlace * 0.005
+            elif self.gold >= 10:
+                reward += firstPlace * 0.001
+
+        # note - to do : take into account tier of unit tiered up
 
         if tieredUp == 10:
-            reward +=
+            reward += firstPlace * 0.01
         elif tieredUp == 11:
-            reward +=
+            reward += firstPlace * 0.03
 
-            
+        if self.leveledUp:
+            reward += firstPlace * 0.03
+
+        if earnedMoney != -1:
+            reward += firstPlace * (1 - earnedMoney / 9) * 0.001
+
+        finished = self.finished()
+
+        if finished != -1:
+
+            if finished == 1:
+                reward == firstPlace
+            elif finished == 2:
+                reward == firstPlace * 0.9
+            elif finished == 3:
+                reward == firstPlace * 0.75
+            elif finished == 4:
+                reward == firstPlace * 0.5
+            elif finished == 5:
+                reward == firstPlace * 0.3
+            elif finished == 6:
+                reward == firstPlace * 0.2
+            elif finished == 7:
+                reward == firstPlace * 0.1
+            elif finished == 8:
+                reward == firstPlace * 0
 
 
+        if self.gamePhase in ['select', 'choose']:
+            reward -= self.timeRunningOut()
 
         return reward
 
+    def finished(self):
+
+        return self.gameStateLoader.detectGameEnd()
+
     def timeRunningOut(self):
 
-        raise RuntimeError("not implemented")
+        timeLeft = self.HUD.getClockTimeLeft()
+
+        if timeLeft <= 5:
+
+            self.selectItem(selection=0)
+            return - 100
+        else:
+            return 0
+
 
     def getGamePhase(self):
 
@@ -873,6 +916,13 @@ class UnderlordInteract():
 
         self.freeRerollAvailable = self.shop.freeReroll()
 
+        newLevel = itemCounts[2]
+
+        if newLevel > self.level:
+            self.leveledUp = True
+        else:
+            self.leveledUp = False
+
         self.level = itemCounts[2]
         self.health = itemCounts[1]
         self.remainingEXP = (itemCounts[4] - itemCounts[3])
@@ -910,12 +960,16 @@ class UnderlordInteract():
                 self.mediumPunish = True
                 return -1
 
+        earnedMoney = 0
+
         if y == -1:
             mouse1.position = (self.benchX + (self.benchXOffset * x), self.benchY)
+            earnedMoney = self.benchHeroes[x].gold + (self.benchHeroes[x].tier - 1) * 2
             self.resetLabel(self.benchHeroes[x])
             self.heroToMove = None
         else:
             mouse1.position = (self.boardX + (self.boardXOffset * y), self.boardY + (self.boardYOffset * x))
+            earnedMoney = self.boardHeroes[x][y].gold + (self.boardHeroes[x][y].tier - 1) * 2
             self.resetLabel(self.boardHeroes[x][y])
             self.heroToMove = None
         # print(f"Moving to board {mouse1.position}")
@@ -931,6 +985,7 @@ class UnderlordInteract():
         time.sleep(self.mouseSleepTime)
 
         mouse1.release(Button.left)
+        return earnedMoney
 
     def moveGameHero(self, hero, newX, newY):
 
