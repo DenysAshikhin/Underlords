@@ -103,19 +103,18 @@ class Shop:
 
     def freeReroll(self):
         gameScreen = imageGrab()
-        crop = gameScreen.crop((880, 120) + (975, 155))
-        crop.show()
+        crop = gameScreen.crop((880, 140) + (975, 185))
         img_cv = cv2.cvtColor(numpy.asarray(crop), cv2.COLOR_RGB2BGR)
 
         hits = MTM.matchTemplates(self.freeRerollIcon,
                                   img_cv,
                                   method=cv2.TM_CCOEFF_NORMED,
-                                  N_object=1,
+                                  N_object=float("inf"),
                                   score_threshold=0.9,
                                   maxOverlap=0,
                                   searchBox=None)
 
-        if "free" in hits['TemplateName'].iloc[0]:
+        if len(hits['TemplateName']) > 0:
             return True
 
         return False
@@ -126,11 +125,11 @@ class Shop:
 
         openIcon = cv2.imread(root + "open.jpg")
         closeIcon = cv2.imread(root + "close.jpg")
-        freeRerollIcon = cv2.imread(root + "/reroll/free.jpg")
+        freeRerollIcon = cv2.imread(root + "reroll/free.jpg")
 
         storeStateList.append(("open", openIcon))
         storeStateList.append(("close", closeIcon))
-        return storeStateList, ["free", freeRerollIcon]
+        return storeStateList, [("free", freeRerollIcon)]
 
     # Given a list of images, run a forward pass with CNN and return predictions
     def predict(self, imageList):
