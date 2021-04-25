@@ -152,7 +152,7 @@ class UnderlordInteract():
         self.remainingEXP = -1
         self.level = -1
         self.round = -1
-        self.freeRerollUsed = False
+        self.freeRerollAvailable = False
         self.lockedIn = False
 
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
@@ -412,7 +412,7 @@ class UnderlordInteract():
         #
         # self.updateHeroItem(tempHero)
         self.health = self.health - 1
-        self.freeRerollUsed = False
+        self.freeRerollAvailable = False
 
     def getObservation(self):
 
@@ -593,10 +593,85 @@ class UnderlordInteract():
 
         return obs
 
+    def act(self, action, x, y, selection):
+
+        tieredUp = None
+
+        if action == 0:
+            self.rerollStore()
+        elif action == 1:
+            self.lockIn()
+        elif action == 2:
+            self.clickUp()
+        elif action == 3:
+            tieredUp = self.buy(x)
+        elif action == 4:
+            self.sellHero(x, y)
+        elif action == 5:
+            self.selectItem(x, y, selection)
+        elif action == 6:
+            self.selectItem(x, y, selection)
+        elif action == 7:
+            self.moveUnit(x, y)
+        elif action == 8:
+            self.moveUnit(x, y)
+
+        timeRunOut = self.timeRunningOut()
+
+        reward = 0
+
+        if self.smallPunish:
+            self.smallPunish = False
+            reward -= 10
+        elif self.mediumPunish:
+            self.mediumPunish = False
+            reward -= 100
+        elif self.strongPunish:
+            self.strongPunish = False
+            reward -= 500
+
+        numHeroes = 0
+
+        for i in range(4):
+            for j in range(8):
+                if self.boardHeroes[i][j] is not None:
+                    numHeroes += 1
+
+        reward -= (self.level - numHeroes) * 20
+
+        if self.gold > 35:
+            reward -= 100
+        elif self.gold >= 30:
+            reward += 30
+        elif self.gold >= 20:
+            reward += 20
+        elif self.gold >= 10:
+            reward += 10
+
+        if tieredUp == 10:
+            reward +=
+        elif tieredUp == 11:
+            reward +=
+
+            
+
+
+
+        return reward
+
+    def timeRunningOut(self):
+
+        raise RuntimeError("not implemented")
+
     def getGamePhase(self):
 
         self.closeStore()
-        time.sleep(self.shopSleepTime)
+
+        newRound = self.HUD.getRound()
+
+        if newRound > self.round:
+            self.lockedIn = False
+
         self.round = self.HUD.getRound()
         # self.gamePhase = self.gameStateLoader.getPhase()
 
@@ -796,6 +871,8 @@ class UnderlordInteract():
         if self.lost == False and (itemCounts[1] > self.health):
             self.lost = True
 
+        self.freeRerollAvailable = self.shop.freeReroll()
+
         self.level = itemCounts[2]
         self.health = itemCounts[1]
         self.remainingEXP = (itemCounts[4] - itemCounts[3])
@@ -935,12 +1012,10 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        currHealth = self.health
+        currHealth = self.healthcurr  # Health < self.health:  # Meaning we lost, so we have a free reroll
 
-        self.updateShop()
-
-        if currHealth < self.health:  # Meaning we lost, so we have a free reroll
-            self.freeRerollUsed = True
+        if self.freeRerollAvailable:
+            self.freeRerollAvailable = False
         elif self.gold < 2:
             self.mediumPunish = True
             return -1
@@ -1243,8 +1318,6 @@ class UnderlordInteract():
             self.strongPunish = True
             return -1
 
-        print('got past game phase')
-
         validIDX = [0, 1, 2, 3, 4]
 
         if idx not in validIDX:
@@ -1272,7 +1345,10 @@ class UnderlordInteract():
 
         if result == 10:  # meaning it tiered up, no need to create a new underlord on bench
             self.updateShop()
-            return 1
+            return 10
+        elif result == 11:
+            self.updateShop()
+            return 11
 
         for x in range(8):
 
@@ -1315,7 +1391,8 @@ class UnderlordInteract():
     def boardLevelUp(self, idx):
 
         # Adding +1 to represent the shop unit coming in
-        board = {"tierTwo": 0, "tierOne": 0 + 1, "tierTwoHeroes": [], "tierOneHeroes": [], "tieredUp": False}
+        board = {"tierTwo": 0, "tierOne": 0 + 1, "tierTwoHeroes": [], "tierOneHeroes": [], "tieredUp2": False,
+                 "tieredUp3": False}
         shopImages, classes, value, inspect, statesList = self.shopChoices
 
         for i in range(4):
@@ -1382,11 +1459,13 @@ class UnderlordInteract():
             raise RuntimeError("Wtf is this even. Note to come back to later?")
             return -1
 
-        if boardScan["tieredUp"] == True:
+        if boardScan["tieredUp2"] == True:
             print('fuck 3')
             return 10  # The shop unit will be consumed to tier up the units strictly on the board, bench is
             # untouched - NOTE - note - make sure bench labels are not updated as a result of this in future
             # make seperate function to update board labels!
+        if boardScan["tieredUp3"] == True:
+            return 11
 
         bench = {"tierTwo": boardScan["tierTwo"], "tierOne": boardScan["tierOne"],
                  "tierTwoHeroes": boardScan["tierTwoHeroes"],
@@ -1430,7 +1509,7 @@ class UnderlordInteract():
             #     self.benchLabels[bench["tierTwoHeroes"][0].coords[0]].config(bg="yellow")
             self.updateHeroLabel(bench["tierTwoHeroes"][0])  # Updating label to for color to indicate tier
 
-            tieredUp = 10
+            tieredUp = 11
 
             for x in range(1, len(bench["tierTwoHeroes"])):
                 specificHero = bench["tierTwoHeroes"][x]
