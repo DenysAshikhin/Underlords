@@ -158,6 +158,8 @@ class UnderlordInteract():
 
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
+        # self.shopImages
+
         self.shopLabels = []
         self.shopImages = []
         self.benchLabels = []
