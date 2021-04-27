@@ -1,13 +1,22 @@
 # Adds the following updates to the `PPOTrainer` config in
 # rllib/agents/ppo/ppo.py.
-from ray.experimental.client import ray
+
 from ray.rllib.agents import with_common_config
 from ray.rllib.agents.ppo import ppo, DDPPOTrainer
 from ray.rllib.agents.ppo import PPOTrainer
 from ray.rllib.env import PolicyServerInput
 from ray.rllib.examples.custom_metrics_and_callbacks import MyCallbacks
+from ray.tune.logger import pretty_print
 
 from environment import UnderlordEnv
+
+
+import argparse
+parser = argparse.ArgumentParser(description='Optional app description')
+parser.add_argument('-ip', type=str,
+                    help='IP of this device')
+
+args = parser.parse_args()
 
 # DEFAULT_CONFIG = ppo.PPOTrainer.merge_trainer_configs(
 #     ppo.DEFAULT_CONFIG,
@@ -111,13 +120,14 @@ DEFAULT_CONFIG = with_common_config({
     "_fake_gpus": False,
     # Use the connector server to generate experiences.
     "input": (
-        lambda ioctx: PolicyServerInput(ioctx, 'localhost', 55555)
+        lambda ioctx: PolicyServerInput(ioctx, args.ip, 55555)
     ),
     # Use a single worker process to run the server.
     "num_workers": 0,
     # Disable OPE, since the rollouts are coming from online clients.
     "input_evaluation": [],
     "callbacks": MyCallbacks,
+    "env_config": {"sleep": True},
 })
 
 # DEFAULT_CONFIG["num_workers"] = 1
@@ -129,5 +139,7 @@ DEFAULT_CONFIG = with_common_config({
 
 # ray.init()
 # trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
+print(f"runnign on: {args.ip}:55555")
 trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
-trainer.train()
+print(pretty_print(trainer.train()))
+
