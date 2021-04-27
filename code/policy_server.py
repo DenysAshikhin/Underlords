@@ -103,6 +103,7 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
+        "use_lstm": True
     },
     # Coefficient of the entropy regularizer.
     "entropy_coeff": 0.0,
@@ -118,7 +119,7 @@ DEFAULT_CONFIG = with_common_config({
     # Target value for KL divergence.
     "kl_target": 0.01,
     # Whether to rollout "complete_episodes" or "truncate_episodes".
-    "batch_mode": "truncate_episodes",
+    "batch_mode": "complete_episodes",
     # Which observation filter to apply to the observation.
     "observation_filter": "NoFilter",
     # Uses the sync samples optimizer instead of the multi-gpu one. This is
