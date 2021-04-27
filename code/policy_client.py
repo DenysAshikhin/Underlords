@@ -4,7 +4,15 @@ from ray.tune.registry import register_env
 
 from environment import UnderlordEnv
 
-client = PolicyClient(address='http://localhost:55555')
+import argparse
+parser = argparse.ArgumentParser(description='Optional app description')
+parser.add_argument('-ip', type=str,
+                    help='IP of this device')
+
+args = parser.parse_args()
+
+
+client = PolicyClient(address=f"http://{args.ip}:55555")
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 

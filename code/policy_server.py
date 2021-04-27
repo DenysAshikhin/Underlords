@@ -1,6 +1,6 @@
 # Adds the following updates to the `PPOTrainer` config in
 # rllib/agents/ppo/ppo.py.
-
+import ray
 from ray.rllib.agents import with_common_config
 from ray.rllib.agents.ppo import ppo, DDPPOTrainer
 from ray.rllib.agents.ppo import PPOTrainer
@@ -53,7 +53,17 @@ args = parser.parse_args()
 #         "truncate_episodes": True,
 #         # This is auto set based on sample batch size.
 #         "train_batch_size": -1,
-
+#         # Use the connector server to generate experiences.
+#         # "input": (
+#         #     lambda ioctx: PolicyServerInput(ioctx, args.ip, 55555)
+#         # ),
+#         # Use a single worker process to run the server.
+#         "num_workers": 1,
+#         # Disable OPE, since the rollouts are coming from online clients.
+#         "input_evaluation": [],
+#         "callbacks": MyCallbacks,
+#         "env_config": {"sleep": True},
+#         'env': UnderlordEnv
 #     },
 #     _allow_unknown_configs=True,
 # )
@@ -128,6 +138,7 @@ DEFAULT_CONFIG = with_common_config({
     "input_evaluation": [],
     "callbacks": MyCallbacks,
     "env_config": {"sleep": True},
+    "framework": "torch"
 })
 
 # DEFAULT_CONFIG["num_workers"] = 1
@@ -136,6 +147,9 @@ DEFAULT_CONFIG = with_common_config({
 # DEFAULT_CONFIG['remote_workers'] = 1
 # DEFAULT_CONFIG["input"] = lambda ioctx: PolicyServerInput(ioctx, 'localhost', 55555)
 # print(DEFAULT_CONFIG)
+
+# ray.init()
+
 
 # ray.init()
 # trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
