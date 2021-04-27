@@ -145,13 +145,16 @@ testpath==0.4.4
 threadpoolctl==2.1.0
 tifffile==2020.12.4
 toml==0.10.1
+torch>=1.7.0
+torchaudio>=0.7.0
+torchvision>=0.8.1
 tornado==6.0.4
 tqdm==4.54.0
 traitlets==5.0.4
 typing-extensions==3.7.4.3
 urllib3==1.25.11
 uvicorn==0.13.4
-vboxapi==1.0
+vboxapi>=1.0
 wcwidth==0.2.5
 webencodings==0.5.1
 Werkzeug==1.0.1
