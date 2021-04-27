@@ -537,16 +537,19 @@ class UnderlordInteract():
         self.updateWindowCoords()
 
         mouse1.position = (self.shopX, self.shopY + 720)
+        time.sleep(self.shopSleepTime)
         mouse1.click(Button.left, 1)
 
         time.sleep(self.shopSleepTime)
 
         mouse1.position = (self.x + 700, self.shopY + 200)
+        time.sleep(self.shopSleepTime)
         mouse1.click(Button.left, 1)
 
         time.sleep(self.shopSleepTime)
 
         mouse1.position = (self.shopX, self.shopY + 720)
+        time.sleep(self.shopSleepTime)
         mouse1.click(Button.left, 1)
         flag = True
 
