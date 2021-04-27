@@ -136,15 +136,14 @@ DEFAULT_CONFIG = with_common_config({
     "num_workers": 0,
     # Disable OPE, since the rollouts are coming from online clients.
     "input_evaluation": [],
-    "callbacks": MyCallbacks,
-    "env_config": {"sleep": True},
+    # "callbacks": MyCallbacks,
+    "env_config": {"sleep": True, "framework": 'torch'},
     "framework": "torch"
 })
 
 # DEFAULT_CONFIG["num_workers"] = 1
 # DEFAULT_CONFIG['env'] = UnderlordEnv
 # DEFAULT_CONFIG['create_env_on_driver'] = True
-# DEFAULT_CONFIG['remote_workers'] = 1
 # DEFAULT_CONFIG["input"] = lambda ioctx: PolicyServerInput(ioctx, 'localhost', 55555)
 # print(DEFAULT_CONFIG)
 

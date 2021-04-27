@@ -100,7 +100,7 @@ class UnderlordEnv(ExternalEnv):
         self._episodes = {}
         self._finished = set()
         self._results_avail_condition = threading.Condition()
-        self._max_concurrent_episodes = 1  # maybe maybe not, no clue lmao
+        self._max_concurrent_episodes = 3  # maybe maybe not, no clue lmao
 
         self.root = Tk()
         self.root.resizable(0, 0)

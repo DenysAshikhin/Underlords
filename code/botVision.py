@@ -426,7 +426,6 @@ class UnderlordInteract():
 
         self.gameStateLoader.currentPhase = None
 
-
     def startNewGame(self):
         self.updateWindowCoords()
 
@@ -469,12 +468,12 @@ class UnderlordInteract():
                 [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
                 # underlords to pick
-                [0,0,0,0],
+                [0, 0, 0, 0],
                 # local Items,
-                [0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],
-                [0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],
+                [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0],
                 # items to pick
-                [0,0,0]
+                [0, 0, 0]
             )
             return obs
 
@@ -860,6 +859,11 @@ class UnderlordInteract():
                 print('break 3')
                 return -1
 
+            if x > 2 or y > 3:
+                self.mediumPunish = True
+                print('uh oh 3')
+                return -1
+
             if self.itemObjects[x][y] is None:
                 # print("there is no item to select here!")
                 self.mediumPunish = True
@@ -1046,12 +1050,17 @@ class UnderlordInteract():
             else:
                 x, y = self.heroToMove.coords
         else:
+
+            check = self.boardHeroCoordCheck(x,y)
+            if check == -1:
+                return check
+
             if y == -1:
                 if self.benchHeroes[x] is None:
                     # print(f"No hero on bench spot {x + 1} to sell!")
                     self.mediumPunish = True
                     return -1
-            elif self.boardheroes[x][y] is None:
+            elif self.boardHeroes[x][y] is None:
                 # print(f"No hero on board spot {x + 1}-{y + 1} to sell!")
                 self.mediumPunish = True
                 return -1
@@ -1355,6 +1364,11 @@ class UnderlordInteract():
                     self.heroToMove = None
                     return -1
             else:
+
+                check = self.boardHeroCoordCheck(x, y)
+                if check == -1:
+                    return check
+
                 if self.boardHeroes[x][y] is not None:  # Making sure board spot has a hero
                     self.heroToMove = self.boardHeroes[x][y]
                 else:
@@ -1363,6 +1377,13 @@ class UnderlordInteract():
                     self.heroToMove = None
                     return -1
 
+        return 1
+
+    def boardHeroCoordCheck(self, x, y):
+        if x > 4 or y > 7:
+            print('bad coords lmao')
+            self.smallPunish = True
+            return -1
         return 1
 
     def updateHeroItem(self, hero):
@@ -1692,6 +1713,5 @@ def openVision():
     # shopFrame.pack()
 
     root.mainloop()
-
 
 # openVision()
