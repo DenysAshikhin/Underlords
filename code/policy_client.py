@@ -23,9 +23,12 @@ episode_id = client.start_episode()
 reward = 0
 print('starting main loop')
 while True:
+    print('getting observation')
     gameObservation = client.env.underlord.getObservation()
+    print('updating gui')
     client.env.root.update()
 
+    print('getting action')
     action = client.get_action(episode_id=episode_id, observation=gameObservation)
     print(f"taking action:")
     print(action)
@@ -33,6 +36,7 @@ while True:
     reward += client.env.underlord.act(action=action[0], x=action[1]-1, y=action[2]-1, selection=action[3]-1)
     print(f"running reward: {reward}")
     client.log_returns(episode_id=episode_id, reward=reward)
+    print('finished logging step')
 
     if client.env.underlord.finished() != -1:
         reward = 0
