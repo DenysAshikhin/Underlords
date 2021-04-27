@@ -1490,7 +1490,7 @@ class UnderlordInteract():
         return 1
 
     def boardHeroCoordCheck(self, x, y):
-        if x > 4 or y > 7:
+        if x > 3 or y > 7:
             print('bad coords lmao')
             self.smallPunish = True
             return -1
