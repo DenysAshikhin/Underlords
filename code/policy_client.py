@@ -41,6 +41,7 @@ while True:
         reward = 0
         #need to call a reset of env here
         client.end_episode(episode_id=episode_id, observation=gameObservation)
+        client.env.resetEnv()
         episode_id = client.start_episode(episode_id=None)
 
     #

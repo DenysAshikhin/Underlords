@@ -152,7 +152,31 @@ DEFAULT_CONFIG = with_common_config({
 
 # ray.init()
 # trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
+
+
 print(f"runnign on: {args.ip}:55555")
 trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
-print(pretty_print(trainer.train()))
+
+
+
+# checkpoint_path = CHECKPOINT_FILE.format(args.run)
+#
+# # Attempt to restore from checkpoint, if possible.
+# if not args.no_restore and os.path.exists(checkpoint_path):
+#     checkpoint_path = open(checkpoint_path).read()
+#     print("Restoring from checkpoint path", checkpoint_path)
+#     trainer.restore(checkpoint_path)
+
+# Serving and training loop.
+i = 0
+while True:
+    print(pretty_print(trainer.train()))
+    print(f"Finished train run #{i+1}")
+    i+=1
+    # checkpoint = trainer.save()
+    # print("Last checkpoint", checkpoint)
+    # with open(checkpoint_path, "w") as f:
+    #     f.write(checkpoint)
+
+
 

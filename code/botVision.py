@@ -180,7 +180,7 @@ class UnderlordInteract():
 
         self.hudLabel = None
         self.toBuy = None
-        shopFrame = Frame(
+        self.shopFrame = Frame(
             master=rootWindow,
             relief=tkinter.RAISED,
             borderwidth=1
@@ -190,13 +190,13 @@ class UnderlordInteract():
         # Initialize 5 pictures for shop, 5 purchase buttons
         for i in range(5):
             # print(f"Confidence {statesList[i] * 100}")
-            label = Label(master=shopFrame, foreground='white', background='black',
+            label = Label(master=self.shopFrame, foreground='white', background='black',
                           text=f"Ignore", compound='top')
             label.grid(row=0, column=i + 1, padx=5, pady=5)
             if not training:
                 self.shopLabels.append(label)
                 button = tkinter.Button(
-                    master=shopFrame,
+                    master=self.shopFrame,
                     text="Purchase",
                     width=10,
                     height=1,
@@ -206,7 +206,7 @@ class UnderlordInteract():
                 )
                 button.grid(row=1, column=i + 1)
 
-        self.itemFrame = Frame(master=shopFrame, relief=tkinter.RAISED, borderwidth=1)
+        self.itemFrame = Frame(master=self.shopFrame, relief=tkinter.RAISED, borderwidth=1)
         self.itemFrame.grid(row=0, column=6)
 
         for i in range(3):
@@ -234,23 +234,23 @@ class UnderlordInteract():
 
         # 8 bench portrait slots
         for x in range(8):
-            newLabel = Label(master=shopFrame, foreground='white', background='black',
+            newLabel = Label(master=self.shopFrame, foreground='white', background='black',
                              text=f"None", compound='top')
             newLabel.grid(row=hudRow + 2, column=x, padx=5, pady=5)
             self.benchLabels.append(newLabel)
             if not training:
-                tempButton = tkinter.Button(master=shopFrame, text="Move", width=4, height=1,
+                tempButton = tkinter.Button(master=self.shopFrame, text="Move", width=4, height=1,
                                             command=lambda pos=x, idx=-1: self.moveUnit(x=pos, y=idx))
                 tempButton.grid(row=hudRow + 3, column=x)
 
-        # shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
-        self.hudLabel = Label(master=shopFrame, foreground='white', background='black',
+        # self.shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
+        self.hudLabel = Label(master=self.shopFrame, foreground='white', background='black',
                               text="Hi", compound='top')
 
         self.hudLabel.grid(row=hudRow, column=4, padx=5, pady=5)
 
         self.rerollButton = tkinter.Button(
-            master=shopFrame,
+            master=self.shopFrame,
             text="Reroll",
             width=10,
             height=1,
@@ -261,7 +261,7 @@ class UnderlordInteract():
         self.rerollButton.grid(row=hudRow, column=3)
 
         self.buyItem1 = tkinter.Button(
-            master=shopFrame,
+            master=self.shopFrame,
             text="buyItem1",
             width=10,
             height=1,
@@ -271,7 +271,7 @@ class UnderlordInteract():
         )
         self.buyItem1.grid(row=hudRow + 1, column=0)
         self.buyItem2 = tkinter.Button(
-            master=shopFrame,
+            master=self.shopFrame,
             text="buyItem2",
             width=10,
             height=1,
@@ -281,7 +281,7 @@ class UnderlordInteract():
         )
         self.buyItem2.grid(row=hudRow + 1, column=1)
         self.buyItem3 = tkinter.Button(
-            master=shopFrame,
+            master=self.shopFrame,
             text="buyItem3",
             width=10,
             height=1,
@@ -291,7 +291,7 @@ class UnderlordInteract():
         )
         self.buyItem3.grid(row=hudRow + 1, column=2)
         self.buyItem4 = tkinter.Button(
-            master=shopFrame,
+            master=self.shopFrame,
             text="buyItem4",
             width=10,
             height=1,
@@ -302,7 +302,7 @@ class UnderlordInteract():
         self.buyItem4.grid(row=hudRow + 1, column=3)
 
         self.testButton = tkinter.Button(
-            master=shopFrame,
+            master=self.shopFrame,
             text='Test Button',
             width=10,
             height=1,
@@ -314,7 +314,7 @@ class UnderlordInteract():
         self.testButton.grid(row=hudRow + 1, column=4)
 
         self.refreshStore = tkinter.Button(
-            master=shopFrame,
+            master=self.shopFrame,
             text='Refresh Store',
             width=10,
             height=1,
@@ -325,7 +325,7 @@ class UnderlordInteract():
         self.refreshStore.grid(row=hudRow + 1, column=5)
 
         self.sellButton = tkinter.Button(
-            master=shopFrame,
+            master=self.shopFrame,
             text="Sell",
             width=10,
             height=1,
@@ -336,7 +336,7 @@ class UnderlordInteract():
         self.sellButton.grid(row=hudRow, column=2)
 
         self.lockInButton = tkinter.Button(
-            master=shopFrame,
+            master=self.shopFrame,
             text="Lock in",
             width=10,
             height=1,
@@ -347,7 +347,7 @@ class UnderlordInteract():
         self.lockInButton.grid(row=hudRow, column=1)
 
         self.clickUpButton = tkinter.Button(
-            master=shopFrame,
+            master=self.shopFrame,
             text="Click Up",
             width=10,
             height=1,
@@ -359,17 +359,126 @@ class UnderlordInteract():
 
         for i in range(4):
             for j in range(8):
-                newLabel = Label(master=shopFrame, foreground='white', background='black',
+                newLabel = Label(master=self.shopFrame, foreground='white', background='black',
                                  text=f"None", compound='top')
                 newLabel.grid(row=3 + (2 * i), column=j, padx=3, pady=2)
                 self.boardLabels[i][j] = newLabel
 
                 if not training:
-                    tempButton = tkinter.Button(master=shopFrame, text="Move", width=4, height=1,
+                    tempButton = tkinter.Button(master=self.shopFrame, text="Move", width=4, height=1,
                                                 command=lambda pos=i, idx=j: self.moveUnit(x=pos, y=idx))
                     tempButton.grid(row=4 + (2 * i), column=j)
 
-        shopFrame.pack()
+        self.shopFrame.pack()
+
+    def resetEnv(self, training=False):
+
+        self.gamePhase = None
+        self.gameStateLoader = state()
+
+        # Punishments to be received at reward calculation if previously did illegal actions.
+        self.smallPunish = False
+        self.mediumPunish = False
+        self.strongPunish = False
+        self.lost = False
+
+        self.localHeroID = 1
+        self.localItemID = 1
+
+        # make sure to close store before getting state!
+        # possible states:
+        # select: selecting an item
+        # choose: choose an underlord
+        # preparing: full control in between combat rounds
+        # combat: fight is happening
+        # countdown: same as preparing - assuming its not SELECT or CHOOSE so check for those first
+
+        self.UnitItemMove = ['preparing', 'countdown']  # Note, might need to remove COUNTDOWN if it delays too much
+        self.StoreInteract = ['preparing', 'combat', 'countdown']
+        self.SelectUnderlord = ['choose']
+        self.SelectItem = ['select']
+
+        self.choseItem = False
+        self.rerolledItem = False
+        self.selected = False
+
+        self.heroToMove = None
+        self.itemToMove = None
+
+        self.speedUpFactor = 1
+
+        self.shopSleepTime = 0.4 / self.speedUpFactor
+        self.mouseSleepTime = 0.25 / self.speedUpFactor
+
+        self.bench = numpy.zeros([1, 8])
+        self.board = numpy.zeros([4, 8])
+        self.shopChoices = None
+        self.storeMap = [350, 450, 575, 700, 800]  # super dumb and outdated to get X offset for purchase unit. change
+        # later if I ever feel like it
+        self.purchaseHistory = []
+        self.gold = -1
+        self.health = -1
+        self.remainingEXP = -1
+        self.level = -1
+        self.round = -1
+        self.freeRerollAvailable = False
+        self.lockedIn = False
+        self.leveledUp = False
+
+        # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
+
+        # self.shopImages
+
+        self.shopLabels = []
+        self.shopImages = []
+        self.benchLabels = []
+        self.benchHeroes = [None, None, None, None, None, None, None, None]
+        self.boardLabels = numpy.full((4, 8), None)
+        self.boardHeroes = numpy.full((4, 8), None)
+        self.itemObjects = numpy.full((3, 4), None)
+        self.itemlabels = numpy.full((3, 4), None)
+        self.underlord = None
+
+        self.checkState = False  # note make sure to False this for production
+
+        # self.boardHeroes = numpy.empty((4, 8))
+        # self.boardHeroes[:] = None
+        self.boardHeroes = self.boardHeroes.tolist()
+
+        self.levelThresh = 3  # level threshold for tiering up a unit
+
+        self.hudLabel = None
+        self.toBuy = None
+        # tempImage = ImageTk.PhotoImage(shopImages[0])
+
+        # Initialize 5 pictures for shop, 5 purchase buttons
+        for i in range(5):
+            # print(f"Confidence {statesList[i] * 100}")
+            self.shopLabels[i].config(foreground='white', background='black',
+                                      text=f"Ignore", compound='top')
+
+        for i in range(3):
+            for j in range(4):
+                self.itemlabels[i][j].config(foreground='white', background='black',
+                                             text=f"item #{i}-{j}", compound='top')
+
+        hudRow = 14
+
+        # 8 bench portrait slots
+        for x in range(8):
+            self.benchLabels[x].config(foreground='white', background='black',
+                                       text=f"None", compound='top')
+
+        # self.shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
+        self.hudLabel.config(foreground='white', background='black',
+                             text="Hi", compound='top')
+
+        for i in range(4):
+            for j in range(8):
+                self.boardLabels[i][j].config(foreground='white', background='black',
+                                              text=f"None", compound='top')
+
+        self.shopFrame.pack()
 
     def testFunction(self, param1, param2):
         # print(self.gameStateLoader.getPhase())
@@ -415,9 +524,7 @@ class UnderlordInteract():
         #
         # self.updateHeroItem(tempHero)
         # print(self.getObservation())
-        self.returnToMainScreen()
-        time.sleep(5)
-        self.startNewGame()
+        self.resetEnv()
 
     def returnToMainScreen(self):
         self.updateWindowCoords()
@@ -1051,7 +1158,7 @@ class UnderlordInteract():
                 x, y = self.heroToMove.coords
         else:
 
-            check = self.boardHeroCoordCheck(x,y)
+            check = self.boardHeroCoordCheck(x, y)
             if check == -1:
                 return check
 
@@ -1714,4 +1821,5 @@ def openVision():
 
     root.mainloop()
 
-# openVision()
+
+openVision()
