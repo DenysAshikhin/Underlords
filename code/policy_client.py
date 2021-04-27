@@ -11,17 +11,17 @@ parser.add_argument('-ip', type=str,
 
 args = parser.parse_args()
 
-
+print('trying to launch policy client')
 client = PolicyClient(address=f"http://{args.ip}:55555")
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
 
-
+print('trying to get initial eid')
 episode_id = client.start_episode()
 # gameObservation = env.underlord.getObservation()
 reward = 0
-
+print('starting main loop')
 while True:
     gameObservation = client.env.underlord.getObservation()
     print(gameObservation)
