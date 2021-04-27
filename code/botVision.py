@@ -745,7 +745,7 @@ class UnderlordInteract():
                     if item.hero is not None:
                         heroID = item.hero.localID
 
-                    localItems.append(item.ID + 1, heroID, item.coords[0] + 1, item.coords[1] + 1)
+                    localItems.append([item.ID + 1, heroID, item.coords[0] + 1, item.coords[1] + 1])
                 else:
                     localItems.append([0, 0, 0, 0, 0])
 
@@ -903,7 +903,7 @@ class UnderlordInteract():
 
         timeLeft = self.HUD.getClockTimeLeft()
 
-        if timeLeft <= 5:
+        if timeLeft <= 10:
 
             self.selectItem(selection=0)
             return - 100

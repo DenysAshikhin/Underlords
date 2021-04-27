@@ -24,10 +24,7 @@ reward = 0
 print('starting main loop')
 while True:
     gameObservation = client.env.underlord.getObservation()
-    print(gameObservation)
-    print('got past obs')
     client.env.root.update()
-    print('got past root update')
 
     action = client.get_action(episode_id=episode_id, observation=gameObservation)
     print(f"taking action:")
