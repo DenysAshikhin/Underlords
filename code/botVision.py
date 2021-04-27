@@ -162,6 +162,7 @@ class UnderlordInteract():
 
         self.shopLabels = []
         self.shopImages = []
+        self.oldShopImages = []
         self.benchLabels = []
         self.benchHeroes = [None, None, None, None, None, None, None, None]
         self.boardLabels = numpy.full((4, 8), None)
@@ -429,14 +430,12 @@ class UnderlordInteract():
 
         # self.shopImages
 
-        self.shopLabels = []
+
+        self.oldShopImages = self.shopImages
         self.shopImages = []
-        self.benchLabels = []
         self.benchHeroes = [None, None, None, None, None, None, None, None]
-        self.boardLabels = numpy.full((4, 8), None)
         self.boardHeroes = numpy.full((4, 8), None)
         self.itemObjects = numpy.full((3, 4), None)
-        self.itemlabels = numpy.full((3, 4), None)
         self.underlord = None
 
         self.checkState = False  # note make sure to False this for production
@@ -447,7 +446,8 @@ class UnderlordInteract():
 
         self.levelThresh = 3  # level threshold for tiering up a unit
 
-        self.hudLabel = None
+
+
         self.toBuy = None
         # tempImage = ImageTk.PhotoImage(shopImages[0])
 
@@ -455,28 +455,28 @@ class UnderlordInteract():
         for i in range(5):
             # print(f"Confidence {statesList[i] * 100}")
             self.shopLabels[i].config(foreground='white', background='black',
-                                      text=f"Ignore", compound='top')
+                                      text=f"Ignore", compound='top', image='')
 
         for i in range(3):
             for j in range(4):
                 self.itemlabels[i][j].config(foreground='white', background='black',
-                                             text=f"item #{i}-{j}", compound='top')
+                                             text=f"item #{i}-{j}", compound='top', image='')
 
         hudRow = 14
 
         # 8 bench portrait slots
         for x in range(8):
             self.benchLabels[x].config(foreground='white', background='black',
-                                       text=f"None", compound='top')
+                                       text=f"None", compound='top', image='')
 
         # self.shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
         self.hudLabel.config(foreground='white', background='black',
-                             text="Hi", compound='top')
+                             text="Hi", compound='top', image='')
 
         for i in range(4):
             for j in range(8):
                 self.boardLabels[i][j].config(foreground='white', background='black',
-                                              text=f"None", compound='top')
+                                              text=f"None", compound='top', image='')
 
         self.shopFrame.pack()
 
