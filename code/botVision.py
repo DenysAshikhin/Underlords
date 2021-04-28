@@ -536,7 +536,8 @@ class UnderlordInteract():
         #
         # self.updateHeroItem(tempHero)
         # print(self.getObservation())
-        self.resetEnv()
+        # self.resetEnv()
+        print(self.finished())
 
     def returnToMainScreen(self):
         self.updateWindowCoords()
@@ -1119,13 +1120,14 @@ class UnderlordInteract():
                 self.boardHeroes[x][y] = self.underlord
                 return
 
-    def updateShop(self):
+    def updateShop(self, units=True, hud=True):
 
-        self.openStore()
+        self.openStore(update=units)
 
         shopImages, classes, value, inspect, statesList = self.shopChoices
 
         itemCounts = self.HUD.getHUD()
+
 
         for i in range(5):
             tempImage = ImageTk.PhotoImage(shopImages[i])
@@ -1135,13 +1137,11 @@ class UnderlordInteract():
             # print(f"{classes[statesList[i]]} {value[i] * 100:2.1f}%")
 
         # itemImage = ImageTk.PhotoImage(itemImage)
-        tempString = "\nUnit Count %d" % itemCounts[2] + "\nGold Count: %d" % itemCounts[0] \
-                     + "\nHealth Count: %d" % itemCounts[1] + "\nRemaining EXP: %d" % (itemCounts[4] - itemCounts[3])
-        self.hudLabel.config(text=tempString)
+
         self.gold = itemCounts[0]
 
         if self.health != -1:
-            if self.lost == False and (itemCounts[1] > self.health):
+            if self.lost == False and (itemCounts[1] < self.health) and (self.health != 10):
                 self.lost = True
 
         self.freeRerollAvailable = self.shop.freeReroll()  # note to do enable later
@@ -1154,8 +1154,15 @@ class UnderlordInteract():
             self.leveledUp = False
 
         self.level = itemCounts[2]
-        self.health = itemCounts[1]
+        if not self.lost:
+            self.health = 100
+        else:
+            self.health = itemCounts[1]
         self.remainingEXP = (itemCounts[4] - itemCounts[3])
+
+        tempString = "\nUnit Count %d" % self.level + "\nGold Count: %d" % self.gold \
+                     + "\nHealth Count: %d" % self.health + "\nRemaining EXP: %d" % (self.remainingEXP)
+        self.hudLabel.config(text=tempString)
 
     def sellHero(self, x=-1, y=-1):
 
@@ -1328,7 +1335,9 @@ class UnderlordInteract():
 
         self.updateWindowCoords()
 
-        if not self.shop.shopOpen():
+        shopOpen = self.shop.shopOpen()
+
+        if not shopOpen:
             mouse1.position = (self.shopX, self.shopY)
             mouse1.click(Button.left, 1)
             time.sleep(self.shopSleepTime)
@@ -1836,7 +1845,7 @@ def openVision():
     # root.geometry("600x105")
     root.resizable(0, 0)
     stopFlag = Event()
-    thread = UnderlordInteract(root)
+    thread = UnderlordInteract(root, {'sleep':False})
     # thread.start()
     # this will stop the timer
     # stopFlag.set()
