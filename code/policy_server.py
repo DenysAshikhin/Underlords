@@ -157,36 +157,26 @@ DEFAULT_CONFIG = with_common_config({
 # trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
 
 
-print(f"running on: {args.ip}:55555")
+print(f"runnign on: {args.ip}:55555")
 trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
 # checkpoint_path = CHECKPOINT_FILE.format(args.run)
-checkpoint_restore_path = "../checkpoints/checkpoint_000000/checkpoint-0"
-checkpoint_path = "../checkpoints"
-
-# checkpoint = trainer.save(checkpoint_path)
-#
-# # # Attempt to restore from checkpoint, if possible.
-# if os.path.exists(checkpoint_path):
-#     print('path found')
-#     checkpoint_path = open(checkpoint_path).read()
-#     print("Restoring from checkpoint path", checkpoint_path)
-#     trainer.restore(checkpoint_path)
-# else:
-#     print("That path does not exist!")
-#     print(checkpoint_path)
+checkpoint_path = "checkpoints/"
+# # Attempt to restore from checkpoint, if possible.
+if os.path.exists(checkpoint_path):
+    checkpoint_path = open(checkpoint_path).read()
+    print("Restoring from checkpoint path", checkpoint_path)
+    trainer.restore(checkpoint_path)
+else:
+    print("That path does not exist!")
 
 # Serving and training loop.
 i = 0
-
-
-
-
 while True:
     print(pretty_print(trainer.train()))
     print(f"Finished train run #{i + 1}")
     i += 1
-    checkpoint = trainer.save(checkpoint_path)
-    print("Last checkpoint", checkpoint)
-    with open(checkpoint_path, "w") as f:
-        f.write(checkpoint)
+    # checkpoint = trainer.save(checkpoint_path)
+    # print("Last checkpoint", checkpoint)
+    # with open(checkpoint_path, "w") as f:
+    #     f.write(checkpoint)
