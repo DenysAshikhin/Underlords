@@ -12,8 +12,8 @@ from ray.tune.logger import pretty_print
 
 from environment import UnderlordEnv
 
-
 import argparse
+
 parser = argparse.ArgumentParser(description='Optional app description')
 parser.add_argument('-ip', type=str,
                     help='IP of this device')
@@ -160,12 +160,10 @@ DEFAULT_CONFIG = with_common_config({
 print(f"runnign on: {args.ip}:55555")
 trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
-
-
 # checkpoint_path = CHECKPOINT_FILE.format(args.run)
 checkpoint_path = "checkpoints/"
 # # Attempt to restore from checkpoint, if possible.
-if not args.no_restore and os.path.exists(checkpoint_path):
+if os.path.exists(checkpoint_path):
     checkpoint_path = open(checkpoint_path).read()
     print("Restoring from checkpoint path", checkpoint_path)
     trainer.restore(checkpoint_path)
@@ -174,12 +172,9 @@ if not args.no_restore and os.path.exists(checkpoint_path):
 i = 0
 while True:
     print(pretty_print(trainer.train()))
-    print(f"Finished train run #{i+1}")
-    i+=1
+    print(f"Finished train run #{i + 1}")
+    i += 1
     checkpoint = trainer.save(checkpoint_path)
     # print("Last checkpoint", checkpoint)
     # with open(checkpoint_path, "w") as f:
     #     f.write(checkpoint)
-
-
-
