@@ -39,7 +39,6 @@ class HUD:
     def getHUD(self):
         # Capture screen once, and crop it as needed
         gameScreen = imageGrab()
-
         goldTemp = self.countHUD(self.cropGold(gameScreen), self.goldTemplates)
         healthTemp = self.countHUD(self.cropHealth(gameScreen), self.healthTemplates)
         unitsTemp = self.countHUD(self.cropUnit(gameScreen), self.unitTemplates)
