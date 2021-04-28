@@ -73,7 +73,6 @@ class Items:
         for file in os.listdir(root):
             img = cv2.imread(os.path.join(root, file))
 
-            Image.fromarray(img).show()
             # print(file)
             templatename = file[0:len(file) - 4]
             templateList.append((templatename, img))
