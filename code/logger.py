@@ -1,7 +1,7 @@
 class logger:
-    def __init__(self):
+    def __init__(self, id):
         super().__init__()
-        self.episodeName = ""
+        self.episodeName = id
         self.logDir = ""
         self.logFile = None
 
@@ -11,6 +11,7 @@ class logger:
             # log
         self.logDir = "../logs/" + self.episodeName + ".txt"
         f = open(self.logDir, 'x')
+        f.close()
 
     def writeLog(self, lines):
         try:

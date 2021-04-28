@@ -3,6 +3,8 @@ from datetime import datetime
 import MTM
 import cv2
 import numpy
+from PIL import Image
+
 from main import imageGrab
 import json
 
@@ -70,12 +72,12 @@ class Items:
         i = 0
         for file in os.listdir(root):
             img = cv2.imread(os.path.join(root, file))
+
             # print(file)
             templatename = file[0:len(file) - 4]
             templateList.append((templatename, img))
             self.itemIDMap[file[: -4]] = i
             i += 1
-
         return templateList
 
     """

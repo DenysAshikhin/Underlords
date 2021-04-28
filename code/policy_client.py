@@ -5,6 +5,9 @@ from ray.tune.registry import register_env
 from environment import UnderlordEnv
 
 import argparse
+
+from logger import logger
+
 parser = argparse.ArgumentParser(description='Optional app description')
 parser.add_argument('-ip', type=str,
                     help='IP of this device')
@@ -22,6 +25,7 @@ episode_id = client.start_episode()
 # gameObservation = env.underlord.getObservation()
 reward = 0
 print('starting main loop')
+replayList = []
 while True:
     print('getting observation')
     gameObservation = client.env.underlord.getObservation()
@@ -37,8 +41,10 @@ while True:
     print(f"running reward: {reward}")
     client.log_returns(episode_id=episode_id, reward=reward)
     print('finished logging step')
-
     finalPosition = client.env.underlord.finished()
+
+    replayList.append((gameObservation, action, finalPosition))
+
 
     if finalPosition != -1:
         print(f"GAME OVER! final position: {finalPosition} ")
@@ -46,19 +52,10 @@ while True:
         #need to call a reset of env here
         client.end_episode(episode_id=episode_id, observation=gameObservation)
         client.env.resetEnv()
+        fileWriter = logger(episode_id)
+        fileWriter.createLog()
+        fileWriter.writeLog(replayList)
+        replayList.clear()
+
         episode_id = client.start_episode(episode_id=None)
 
-    #
-    # while True:
-    #     obs, reward, done, info = env.step(action)
-    #     rewards += reward
-    #     client.log_returns(eid, reward, info=info)
-    #     if done:
-    #         print("Total reward:", rewards)
-    #         if rewards >= args.stop_reward:
-    #             print("Target reward achieved, exiting")
-    #             exit(0)
-    #         rewards = 0
-    #         client.end_episode(eid, obs)
-    #         obs = env.reset()
-    #         eid = client.start_episode(training_enabled=not args.no_train)
