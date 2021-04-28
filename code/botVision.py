@@ -65,11 +65,23 @@ class UnderlordInteract():
         self.hwnd = win32gui.FindWindow(None, 'Dota Underlords')
         #        win32gui.SetForegroundWindow(self.hwnd)
 
-        rect = win32gui.GetWindowRect(self.hwnd)
-        self.x = rect[0]
-        self.y = rect[1]
-        self.w = rect[2] - self.x
-        self.h = rect[3] - self.y
+        rect = None
+
+        try:
+            rect = win32gui.GetWindowRect(self.hwnd)
+        except:
+            rect = None
+
+        if rect is None:
+            self.x=0
+            self.y=0
+            self.h=0
+            self.w=0
+        else:
+            self.x = rect[0]
+            self.y = rect[1]
+            self.w = rect[2] - self.x
+            self.h = rect[3] - self.y
         self.shopX = self.x + 905
         self.shopY = self.y + 65
         self.rerollX = self.shopX
