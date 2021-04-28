@@ -167,6 +167,8 @@ if os.path.exists(checkpoint_path):
     checkpoint_path = open(checkpoint_path).read()
     print("Restoring from checkpoint path", checkpoint_path)
     trainer.restore(checkpoint_path)
+else:
+    print("That path does not exist!")
 
 # Serving and training loop.
 i = 0
@@ -174,7 +176,7 @@ while True:
     print(pretty_print(trainer.train()))
     print(f"Finished train run #{i + 1}")
     i += 1
-    checkpoint = trainer.save(checkpoint_path)
+    # checkpoint = trainer.save(checkpoint_path)
     # print("Last checkpoint", checkpoint)
     # with open(checkpoint_path, "w") as f:
     #     f.write(checkpoint)
