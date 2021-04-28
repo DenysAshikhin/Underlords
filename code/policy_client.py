@@ -15,7 +15,7 @@ parser.add_argument('-ip', type=str,
 args = parser.parse_args()
 
 print('trying to launch policy client')
-client = PolicyClient(address=f"http://{args.ip}:55555")
+client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=600)
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
@@ -37,7 +37,7 @@ while True:
     print(f"taking action:")
     print(action)
     print('----')
-    reward += client.env.underlord.act(action=action[0], x=action[1]-1, y=action[2]-1, selection=action[3]-1)
+    reward += client.env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
     print(f"running reward: {reward}")
     client.log_returns(episode_id=episode_id, reward=reward)
     print('finished logging step')
@@ -45,11 +45,10 @@ while True:
 
     replayList.append((gameObservation, action, finalPosition))
 
-
     if finalPosition != -1:
         print(f"GAME OVER! final position: {finalPosition} ")
         reward = 0
-        #need to call a reset of env here
+        # need to call a reset of env here
         client.end_episode(episode_id=episode_id, observation=gameObservation)
         client.env.resetEnv()
         fileWriter = logger(episode_id)
@@ -58,4 +57,3 @@ while True:
         replayList.clear()
 
         episode_id = client.start_episode(episode_id=None)
-
