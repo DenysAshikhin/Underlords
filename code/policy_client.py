@@ -13,6 +13,9 @@ parser = argparse.ArgumentParser(description='Optional app description')
 parser.add_argument('-ip', type=str,
                     help='IP of this device')
 
+parser.add_argument('-speed', type=float,
+                    help='gameFactor, default 1.0')
+
 args = parser.parse_args()
 
 print('trying to launch policy client')
@@ -27,9 +30,8 @@ episode_id = client.start_episode()
 reward = 0
 print('starting main loop')
 replayList = []
-
-
-
+client.env.underlord.mouseSleepTime = 0.1 * args.speed
+client.env.underlord.shopSleepTime = 0.3 * args.speed
 
 while True:
     print('getting observation')
