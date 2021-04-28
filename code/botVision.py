@@ -899,6 +899,8 @@ class UnderlordInteract():
         if self.gamePhase in ['select', 'choose']:
             reward -= self.timeRunningOut()
 
+        time.sleep(self.shopSleepTime)
+
         return reward
 
     def finished(self):
