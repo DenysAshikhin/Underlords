@@ -585,9 +585,9 @@ class UnderlordInteract():
         # print("--- %s seconds to get observation ---" % (time.time() - start_time))
 
 
-        start_time = time.time()
+        # start_time = time.time()
         position = self.finished()
-        print("--- %s seconds to get position ---" % (time.time() - start_time))
+        # print("--- %s seconds to get position ---" % (time.time() - start_time))
 
         if position != -1:
             obs = (
@@ -616,20 +616,20 @@ class UnderlordInteract():
             position = 0
 
 
-        start_time = time.time()
+        # start_time = time.time()
 
         self.updateWindowCoords()
-        print("--- %s seconds to get update coords ---" % (time.time() - start_time))
+        # print("--- %s seconds to get update coords ---" % (time.time() - start_time))
 
-        start_time = time.time()
+        # start_time = time.time()
 
         phase = self.getGamePhase()
-        print("--- %s seconds to get update phase ---" % (time.time() - start_time))
-        start_time = time.time()
+        # print("--- %s seconds to get update phase ---" % (time.time() - start_time))
+        # start_time = time.time()
 
         if phase not in ['select', 'choose']:
             self.updateShop(skipCheck=True)
-        print("--- %s seconds to get update shop ---" % (time.time() - start_time))
+        # print("--- %s seconds to get update shop ---" % (time.time() - start_time))
 
         health = None
 
@@ -966,9 +966,9 @@ class UnderlordInteract():
         if not skipCheck:
             self.closeStore()
 
-        start_time = time.time()
+        # start_time = time.time()
         newRound = self.HUD.getRound()
-        print("--- %s seconds to get actual get round ---" % (time.time() - start_time))
+        # print("--- %s seconds to get actual get round ---" % (time.time() - start_time))
 
         self.openStore(skipCheck=True)
 
@@ -1162,9 +1162,9 @@ class UnderlordInteract():
 
         shopImages, classes, value, inspect, statesList = self.shopChoices
 
-        start_time = time.time()
+        # start_time = time.time()
         itemCounts = self.HUD.getHUD()
-        print("--- %s seconds to get actual hud stats ---" % (time.time() - start_time))
+        # print("--- %s seconds to get actual hud stats ---" % (time.time() - start_time))
 
         for i in range(5):
             tempImage = ImageTk.PhotoImage(shopImages[i])
