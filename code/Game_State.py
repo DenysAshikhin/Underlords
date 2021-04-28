@@ -45,7 +45,8 @@ class state:
 
     def detectGameEnd(self):
         gameScreen = imageGrab()
-        placeCrop = gameScreen.crop((155, 300) + (350, 420))
+        placeCrop = gameScreen.crop((155, 260) + (350, 420))
+        # placeCrop.show()
 
         placePhase = self.detectPhase(placeCrop, self.placeTemplates)
         if placePhase is not None:
