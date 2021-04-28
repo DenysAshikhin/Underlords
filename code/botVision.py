@@ -532,6 +532,7 @@ class UnderlordInteract():
         mouse1.click(Button.left, 1)
 
         self.gameStateLoader.currentPhase = None
+        time.sleep(8)
 
     def startNewGame(self):
         self.updateWindowCoords()
@@ -846,10 +847,15 @@ class UnderlordInteract():
 
             reward -= (self.level - numHeroes) * (firstPlace * 0.05)
 
+
+        #punish for having too much gold regardless
+        if self.gold > 40:
+            reward -= 0.05
+
+
         if action in [0, 2, 3]:
-            if self.gold > 40:
-                reward -= 0.05
-            elif self.gold >= 30:
+
+            if self.gold >= 30:
                 reward += firstPlace * 0.02
             elif self.gold >= 20:
                 reward += firstPlace * 0.005
