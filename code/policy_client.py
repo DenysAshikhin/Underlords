@@ -15,7 +15,7 @@ parser.add_argument('-ip', type=str,
 args = parser.parse_args()
 
 print('trying to launch policy client')
-client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=600)
+client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=600.0)
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
@@ -33,7 +33,11 @@ while True:
     client.env.root.update()
 
     print('getting action')
-    action = client.get_action(episode_id=episode_id, observation=gameObservation)
+    action = None
+    try:
+        action = client.get_action(episode_id=episode_id, observation=gameObservation)
+    except:
+        action = client.get_action(episode_id=episode_id, observation=gameObservation)
     print(f"taking action:")
     print(action)
     print('----')
