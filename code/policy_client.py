@@ -38,7 +38,10 @@ while True:
     client.log_returns(episode_id=episode_id, reward=reward)
     print('finished logging step')
 
-    if client.env.underlord.finished() != -1:
+    finalPosition = client.env.underlord.finished()
+
+    if finalPosition != -1:
+        print(f"GAME OVER! final position: {finalPosition} ")
         reward = 0
         #need to call a reset of env here
         client.end_episode(episode_id=episode_id, observation=gameObservation)
