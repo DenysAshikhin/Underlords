@@ -1897,4 +1897,4 @@ def openVision():
     root.mainloop()
 
 
-openVision()
+# openVision()
