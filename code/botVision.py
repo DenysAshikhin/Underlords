@@ -770,7 +770,12 @@ class UnderlordInteract():
             items = self.items.checkItems()
 
             for item in items:
-                itemPick.append(self.itemIDmap[item])
+                try:
+                    itemPick.append(self.itemIDmap[item])
+                except:
+                    print(self.itemIDmap)
+                    print(item)
+                    raise RuntimeError('Error trying to observe items')
 
         else:
             itemPick = [0, 0, 0]
