@@ -15,6 +15,8 @@
 /runs
 /code/__pycache__
 
+/checkpoints
+
 
 # User-specific stuff
 .idea/**/workspace.xml
