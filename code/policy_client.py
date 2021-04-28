@@ -4,6 +4,7 @@ from ray.tune.registry import register_env
 
 from environment import UnderlordEnv
 
+import time
 import argparse
 
 from logger import logger
@@ -26,26 +27,37 @@ episode_id = client.start_episode()
 reward = 0
 print('starting main loop')
 replayList = []
+
+
+
+
 while True:
     print('getting observation')
+    start_time = time.time()
     gameObservation = client.env.underlord.getObservation()
-    print('updating gui')
+    print("--- %s seconds to get observation ---" % (time.time() - start_time))
+    start_time = time.time()
     client.env.root.update()
+    print("--- %s seconds to update GUI ---" % (time.time() - start_time))
+    start_time = time.time()
 
-    print('getting action')
     action = None
     try:
         action = client.get_action(episode_id=episode_id, observation=gameObservation)
     except:
         action = client.get_action(episode_id=episode_id, observation=gameObservation)
-    print(f"taking action:")
+    print("--- %s seconds to get action ---" % (time.time() - start_time))
+    start_time = time.time()
     print(action)
     print('----')
     reward += client.env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
+    print("--- %s seconds to get do action ---" % (time.time() - start_time))
+    start_time = time.time()
     print(f"running reward: {reward}")
     client.log_returns(episode_id=episode_id, reward=reward)
     print('finished logging step')
     finalPosition = client.env.underlord.finished()
+    print("--- %s seconds to get finish logging return ---" % (time.time() - start_time))
 
     replayList.append((gameObservation, action, finalPosition))
 

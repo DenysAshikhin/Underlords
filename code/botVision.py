@@ -4,6 +4,7 @@ import tkinter
 from threading import Event, Thread
 from tkinter import Frame, Tk, Label
 
+import time
 import numpy
 import win32gui
 from PIL import ImageTk, Image
@@ -144,8 +145,8 @@ class UnderlordInteract():
 
         self.speedUpFactor = 1
 
-        self.shopSleepTime = 0.4 / self.speedUpFactor
-        self.mouseSleepTime = 0.25 / self.speedUpFactor
+        self.shopSleepTime = 0.3 / self.speedUpFactor
+        self.mouseSleepTime = 0.1 / self.speedUpFactor
 
         self.shop = Shop()
         self.HUD = HUD()
@@ -535,9 +536,12 @@ class UnderlordInteract():
         # self.itemToMove = Item("dragon_lance", (0, 0), ID=123)
         #
         # self.updateHeroItem(tempHero)
-        # print(self.getObservation())
+
+        start_time = time.time()
+        print(self.getObservation())
+        print("--- %s seconds to get observation ---" % (time.time() - start_time))
         # self.resetEnv()
-        print(self.finished())
+        # print(self.finished())
 
     def returnToMainScreen(self):
         self.updateWindowCoords()
@@ -577,7 +581,13 @@ class UnderlordInteract():
 
     def getObservation(self):
 
+        overallTime = time.time()
+        # print("--- %s seconds to get observation ---" % (time.time() - start_time))
+
+
+        start_time = time.time()
         position = self.finished()
+        print("--- %s seconds to get position ---" % (time.time() - start_time))
 
         if position != -1:
             obs = (
@@ -604,10 +614,22 @@ class UnderlordInteract():
 
         if position == -1:
             position = 0
+
+
+        start_time = time.time()
+
+        self.updateWindowCoords()
+        print("--- %s seconds to get update coords ---" % (time.time() - start_time))
+
+        start_time = time.time()
+
         phase = self.getGamePhase()
+        print("--- %s seconds to get update phase ---" % (time.time() - start_time))
+        start_time = time.time()
 
         if phase not in ['select', 'choose']:
-            self.updateShop()
+            self.updateShop(skipCheck=True)
+        print("--- %s seconds to get update shop ---" % (time.time() - start_time))
 
         health = None
 
@@ -817,6 +839,8 @@ class UnderlordInteract():
         )
 
         print(f"Time left: {self.HUD.getClockTimeLeft()}")
+        print("--- %s seconds to get observation ---" % (time.time() - overallTime))
+
         return obs
 
     def act(self, action, x, y, selection):
@@ -918,7 +942,7 @@ class UnderlordInteract():
         if self.gamePhase in ['select', 'choose']:
             reward -= self.timeRunningOut()
 
-        time.sleep(self.shopSleepTime)
+        self.closeStore(skipCheck=True)
 
         return reward
 
@@ -930,18 +954,23 @@ class UnderlordInteract():
 
         timeLeft = self.HUD.getClockTimeLeft()
 
-        if timeLeft <= 10:
+        if timeLeft <= 12:
 
             self.selectItem(selection=0)
             return - 100
         else:
             return 0
 
-    def getGamePhase(self):
+    def getGamePhase(self, skipCheck=False):
 
-        self.closeStore()
+        if not skipCheck:
+            self.closeStore()
 
+        start_time = time.time()
         newRound = self.HUD.getRound()
+        print("--- %s seconds to get actual get round ---" % (time.time() - start_time))
+
+        self.openStore(skipCheck=True)
 
         if newRound > self.round:
             self.lockedIn = False
@@ -1032,7 +1061,7 @@ class UnderlordInteract():
                 return -1
 
             else:
-                self.updateWindowCoords()
+                # self.updateWindowCoords()
                 mouse1.position = (self.itemRerollX, self.itemRerollY)
                 mouse1.click(Button.left, 1)
                 self.rerolledItem = True
@@ -1040,7 +1069,7 @@ class UnderlordInteract():
                 self.selected = False
 
         else:
-            self.updateWindowCoords()
+            # self.updateWindowCoords()
             mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
             mouse1.click(Button.left, 1)
             self.rerolledItem = False
@@ -1074,7 +1103,7 @@ class UnderlordInteract():
 
     def buyUnderlord(self, underlord, selection):
 
-        self.updateWindowCoords()
+        # self.updateWindowCoords()
         mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
         mouse1.click(Button.left, 1)
 
@@ -1126,14 +1155,16 @@ class UnderlordInteract():
                 self.boardHeroes[x][y] = self.underlord
                 return
 
-    def updateShop(self, units=True, hud=True):
+    def updateShop(self, units=True, hud=True, skipCheck=False):
 
-        self.openStore(update=units)
+        if not skipCheck:
+            self.openStore(update=units)
 
         shopImages, classes, value, inspect, statesList = self.shopChoices
 
+        start_time = time.time()
         itemCounts = self.HUD.getHUD()
-
+        print("--- %s seconds to get actual hud stats ---" % (time.time() - start_time))
 
         for i in range(5):
             tempImage = ImageTk.PhotoImage(shopImages[i])
@@ -1222,7 +1253,7 @@ class UnderlordInteract():
             self.heroToMove = None
         # print(f"Moving to board {mouse1.position}")
 
-        self.updateWindowCoords()
+        # self.updateWindowCoords()
 
         mouse1.press(Button.left)
 
@@ -1237,7 +1268,7 @@ class UnderlordInteract():
 
     def moveGameHero(self, hero, newX, newY):
 
-        self.updateWindowCoords()
+        # self.updateWindowCoords()
 
         heroX, heroY = hero.coords
 
@@ -1328,25 +1359,31 @@ class UnderlordInteract():
 
         self.updateShop()
 
-    def closeStore(self):
+    def closeStore(self, skipCheck=False):
 
-        self.updateWindowCoords()
+        # self.updateWindowCoords()
 
-        if self.shop.shopOpen():
+        if not skipCheck:
             mouse1.position = (self.shopX, self.shopY)
             mouse1.click(Button.left, 1)
-            time.sleep(2 * self.mouseSleepTime)
-
-    def openStore(self, update=True):
-
-        self.updateWindowCoords()
-
-        shopOpen = self.shop.shopOpen()
-
-        if not shopOpen:
+        elif self.shop.shopOpen():
             mouse1.position = (self.shopX, self.shopY)
             mouse1.click(Button.left, 1)
-            time.sleep(self.shopSleepTime)
+            time.sleep(self.mouseSleepTime)
+
+    def openStore(self, update=True, skipCheck=False):
+
+        # self.updateWindowCoords()
+
+        if not skipCheck:
+            shopOpen = self.shop.shopOpen()
+
+            if not shopOpen:
+                mouse1.position = (self.shopX, self.shopY)
+                mouse1.click(Button.left, 1)
+                time.sleep(self.shopSleepTime)
+        else:
+            time.sleep(self.mouseSleepTime)
         if update:
             self.shopChoices = self.shop.labelShop()
 
@@ -1559,7 +1596,7 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     return -1
 
-        self.updateWindowCoords()
+        # self.updateWindowCoords()
 
         originalHero = self.itemToMove.hero
 
@@ -1851,7 +1888,7 @@ def openVision():
     # root.geometry("600x105")
     root.resizable(0, 0)
     stopFlag = Event()
-    thread = UnderlordInteract(root, {'sleep':False})
+    thread = UnderlordInteract(root)
     # thread.start()
     # this will stop the timer
     # stopFlag.set()
@@ -1860,4 +1897,4 @@ def openVision():
     root.mainloop()
 
 
-# openVision()
+openVision()
