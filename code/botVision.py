@@ -514,12 +514,12 @@ class UnderlordInteract():
     def testFunction(self, param1, param2):
 
 
-        # start_time = time.time()
-        # print(self.getObservation())
-        # print("--- %s seconds to get observation ---" % (time.time() - start_time))
-        # self.updateWindowCoords()
+        start_time = time.time()
+        print(self.getObservation())
+        print("--- %s seconds to get observation ---" % (time.time() - start_time))
+        self.updateWindowCoords()
 
-        self.startNewGame()
+        # self.startNewGame()
 
         #
         # self.buyItem(0,[(-1, 10101)])
