@@ -512,53 +512,16 @@ class UnderlordInteract():
         self.shopFrame.pack()
 
     def testFunction(self, param1, param2):
-        # print(self.gameStateLoader.getPhase())
-        # print(self.closeStore())
-        # list = itemNameList()
-        #
-        # for item in list:
-        #     if "melee_only" in self.items.itemData[item]:
-        #         print(item)
-        #     if "ranged_only" in self.items.itemData[item]:
-        #         print(item)
-        #     if "requires_ability" in self.items.itemData[item]:
-        #         print(item)
-        # print(self.shop.classes)
-        # #
-        # for profile in self.profilePics.keys() :
-        #     print(self.underlords.underlordData[profile])
-        # tempHeroName = 'luna'
-        # fullHero = self.underlords.underlordData[tempHeroName]
-        #
-        # melee = False
-        # ranged = False
-        # preventMana = False
-        # gold = fullHero['goldCost']
-        #
-        # if fullHero['attackRange'] == 1:
-        #     melee = True
-        # else:
-        #     ranged = True
-        #
-        # if 'prevent_mana_items' in fullHero:
-        #     preventMana = fullHero['prevent_mana_items']
-        #
-        # tempHero = Hero(tempHeroName, (-1, -1),
-        #                 self.profilePics[tempHeroName],
-        #                 ID=123,
-        #                 gold=gold,
-        #                 melee=melee,
-        #                 ranged=ranged,
-        #                 preventMana=preventMana)
-        #
-        # self.itemToMove = Item("dragon_lance", (0, 0), ID=123)
-        #
-        # self.updateHeroItem(tempHero)
+
 
         start_time = time.time()
         print(self.getObservation())
         print("--- %s seconds to get observation ---" % (time.time() - start_time))
         self.updateWindowCoords()
+        #
+        # self.buyItem(0,[(-1, 10101)])
+        # self.buyItem(0, [(-1, 10101)])
+        # self.buyItem(0, [(-1, 10106)])
         # self.resetEnv()
         # print(self.finished())
 
@@ -811,7 +774,8 @@ class UnderlordInteract():
             rerolledItem = 1
 
         obs = (
-            self.finalPlacement, self.health, self.gold, self.level, self.remainingEXP, self.round, self.lockedIn, gamePhase,
+            self.finalPlacement, self.health, self.gold, self.level, self.remainingEXP, self.round, self.lockedIn,
+            gamePhase,
             heroToMove, itemToMove, self.rerollCost, rerolledItem,
             # store heros
             shopHeros,
@@ -972,40 +936,40 @@ class UnderlordInteract():
 
     def selectItem(self, x=-1, y=-1, selection=-1):
 
-        gamePhase = self.getGamePhase()
+        # gamePhase = self.getGamePhase()
 
-        print(f"gamePhase: {gamePhase}")
+        # print(f"gamePhase: {gamePhase}")
 
-        if gamePhase in self.SelectItem:
+        if self.itemPicks is not None:
 
             if selection < -1 or selection > 3:
                 print('break 1')
                 self.mediumPunish = True
                 return -1
 
-            items = self.items.checkItems()
+            # items = self.items.checkItems()
+            #
+            # if items[0] is None:
+            #     raise RuntimeError("item select Uh Oh")
+            #     return -1
 
-            if items[0] is None:
-                raise RuntimeError("item select Uh Oh")
-                return -1
+            self.buyItem(selection, self.itemPicks)
 
-            self.buyItem(selection, items)
+        elif self.underlordPicks is not None:
 
-        elif gamePhase in self.SelectUnderlord:
-
-            underlords = self.underlords.checkUnderlords()
-
-            if underlords[0] is None:
-                print("No Underlord or item available for selection!")
-                raise RuntimeError("Underlord Uh Oh")
-                return -1
+            # underlords = self.underlords.checkUnderlords()
+            #
+            # if underlords[0] is None:
+            #     print("No Underlord or item available for selection!")
+            #     raise RuntimeError("Underlord Uh Oh")
+            #     return -1
 
             if selection < -1 or selection > 3:
                 self.mediumPunish = True
                 print('break 2')
                 return -1
 
-            self.buyUnderlord(underlords[selection], selection)
+            self.buyUnderlord(self.underlordPicks[selection], selection)
 
         else:
 
@@ -1043,6 +1007,10 @@ class UnderlordInteract():
 
     def buyItem(self, selection, itemList):
 
+        print('has reroll:')
+
+        print(self.rerolledItem)
+
         if selection == 3:
             if self.rerolledItem:
 
@@ -1054,22 +1022,87 @@ class UnderlordInteract():
                 # self.updateWindowCoords()
                 mouse1.position = (self.itemRerollX, self.itemRerollY)
                 mouse1.click(Button.left, 1)
-                self.rerolledItem = True
-                self.choseItem = False
-                self.selected = False
+                # self.rerolledItem = True
+                # self.choseItem = False
+                # self.selected = False
 
         else:
             # self.updateWindowCoords()
             mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
             mouse1.click(Button.left, 1)
-            self.rerolledItem = False
-            self.choseItem = True
-            self.selected = True
+            time.sleep(1.5)
+            # self.rerolledItem = False
+            # self.choseItem = True
+            # self.selected = True
+
+            idx = 0
+            holderItem = None
+            boughtItemId = itemList[selection]
+            foundLocation = False
+
             for i in range(3):
                 for j in range(4):
-                    if self.itemObjects[i][j] is None:
 
-                        name = itemList[selection]
+                    itemObject = self.itemObjects[i][j]
+
+                    # meaning we found where the new item went, but need to shift all the other items down 1
+                    if holderItem is not None:
+                        tempHolder = itemObject
+                        self.itemObjects[i][j] = holderItem
+                        self.itemlabels[i][j].config(text=holderItem.name)
+                        holderItem = tempHolder
+
+
+                        # meaning the next item doesn't exit, no more items left to shift
+                        if holderItem is None:
+                            return 1
+
+                    # meaning we are searching for a spot, and the current spots are taken
+                    elif itemObject is not None:
+
+                        # note I don't check the [0] (slot_index), I assume they are returned in order. If error
+                        # check that
+
+                        # found where the item we bought might go, need to check
+                        # or we have found it previously, and are now shifting to after the existing duplicates
+                        if self.gsiItems[idx] == boughtItemId or foundLocation:
+
+                            foundLocation = True
+                            # if we already have this item before, then it goes to next spot
+                            if itemObject.ID == boughtItemId:
+                                continue
+                            else:
+                                # create a new local item and put it in the right spot
+                                item = self.items.itemDataID[boughtItemId]
+                                name = item['icon']
+
+                                melee = False
+                                ranged = False
+                                preventMana = False
+
+                                if "melee_only" in self.items.itemData[name]:
+                                    melee = True
+                                if "ranged_only" in self.items.itemData[name]:
+                                    ranged = True
+                                if "requires_ability" in self.items.itemData[name]:
+                                    preventMana = True
+
+                                holderItem = itemObject
+
+                                self.itemObjects[i][j] = Item(name, (i, j),
+                                                              ID=boughtItemId,
+                                                              melee=melee,
+                                                              ranged=ranged,
+                                                              preventMana=preventMana,
+                                                              localID=self.localItemID)
+                                self.localItemID += 1
+                                self.itemlabels[i][j].config(text=name)
+
+                    # meaning that there are no existing copies of the item we just got
+                    else:
+                        item = self.items.itemDataID[boughtItemId]
+                        name = item['icon']
+
                         melee = False
                         ranged = False
                         preventMana = False
@@ -1082,14 +1115,15 @@ class UnderlordInteract():
                             preventMana = True
 
                         self.itemObjects[i][j] = Item(name, (i, j),
-                                                      ID=self.itemIDmap[name],
+                                                      ID=boughtItemId,
                                                       melee=melee,
                                                       ranged=ranged,
                                                       preventMana=preventMana,
                                                       localID=self.localItemID)
                         self.localItemID += 1
-                        self.itemlabels[i][j].config(text=self.itemObjects[i][j].name)
-                        return
+                        self.itemlabels[i][j].config(text=name)
+                        return 1
+                    idx += 1
 
     def buyUnderlord(self, underlord, selection):
 
@@ -1284,7 +1318,7 @@ class UnderlordInteract():
             self.smallPunish = True
             return -1
 
-        self.openStore(update=False,skipCheck=True)
+        self.openStore(update=False, skipCheck=True)
         mouse1.position = (self.clickUpX, self.clickUpY)
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
@@ -1331,10 +1365,10 @@ class UnderlordInteract():
             mouse1.position = (self.shopX, self.shopY)
             time.sleep(self.mouseSleepTime)
             mouse1.click(Button.left, 1)
-        # elif self.shop.shopOpen():
-        #     mouse1.position = (self.shopX, self.shopY)
-        #     mouse1.click(Button.left, 1)
-        #     time.sleep(self.mouseSleepTime)
+        elif self.shop.shopOpen():
+            mouse1.position = (self.shopX, self.shopY)
+            mouse1.click(Button.left, 1)
+            time.sleep(self.mouseSleepTime)
 
     def openStore(self, update=True, skipCheck=False):
 
@@ -1351,8 +1385,8 @@ class UnderlordInteract():
             mouse1.position = (self.shopX, self.shopY)
             mouse1.click(Button.left, 1)
             time.sleep(self.mouseSleepTime)
-        if update:
-            self.shopChoices = self.shop.labelShop()
+        # if update:
+        #     self.shopChoices = self.shop.labelShop()
 
     def updateWindowCoords(self):
         self.hwnd = win32gui.FindWindow(None, 'Dota Underlords')

@@ -51,6 +51,11 @@ class RequestHandler(BaseHTTPRequestHandler):
 
                         publicData = data['public_player_state']
 
+                        if 'is_human_player' not in publicData:
+                            continue
+                        elif not publicData['is_human_player']:
+                            continue
+
                         if 'health' in publicData:
                             self.server.env.health = publicData['health']
                         if 'gold' in publicData:
@@ -60,9 +65,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                         if 'next_level_exp' in publicData:
                             self.server.env.remainingEXP = publicData['next_level_exp']
                         if 'final_place' in publicData:
+                            self.server.env.finalPlace = publicData['final_place']
 
-                            if publicData['is_human_player']:
-                                self.server.env.finalPlace = publicData['final_place']
 
                         if 'units' in publicData:
                             units = publicData['units']  # It's all units
@@ -106,11 +110,13 @@ class RequestHandler(BaseHTTPRequestHandler):
                             for item in privateData['oldest_unclaimed_reward']['choices']:
                                 itemChoices.append(item['item_id'])
                             self.server.env.itemPicks = itemChoices
+
                         else:
                             self.server.env.itemPicks = None
 
-                        if 'used_item_reroll_this_round' in privateData:
-                            self.server.env.rerolledItem = privateData['used_item_reroll_this_round']
+                        if 'used_item_reward_reroll_this_round' in privateData:
+                            self.server.env.rerolledItem = privateData['used_item_reward_reroll_this_round']
+
                         if 'shop_units' in privateData:
                             shopUnits = []
 

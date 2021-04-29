@@ -191,7 +191,8 @@
       ]
     },
     "crown_of_antlers": {
-      "temp": 10011111
+      "temp": 10011111,
+      "id": 5345
     },
     "talisman_of_evasion": {
       "id": 10109,
@@ -918,7 +919,7 @@
       "type": "placeable",
       "displayName": "#dac_item_tombstone",
       "description": "#dac_item_tombstone_desc",
-      "icon": "build_undying_tower",
+      "icon": "tombstone",
       "unitName": "tombstone"
     },
     "target_buddy": {
@@ -1569,13 +1570,19 @@
   },
   "set_balance": {
     "kaden's_blade": {
-      "temp": 1023123
+      "temp": 1023123,
+      "id": 5342,
+      "icon":"kaden's_blade"
     },
     "ristul_circlet": {
-      "temp": 1023123
+      "temp": 1023123,
+      "id": 5343,
+      "icon": "ristul_circlet"
     },
     "leg_breaker's_fedora": {
-      "temp": 1023123
+      "temp": 1023123,
+      "id": 5344,
+      "icon": "leg_breaker's_fedora"
     },
     "claymore": {
       "id": 10100,
@@ -1597,7 +1604,9 @@
       "icon": "claymore"
     },
     "crown_of_antlers": {
-      "temp": 10011111
+      "temp": 10011111,
+      "id": 5345,
+      "icon": "crown_of_antlers"
     },
     "void_stone": {
       "id": 10101,
@@ -1747,7 +1756,7 @@
       "defensive_health_regen": 25,
       "offensive_magicres_debuff": 25,
       "offensive_aura_aoe": 1,
-      "icon": "hood",
+      "icon": "hood_of_defiance",
       "content_enable_group": "rotation"
     },
     "kaya": {
@@ -2172,7 +2181,7 @@
       "defensive_duration": 2.5,
       "support_aspd_slow": 75,
       "support_duration": 5,
-      "icon": "eul_scepter",
+      "icon": "eul",
       "precache": [
         "particles/items_fx/cyclone.vpcf"
       ]
@@ -2379,7 +2388,7 @@
       "precache": [
         "particles/items/heart_of_tarrasque/heart_tarrasque.vpcf"
       ],
-      "icon": "heart"
+      "icon": "heart_of_tarrasque"
     },
     "octarine_essence": {
       "id": 10162,
@@ -2405,7 +2414,7 @@
         "particles/items2_fx/pipe_of_insight.vpcf"
       ],
       "stealable": "false",
-      "icon": "octarine_fragment"
+      "icon": "octarine_essence"
     },
     "horn_of_the_alpha": {
       "id": 10163,
@@ -2482,7 +2491,7 @@
       "type": "placeable",
       "displayName": "#dac_item_healing_ward",
       "description": "#dac_item_healing_ward_desc",
-      "icon": "build_healing_ward",
+      "icon": "healing_ward",
       "unitName": "healing_ward"
     },
     "barricade": {
@@ -2492,7 +2501,7 @@
       "type": "placeable",
       "displayName": "#dac_item_barricade",
       "description": "#dac_item_barricade_desc",
-      "icon": "build_barricade",
+      "icon": "barricade",
       "unitName": "barricade",
       "unitCount": 3,
       "supportUnitCount": 1,
@@ -2505,7 +2514,7 @@
       "type": "placeable",
       "displayName": "#dac_item_tombstone",
       "description": "#dac_item_tombstone_desc",
-      "icon": "build_undying_tower",
+      "icon": "tombstone",
       "unitName": "tombstone",
       "content_enable_group": "rotation"
     },
@@ -2516,7 +2525,7 @@
       "type": "placeable",
       "displayName": "#dac_item_target_buddy",
       "description": "#dac_item_target_buddy_desc",
-      "icon": "build_target_buddy",
+      "icon": "target_buddy",
       "unitName": "target_buddy"
     },
     "battle_fury": {
@@ -2968,7 +2977,7 @@
       "mango_production_interval": 0.5,
       "displayName": "#dac_item_mango_tree",
       "description": "#dac_item_mango_tree_desc",
-      "icon": "build_mango_tree",
+      "icon": "mango_tree",
       "unitName": "mango_tree"
     },
     "quelling_blade": {
@@ -3009,7 +3018,7 @@
       "description": "#dac_item_hood_of_defiance_rot1_desc",
       "bonus_magical_resistance": 30,
       "row_radius": 1,
-      "icon": "hood"
+      "icon": "hood_of_defiance"
     },
     "vitality_booster_rot1": {
       "content_enable_group": "null",
@@ -3055,7 +3064,7 @@
       "type": "placeable",
       "displayName": "#dac_item_barricade_rot1",
       "description": "#dac_item_barricade_rot1_desc",
-      "icon": "build_barricade",
+      "icon": "barricade_rot1",
       "unitName": "barricade_rot1",
       "unitCount": 2,
       "content_enable_group": "null"

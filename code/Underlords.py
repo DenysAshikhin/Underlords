@@ -20,10 +20,14 @@ class Underlords:
         self.underlordData = self.underlordData['set_balance']
         self.underlordDataID = {}
 
+        # biggestNum = 0
+
         for underlord in self.underlordData:
             # print(underlord)
+            # if biggestNum < int(self.underlordData[underlord]['id']):
+            #     biggestNum = int(self.underlordData[underlord]['id'])
             self.underlordDataID[self.underlordData[underlord]['id']] = self.underlordData[underlord]
-
+        # print(f"biggest ID: biggestNum: {biggestNum}")
 
 
     def checkUnderlords(self):

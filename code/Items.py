@@ -24,6 +24,23 @@ class Items:
 
         self.itemData = self.itemData['set_balance']
 
+        self.itemDataID = {}
+
+        # biggestNum = 0
+
+        for item in self.itemData:
+            # print(item)
+
+
+            # print(self.itemData[self.itemData[item]['icon']])
+
+            # if biggestNum < int(self.itemData[item]['id']):
+            #     biggestNum = int(self.itemData[item]['id'])
+
+            self.itemDataID[self.itemData[item]['id']] = self.itemData[item]
+        # print(f"biggest item ID: biggestNum: {biggestNum}")
+
+
 
         self.banned = ['mango_tree', 'divine_rapier', 'barricade', 'vesture_of_the_tyrant']  # might allow them later
         self.unique = ['battle fury', 'dragon lance', 'refresher orb', 'void stone']

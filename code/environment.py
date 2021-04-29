@@ -63,29 +63,29 @@ class UnderlordEnv(ExternalEnv):
              spaces.Discrete(3),  # reRoll cost
              spaces.Discrete(2),  # rerolled (item)
              # below are the store heros
-             spaces.MultiDiscrete([71, 71, 71, 71, 71]),
+             spaces.MultiDiscrete([1006, 1006, 1006, 1006, 1006]),
              # below are the bench heroes
-             spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]), spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]),
+             spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]), spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]),
+             spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]), spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]),
+             spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]), spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]),
              # below are the board heros
-             spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]), spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]),
+             spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]), spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]),
+             spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]), spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]),
+             spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]), spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]),
+             spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]), spaces.MultiDiscrete([1006, 500, 4, 6, 500, 9, 9, 3]),
              # below are underlords to pick (whenever valid) -> underlord ID - specialty
              spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3, ]),
              # below are the items
-             spaces.MultiDiscrete([61, 14, 500, 4, 5]), spaces.MultiDiscrete([61, 14, 500, 4, 5]),
-             spaces.MultiDiscrete([61, 14, 500, 4, 5]), spaces.MultiDiscrete([61, 14, 500, 4, 5]),
-             spaces.MultiDiscrete([61, 14, 500, 4, 5]), spaces.MultiDiscrete([61, 14, 500, 4, 5]),
-             spaces.MultiDiscrete([61, 14, 500, 4, 5]), spaces.MultiDiscrete([61, 14, 500, 4, 5]),
-             spaces.MultiDiscrete([61, 14, 500, 4, 5]), spaces.MultiDiscrete([61, 14, 500, 4, 5]),
-             spaces.MultiDiscrete([61, 14, 500, 4, 5]), spaces.MultiDiscrete([61, 14, 500, 4, 5]),
+             spaces.MultiDiscrete([10220, 500, 500, 4, 5]), spaces.MultiDiscrete([10220, 500, 500, 4, 5]),
+             spaces.MultiDiscrete([10220, 500, 500, 4, 5]), spaces.MultiDiscrete([10220, 500, 500, 4, 5]),
+             spaces.MultiDiscrete([10220, 500, 500, 4, 5]), spaces.MultiDiscrete([10220, 500, 500, 4, 5]),
+             spaces.MultiDiscrete([10220, 500, 500, 4, 5]), spaces.MultiDiscrete([10220, 500, 500, 4, 5]),
+             spaces.MultiDiscrete([10220, 500, 500, 4, 5]), spaces.MultiDiscrete([10220, 500, 500, 4, 5]),
+             spaces.MultiDiscrete([10220, 500, 500, 4, 5]), spaces.MultiDiscrete([10220, 500, 500, 4, 5]),
              # below are the items to pick from
-             spaces.MultiDiscrete([61, 61, 61]))
+             spaces.MultiDiscrete([10220, 10220, 10220]))
         )
 
         self.action_space = spaces.MultiDiscrete(
