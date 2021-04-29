@@ -969,7 +969,7 @@ class UnderlordInteract():
                 print('break 2')
                 return -1
 
-            self.buyUnderlord(self.underlordPicks[selection], selection)
+            self.buyUnderlord(self.underlordPicks, selection)
 
         else:
 
@@ -1006,10 +1006,6 @@ class UnderlordInteract():
                 self.itemToMove = self.itemObjects[x][y]
 
     def buyItem(self, selection, itemList):
-
-        print('has reroll:')
-
-        print(self.rerolledItem)
 
         if selection == 3:
             if self.rerolledItem:
@@ -1125,7 +1121,7 @@ class UnderlordInteract():
                         return 1
                     idx += 1
 
-    def buyUnderlord(self, underlord, selection):
+    def buyUnderlord(self, underlords, selection):
 
         # self.updateWindowCoords()
         mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
@@ -1138,32 +1134,53 @@ class UnderlordInteract():
 
         preferences = []
         ID = None
+        name = None
 
-        if underlord == 'aggressive_tank':
-            preferences = JullPreferences
-            ID = 63
-        elif underlord == 'healing_tank':
-            preferences = JullPreferences
-            ID = 64
-        elif underlord == 'damage_support':
-            preferences = AnnaPreferences
-            ID = 65
-        elif underlord == 'healing_support':
-            preferences = AnnaPreferences
-            ID = 66
-        elif underlord == 'healing_stealing':
-            preferences = FurPreferences
-            ID = 67
-        elif underlord == 'rapid_furball':
-            preferences = FurPreferences
-            ID = 68
-        elif underlord == 'high_damage_dealer':
-            preferences = AnnaPreferences
-            ID = 69
-        elif underlord == 'support_damage_dealer':
-            preferences = AnnaPreferences
-            ID = 70
+        underlord = underlords[selection]
 
+        if underlord['underlord_id'] == 1:
+
+            preferences = AnnaPreferences
+
+            if underlord['build_id'] == 0:  # damage support
+                ID = 63
+                name = 'damage_support'
+            else:
+                ID = 64
+                name = 'healing_support'
+
+        elif underlord['underlord_id'] == 2:
+
+            preferences = JullPreferences
+
+            if underlord['build_id'] == 0: #agressive tank
+                ID = 65
+                name = 'aggressive_tank'
+            else:
+                ID = 66
+                name = 'healing_tank'
+
+        elif underlord['underlord_id'] == 3:
+
+            preferences = FurPreferences
+
+            if underlord['build_id'] == 0:  # healing stealing
+                ID = 67
+                name = 'healing_stealing'
+            else:
+                ID = 68
+                name = 'rapid_furball'
+
+        elif underlord['underlord_id'] == 4:
+
+            preferences = AnnaPreferences
+
+            if underlord['build_id'] == 0:  # high damage dealer
+                ID = 69
+                name = 'high_damage_dealer'
+            else:
+                ID = 70
+                name = 'support_damage_dealer'
         else:
             print('No clue what underlord that is!')
             return -1
@@ -1172,7 +1189,7 @@ class UnderlordInteract():
 
             if self.boardHeroes[x][y] is None:
                 print(f"Found a spot for underlord at: {x}-{y}")
-                self.underlord = Hero(underlord, (x, y), self.underlordPics[underlord], True, ID=ID,
+                self.underlord = Hero(name, (x, y), self.underlordPics[name], True, ID=ID,
                                       localID=self.localHeroID)
                 self.localHeroID += 1
                 self.updateHeroLabel(self.underlord)
@@ -1671,7 +1688,7 @@ class UnderlordInteract():
             self.strongPunish = True
             return -1
 
-        self.openStore()
+        self.openStore(skipCheck=True)
         validIDX = [0, 1, 2, 3, 4]
 
         if idx not in validIDX:
@@ -1691,10 +1708,25 @@ class UnderlordInteract():
             return -1
 
         if result == 10:  # meaning it tiered up, no need to create a new underlord on bench
-            self.updateShop()
+
+            mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
+            time.sleep(self.mouseSleepTime)
+            mouse1.click(Button.left, 1)
+
+            time.sleep(self.mouseSleepTime)
+
+            self.closeStore(skipCheck=True)
+
             return 10
         elif result == 11:
-            self.updateShop()
+
+            mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
+            time.sleep(self.mouseSleepTime)
+            mouse1.click(Button.left, 1)
+
+            time.sleep(self.mouseSleepTime)
+
+            self.closeStore(skipCheck=True)
             return 11
 
         for x in range(8):
@@ -1710,6 +1742,7 @@ class UnderlordInteract():
                                            image=self.benchHeroes[x].image)
 
                 mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
+                time.sleep(self.mouseSleepTime)
                 mouse1.click(Button.left, 1)
 
                 time.sleep(self.mouseSleepTime)
