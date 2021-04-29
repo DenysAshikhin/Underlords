@@ -393,9 +393,10 @@ class UnderlordInteract():
 
         self.shopFrame.pack()
 
-        self.server = GSI_Server(('localhost', 3000), env=self)
-        self.server.start_server()
-        print('server started!')
+        if rect is not None:
+            self.server = GSI_Server(('localhost', 3000), env=self)
+            self.server.start_server()
+            print('server started!')
 
     def resetEnv(self, training=False):
 
