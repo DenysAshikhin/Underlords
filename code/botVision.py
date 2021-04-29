@@ -800,6 +800,7 @@ class UnderlordInteract():
         )
 
         print(f"Time left: {self.HUD.getClockTimeLeft()}")
+        print(f"Current Round: {self.round}")
         # print("--- %s seconds to get observation ---" % (time.time() - overallTime))
 
         return obs
