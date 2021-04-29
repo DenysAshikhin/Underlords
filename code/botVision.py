@@ -214,7 +214,7 @@ class UnderlordInteract():
             # print(f"Confidence {statesList[i] * 100}")
             label = Label(master=self.shopFrame, foreground='white', background='black',
                           text=f"Ignore", compound='top')
-            label.grid(row=0, column=i + 1, padx=5, pady=5)
+            label.grid(row=0, column=i, padx=5, pady=5)
             if not training:
                 self.shopLabels.append(label)
                 button = tkinter.Button(
@@ -226,10 +226,10 @@ class UnderlordInteract():
                     fg="yellow",
                     command=lambda idx=i: self.buy(idx=idx)
                 )
-                button.grid(row=1, column=i + 1)
+                button.grid(row=1, column=i)
 
         self.itemFrame = Frame(master=self.shopFrame, relief=tkinter.RAISED, borderwidth=1)
-        self.itemFrame.grid(row=0, column=6)
+        self.itemFrame.grid(row=0, column=5)
 
         for i in range(3):
             for j in range(4):
