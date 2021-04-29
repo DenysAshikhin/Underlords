@@ -1145,44 +1145,44 @@ class UnderlordInteract():
 
         underlord = underlords[selection]
 
-        if underlord['underlord_id'] == 1:
+        if underlord[0] == 1:
 
             preferences = AnnaPreferences
 
-            if underlord['build_id'] == 0:  # damage support
+            if underlord[1] == 0:  # damage support
                 ID = 63
                 name = 'damage_support'
             else:
                 ID = 64
                 name = 'healing_support'
 
-        elif underlord['underlord_id'] == 2:
+        elif underlord[0] == 2:
 
             preferences = JullPreferences
 
-            if underlord['build_id'] == 0: #agressive tank
+            if underlord[1] == 0: #agressive tank
                 ID = 65
                 name = 'aggressive_tank'
             else:
                 ID = 66
                 name = 'healing_tank'
 
-        elif underlord['underlord_id'] == 3:
+        elif underlord[0] == 3:
 
             preferences = FurPreferences
 
-            if underlord['build_id'] == 0:  # healing stealing
+            if underlord[1] == 0:  # healing stealing
                 ID = 67
                 name = 'healing_stealing'
             else:
                 ID = 68
                 name = 'rapid_furball'
 
-        elif underlord['underlord_id'] == 4:
+        elif underlord[0] == 4:
 
             preferences = AnnaPreferences
 
-            if underlord['build_id'] == 0:  # high damage dealer
+            if underlord[1] == 0:  # high damage dealer
                 ID = 69
                 name = 'high_damage_dealer'
             else:
