@@ -17,7 +17,7 @@ import json
 class GSI_Server(HTTPServer):
     def __init__(self, server_adress, env=None):
         super(GSI_Server, self).__init__(server_adress, RequestHandler)
-
+        self.env = env
         self.running = False
 
     def start_server(self):
@@ -35,6 +35,7 @@ class GSI_Server(HTTPServer):
 
 
 class RequestHandler(BaseHTTPRequestHandler):
+
     def do_POST(self):
         length = int(self.headers["Content-Length"])
         body = self.rfile.read(length).decode("utf-8")
@@ -51,15 +52,18 @@ class RequestHandler(BaseHTTPRequestHandler):
                         publicData = data['public_player_state']
 
                         if 'health' in publicData:
-                            health = publicData['health']
+                            self.server.env.health = publicData['health']
                         if 'gold' in publicData:
-                            gold = publicData['gold']
+                            self.server.env.gold = publicData['gold']
                         if 'board_unit_limit' in publicData:
-                            level = publicData['board_unit_limit']
+                            self.server.env.level = publicData['board_unit_limit']
                         if 'next_level_exp' in publicData:
-                            remainingEXP = publicData['next_level_exp']
+                            self.server.env.remainingEXP = publicData['next_level_exp']
                         if 'final_place' in publicData:
-                            finalPlace = publicData['final_place']
+
+                            if publicData['is_human_player']:
+                                self.server.env.finalPlace = publicData['final_place']
+
                         if 'units' in publicData:
                             units = publicData['units']  # It's all units
 
@@ -68,14 +72,19 @@ class RequestHandler(BaseHTTPRequestHandler):
                             items = []
                             for item in publicData['item_slots']:
                                 items.append((item['slot_index'], item['item_id']))
+                            self.server.env.gsiItems = items
 
                     elif 'private_player_state' in data:
 
+
                         privateData = data['private_player_state']
-                        if 'units' in privateData:
-                            shopLocked = privateData['shopLocked']
+
+                        if 'shopLocked' in privateData:
+                            self.server.env.lockedIn = privateData['shopLocked']
+
                         if 'reroll_cost' in privateData:
-                            rerollCost = privateData['reroll_cost']
+                            self.server.env.rerollCost = privateData['reroll_cost']
+
                         if 'can_select_underlord' in privateData:
                             can_select_underlord = privateData['can_select_underlord']
 
@@ -86,22 +95,32 @@ class RequestHandler(BaseHTTPRequestHandler):
                                 for underlord in privateData['underlord_picker_offering']:
                                     underlordPicks.append((underlord['underlord_id'], underlord['build_id']))
 
+                                self.server.env.underlordPicks = underlordPicks
+                            else:
+                                self.server.env.underlordPicks = None
+
                         if 'oldest_unclaimed_reward' in privateData:
 
                             itemChoices = []
 
-                            for item in privateData['oldest_unclaimed_reward']:
+                            for item in privateData['oldest_unclaimed_reward']['choices']:
                                 itemChoices.append(item['item_id'])
+                            self.server.env.itemPicks = itemChoices
                         else:
-                            itemChoices = [0, 0, 0]
+                            self.server.env.itemPicks = None
 
                         if 'used_item_reroll_this_round' in privateData:
-                            itemRerolled = privateData['used_item_reroll_this_round']
+                            self.server.env.rerolledItem = privateData['used_item_reroll_this_round']
                         if 'shop_units' in privateData:
                             shopUnits = []
 
+                            # print('updating shopUnits')
+
                             for i in range(5):
                                 shopUnits.append(privateData['shop_units'][i]['unit_id'])
+                            self.server.env.shopUnits = shopUnits
+                        # else:
+                        #     self.server.env.shopUnits = None
 
                     else:
                         print("lol what now?")
@@ -111,7 +130,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         # self.server.parser.parse_payload(payload, self.server.gamestate)
         self.server.running = True
 
-
+#
 # server = GSI_Server(('localhost', 3000))
 # server.start_server()
 #

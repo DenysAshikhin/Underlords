@@ -18,70 +18,13 @@ class Underlords:
             self.underlordData = json.load(f)
 
         self.underlordData = self.underlordData['set_balance']
+        self.underlordDataID = {}
 
-        self.prices = {'abbadon': 3,
-                       'alchemist': 3,
-                       'anti mage': 1,
-                       'axe': 5,
-                       'bat rider': 1,
-                       'beastmaster': 3,
-                       'bounty hunter': 1,
-                       'bristle back': 2,
-                       'chaos knight': 2,
-                       'crystal maiden': 1,
-                       'dazzle': 1,
-                       'death prophet': 4,
-                       'doom': 4,
-                       'dragon knight': 5,
-                       'drow ranger': 1,
-                       'earth spirit': 2,
-                       'ember spirit': 3,
-                       'enchantress': 1,
-                       'faceless void': 5,
-                       'juggernaut': 2,
-                       'keeper of the light': 5,
-                       'kunka': 2,
-                       'legion commander': 2,
-                       'lich': 1,
-                       'life stealer': 3,
-                       'lina': 4,
-                       'lone druid': 4,
-                       'luna': 2,
-                       'lycan': 3,
-                       'magnus': 1,
-                       'medusa': 5,
-                       'meepo': 2,
-                       'mirana': 4,
-                       'nature prophet': 2,
-                       'omniknight': 3,
-                       'pangolier': 4,
-                       'phantom assassin': 1,
-                       'puck': 3,
-                       'pudge': 2,
-                       'queen of pain': 2,
-                       'rubick': 4,
-                       'shadow demon': 1,
-                       'shadow shaman': 3,
-                       'slardar': 1,
-                       'slark': 3,
-                       'snap fire': 1,
-                       'spectre': 3,
-                       'spirit breaker': 2,
-                       'storm spirit': 2,
-                       'sven': 4,
-                       'templar assassin': 4,
-                       'terror blade': 3,
-                       'tidehunter': 4,
-                       'treant protector': 3,
-                       'troll warrior': 5,
-                       'tusk': 1,
-                       'vengeful spirit': 1,
-                       'venomancer': 1,
-                       'viper': 4,
-                       'void spirit': 4,
-                       'wind ranger': 2,
-                       'wraith king': 5
-                       }
+        for underlord in self.underlordData:
+            # print(underlord)
+            self.underlordDataID[self.underlordData[underlord]['id']] = self.underlordData[underlord]
+
+
 
     def checkUnderlords(self):
         gameScreen = imageGrab()

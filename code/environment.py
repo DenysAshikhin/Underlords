@@ -60,7 +60,7 @@ class UnderlordEnv(ExternalEnv):
              spaces.Discrete(6),  # gamePhase *
              spaces.MultiDiscrete([500, 3]),  # heroToMove: heroLocalID, isUnderlord
              spaces.Discrete(500),  # itemToMove: localID*,
-             spaces.Discrete(2),  # has freeReroll
+             spaces.Discrete(3),  # reRoll cost
              spaces.Discrete(2),  # rerolled (item)
              # below are the store heros
              spaces.MultiDiscrete([71, 71, 71, 71, 71]),
@@ -75,8 +75,8 @@ class UnderlordEnv(ExternalEnv):
              spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]),
              spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]),
              spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 500, 4, 6, 14, 9, 9, 3]),
-             # below are underlords to pick (whenever valid)
-             spaces.MultiDiscrete([71, 71, 71, 71]),
+             # below are underlords to pick (whenever valid) -> underlord ID - specialty
+             spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3, ]),
              # below are the items
              spaces.MultiDiscrete([61, 14, 500, 4, 5]), spaces.MultiDiscrete([61, 14, 500, 4, 5]),
              spaces.MultiDiscrete([61, 14, 500, 4, 5]), spaces.MultiDiscrete([61, 14, 500, 4, 5]),
