@@ -514,10 +514,13 @@ class UnderlordInteract():
     def testFunction(self, param1, param2):
 
 
-        start_time = time.time()
-        print(self.getObservation())
-        print("--- %s seconds to get observation ---" % (time.time() - start_time))
-        self.updateWindowCoords()
+        # start_time = time.time()
+        # print(self.getObservation())
+        # print("--- %s seconds to get observation ---" % (time.time() - start_time))
+        # self.updateWindowCoords()
+
+        self.startNewGame()
+
         #
         # self.buyItem(0,[(-1, 10101)])
         # self.buyItem(0, [(-1, 10101)])
@@ -560,6 +563,8 @@ class UnderlordInteract():
             phase = self.getGamePhase()
             if phase is not None:
                 flag = False
+
+        self.closeStore()
 
     def getObservation(self):
 
