@@ -879,25 +879,25 @@ class UnderlordInteract():
         if earnedMoney != -1:
             reward += firstPlace * (1 - earnedMoney / 9) * 0.001
 
-        finished = self.finished()
+        # finished = self.finished()
 
-        if finished != -1:
+        if self.finalPlacement != -1:
 
-            if finished == 1:
+            if self.finalPlacement == 1:
                 reward == firstPlace
-            elif finished == 2:
+            elif self.finalPlacement == 2:
                 reward == firstPlace * 0.9
-            elif finished == 3:
+            elif self.finalPlacement == 3:
                 reward == firstPlace * 0.75
-            elif finished == 4:
+            elif self.finalPlacement == 4:
                 reward == firstPlace * 0.5
-            elif finished == 5:
+            elif self.finalPlacement == 5:
                 reward == firstPlace * 0.3
-            elif finished == 6:
+            elif self.finalPlacement == 6:
                 reward == firstPlace * 0.2
-            elif finished == 7:
+            elif self.finalPlacement == 7:
                 reward == firstPlace * 0.1
-            elif finished == 8:
+            elif self.finalPlacement == 8:
                 reward == firstPlace * 0
 
         if self.gamePhase in ['select', 'choose']:
@@ -933,12 +933,8 @@ class UnderlordInteract():
         # self.openStore(skipCheck=True)
 
         # self.gamePhase = self.gameStateLoader.getPhase()
-        newRound = self.HUD.getRound()
 
-        if newRound > self.round:
-            self.lockedIn = False
-
-        self.round = newRound
+        self.round = self.HUD.getRound()
         return self.gameStateLoader.getPhase()
 
     def selectItem(self, x=-1, y=-1, selection=-1):
