@@ -89,8 +89,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                             self.server.env.gold = publicData['gold']
                         if 'board_unit_limit' in publicData:
                             self.server.env.level = publicData['board_unit_limit']
-                        if 'next_level_exp' in publicData:
-                            self.server.env.remainingEXP = publicData['next_level_exp']
+                        if 'next_level_xp' in publicData:
+                            self.server.env.remainingEXP = publicData['next_level_xp'] - publicData['xp']
                         if 'final_place' in publicData:
                             self.server.env.finalPlace = publicData['final_place']
 

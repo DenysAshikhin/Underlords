@@ -42,7 +42,7 @@ class Items:
 
 
 
-        self.banned = ['mango_tree', 'divine_rapier', 'barricade', 'vesture_of_the_tyrant']  # might allow them later
+        self.banned = ['mango_tree', 'divine_rapier', 'barricade', 'vesture_of_the_tyrant', 'target_buddy', 'barricade_rot1']  # might allow them later
         self.unique = ['battle fury', 'dragon lance', 'refresher orb', 'void stone']
         self.bannedUnderlords = {  # Making this list sucks :c
             'battle fury': ['bat rider', 'crystal maiden', 'dazzle', 'death prophet', 'drow ranger', 'enchantress',

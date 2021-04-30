@@ -2255,7 +2255,7 @@
       "maxmana": 100,
       "model": "models/heroes/treant_protector/treant_protector.vmdl",
       "model_scale": 0.65,
-      "texturename": "treant",
+      "texturename": "treant_protector",
       "soundSet": "Hero_Treant",
       "movespeed": 270,
       "healthBarOffset": -75
@@ -8264,7 +8264,7 @@
       "maxmana": 100,
       "model": "models/heroes/treant_protector/treant_protector.vmdl",
       "model_scale": 0.65,
-      "texturename": "treant",
+      "texturename": "treant_protector",
       "soundSet": "Hero_Treant",
       "movespeed": 270,
       "healthBarOffset": -75
