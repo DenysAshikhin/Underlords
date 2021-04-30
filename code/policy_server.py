@@ -15,8 +15,10 @@ from environment import UnderlordEnv
 import argparse
 
 parser = argparse.ArgumentParser(description='Optional app description')
-parser.add_argument('-ip', type=str,
-                    help='IP of this device')
+parser.add_argument('-ip', type=str, help='IP of this device')
+
+parser.add_argument('-checkpoint', type=str, help='location of checkpoint to restore from')
+
 
 args = parser.parse_args()
 
@@ -144,15 +146,15 @@ DEFAULT_CONFIG = with_common_config({
     "framework": "tf",
     "explore": True,
     "exploration_config": {
-            # The Exploration class to use. In the simplest case, this is the name
-            # (str) of any class present in the `rllib.utils.exploration` package.
-            # You can also provide the python class directly or the full location
-            # of your class (e.g. "ray.rllib.utils.exploration.epsilon_greedy.
-            # EpsilonGreedy").
-            "type": "StochasticSampling",
-            # "sub_exploration": "StochasticSampling"
-            # Add constructor kwargs here (if any).
-        },
+        # The Exploration class to use. In the simplest case, this is the name
+        # (str) of any class present in the `rllib.utils.exploration` package.
+        # You can also provide the python class directly or the full location
+        # of your class (e.g. "ray.rllib.utils.exploration.epsilon_greedy.
+        # EpsilonGreedy").
+        "type": "StochasticSampling",
+        # "sub_exploration": "StochasticSampling"
+        # Add constructor kwargs here (if any).
+    },
 })
 
 # DEFAULT_CONFIG["num_workers"] = 1
@@ -166,20 +168,23 @@ DEFAULT_CONFIG = with_common_config({
 
 ray.init()
 
-print(f"runnign on: {args.ip}:55555")
+print(f"running on: {args.ip}:55555")
 
 # trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
 trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
-# # checkpoint_path = CHECKPOINT_FILE.format(args.run)
-# # checkpoint_path = "../checkpoints"
-# # # Attempt to restore from checkpoint, if possible.
-# if os.path.exists(checkpoint_path):
-#     checkpoint_path = open(checkpoint_path).read()
-#     print("Restoring from checkpoint path", checkpoint_path)
-#     trainer.restore(checkpoint_path)
-# else:
-#     print("That path does not exist!")
+# checkpoint_path = CHECKPOINT_FILE.format(args.run)
+checkpoint_path = "checkpoints/"
+
+
+if args.checkpoint:
+    # Attempt to restore from checkpoint, if possible.
+    if os.path.exists(args.checkpoint):
+        print('path FOUND!')
+        print("Restoring from checkpoint path", args.checkpoint)
+        trainer.restore(args.checkpoint)
+    else:
+        print("That path does not exist!")
 
 # Serving and training loop.
 i = 0
@@ -187,7 +192,5 @@ while True:
     print(pretty_print(trainer.train()))
     print(f"Finished train run #{i + 1}")
     i += 1
-    # checkpoint = trainer.save(checkpoint_path)
-    # print("Last checkpoint", checkpoint)
-    # with open(checkpoint_path, "w") as f:
-    #     f.write(checkpoint)
+    checkpoint = trainer.save(checkpoint_path)
+    print("Last checkpoint", checkpoint)

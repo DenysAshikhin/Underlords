@@ -71,6 +71,12 @@ if __name__ == "__main__":
 
     checkpoint_path = CHECKPOINT_FILE.format(args.run)
 
+    checkpoint = trainer.save()
+    print("Last checkpoint", checkpoint)
+    with open(checkpoint_path, "w") as f:
+        f.write(checkpoint)
+
+
     # Attempt to restore from checkpoint, if possible.
     if not args.no_restore and os.path.exists(checkpoint_path):
         checkpoint_path = open(checkpoint_path).read()
