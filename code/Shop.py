@@ -17,6 +17,16 @@ class Shop:
     def __init__(self):
         super().__init__()
         self.classes = self.getClasses()
+
+        self.classIDMap = {}
+
+        i = 0
+
+        for clas in self.classes:
+            self.classIDMap[clas] = i
+            i += 1
+
+
         self.model = self.createModel()
         self.storeIconTemplates, self.freeRerollIcon = self.loadIcons()
         self.red = Image.open("../blank/red.jpg")

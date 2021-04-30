@@ -43,6 +43,8 @@ class Underlords:
 
         return underlordsList
 
+
+
     def loadUnderlords(self):
         root = os.path.join(os.path.dirname(os.getcwd()), "underlords")
         templateList = []
@@ -51,6 +53,7 @@ class Underlords:
             img = cv2.imread(os.path.join(root, file))
             templatename = file[0:len(file) - 4]
             templateList.append((templatename, img))
+
 
         return templateList
 

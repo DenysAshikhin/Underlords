@@ -30,8 +30,8 @@ episode_id = client.start_episode()
 reward = 0
 print('starting main loop')
 replayList = []
-client.env.underlord.mouseSleepTime = 0.1 * args.speed
-client.env.underlord.shopSleepTime = 0.3 * args.speed
+client.env.underlord.mouseSleepTime *= args.speed
+client.env.underlord.shopSleepTime *= args.speed
 
 while True:
     # print('getting observation')
@@ -44,10 +44,12 @@ while True:
     # start_time = time.time()
 
     action = None
+    print('trying to get action')
     try:
         action = client.get_action(episode_id=episode_id, observation=gameObservation)
     except:
         action = client.get_action(episode_id=episode_id, observation=gameObservation)
+    print("got action")
     # print("--- %s seconds to get action ---" % (time.time() - start_time))
     # start_time = time.time()
     print(action)

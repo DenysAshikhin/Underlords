@@ -56,6 +56,33 @@ class RequestHandler(BaseHTTPRequestHandler):
                         elif not publicData['is_human_player']:
                             continue
 
+                        if 'combat_type' in publicData:
+                            self.server.env.combatType = publicData['combat_type']
+                        if 'combat_result' in publicData:
+                            combatResult = publicData['combat_result']
+
+                            if publicData['wins'] != self.server.env.wins:
+                                self.server.env.wins = publicData['wins']
+                                self.server.env.round += 1
+                                self.server.env.newRoundStarted = True
+                                # print(f"it is now round WIN: {self.server.env.round}")
+                                # print(self.server.env.combatResult)
+                            elif publicData['losses'] != self.server.env.losses:
+                                self.server.env.losses = publicData['losses']
+                                self.server.env.round += 1
+                                self.server.env.newRoundStarted = True
+                                # print(f"it is now round LOSS: {self.server.env.round}")
+                                # print(self.server.env.combatResult)
+                            elif self.server.env.combatResult != combatResult and combatResult != 1 and combatResult != 2:
+                                print("There was a draw?")
+                                self.server.env.combatResult = combatResult
+                                self.server.env.round += 1
+                                self.server.env.newRoundStarted = True
+                                # print(f"it is now round DRAW: {self.server.env.round}")
+                                # print(self.server.env.combatResult)
+                            else:
+                                self.server.env.newRoundStarted = False
+
                         if 'health' in publicData:
                             self.server.env.health = publicData['health']
                         if 'gold' in publicData:
@@ -66,7 +93,6 @@ class RequestHandler(BaseHTTPRequestHandler):
                             self.server.env.remainingEXP = publicData['next_level_exp']
                         if 'final_place' in publicData:
                             self.server.env.finalPlace = publicData['final_place']
-
 
                         if 'units' in publicData:
                             units = publicData['units']  # It's all units
@@ -79,7 +105,6 @@ class RequestHandler(BaseHTTPRequestHandler):
                             self.server.env.gsiItems = items
 
                     elif 'private_player_state' in data:
-
 
                         privateData = data['private_player_state']
 
