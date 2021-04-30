@@ -32,8 +32,14 @@ episode_id = client.start_episode()
 reward = 0
 print('starting main loop')
 replayList = []
-client.env.underlord.mouseSleepTime *= args.speed
-client.env.underlord.shopSleepTime *= args.speed
+
+
+if args.speed is not None:
+
+    print(f"multiply by {args.speed}")
+
+    client.env.underlord.mouseSleepTime *= args.speed
+    client.env.underlord.shopSleepTime *= args.speed
 
 while True:
     # print('getting observation')
