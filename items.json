@@ -929,7 +929,7 @@
       "type": "placeable",
       "displayName": "#dac_item_target_buddy",
       "description": "#dac_item_target_buddy_desc",
-      "icon": "build_target_buddy",
+      "icon": "target_buddy",
       "unitName": "target_buddy"
     },
     "battle_fury": {

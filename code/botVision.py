@@ -527,10 +527,16 @@ class UnderlordInteract():
 
     def testFunction(self, param1, param2):
 
+        self.updateWindowCoords()
         start_time = time.time()
         print(self.getObservation())
         print("--- %s seconds to get observation ---" % (time.time() - start_time))
-        self.updateWindowCoords()
+
+
+
+        if self.underlordPicks is not None or self.itemPicks is not None:
+            print(f"result of running out: {self.timeRunningOut()}")
+
 
         # self.startNewGame()
 
@@ -1066,9 +1072,7 @@ class UnderlordInteract():
 
         else:
             # self.updateWindowCoords()
-            mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
-            time.sleep(self.mouseSleepTime)
-            mouse1.click(Button.left, 1)
+
             # self.rerolledItem = False
             # self.choseItem = True
             # self.selected = True
@@ -1094,6 +1098,46 @@ class UnderlordInteract():
 
                         # meaning the next item doesn't exit, no more items left to shift
                         if holderItem is None:
+                            mouse1.position = (
+                            self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
+                            time.sleep(self.mouseSleepTime)
+                            mouse1.click(Button.left, 1)
+                            time.sleep(3)
+                            return 1
+
+
+                        # meaning it is our first item
+                        if self.gsiItems is None:
+                            item = self.items.itemDataID[boughtItemId]
+                            name = item['icon']
+                            properID = self.items.itemIDMap[name]
+
+                            melee = False
+                            ranged = False
+                            preventMana = False
+
+                            if "melee_only" in self.items.itemData[name]:
+                                melee = True
+                            if "ranged_only" in self.items.itemData[name]:
+                                ranged = True
+                            if "requires_ability" in self.items.itemData[name]:
+                                preventMana = True
+
+                            holderItem = itemObject
+
+                            self.itemObjects[i][j] = Item(name, (i, j),
+                                                          ID=properID,
+                                                          melee=melee,
+                                                          ranged=ranged,
+                                                          preventMana=preventMana,
+                                                          localID=self.localItemID,
+                                                          legacyID=boughtItemId)
+                            self.localItemID += 1
+                            self.itemlabels[i][j].config(text=name)
+                            mouse1.position = (
+                                self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
+                            time.sleep(self.mouseSleepTime)
+                            mouse1.click(Button.left, 1)
                             time.sleep(3)
                             return 1
 
@@ -1165,6 +1209,9 @@ class UnderlordInteract():
                                                       legacyID=boughtItemId)
                         self.localItemID += 1
                         self.itemlabels[i][j].config(text=name)
+                        mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
+                        time.sleep(self.mouseSleepTime)
+                        mouse1.click(Button.left, 1)
                         time.sleep(3)
                         return 1
                     idx += 1
@@ -1173,8 +1220,7 @@ class UnderlordInteract():
     def buyUnderlord(self, underlords, selection):
 
         # self.updateWindowCoords()
-        mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
-        mouse1.click(Button.left, 1)
+
 
         AnnaPreferences = [(2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7)]
         JullPreferences = [(0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (3, 0), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7)]
@@ -1243,6 +1289,9 @@ class UnderlordInteract():
                 self.localHeroID += 1
                 self.updateHeroLabel(self.underlord)
                 self.boardHeroes[x][y] = self.underlord
+                mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
+                time.sleep(self.mouseSleepTime)
+                mouse1.click(Button.left, 1)
                 time.sleep(3)
                 return
 
@@ -1330,18 +1379,18 @@ class UnderlordInteract():
 
         # self.updateWindowCoords()
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime*2)
 
         mouse1.press(Button.left)
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime*2)
 
-        mouse1.position = (self.x + 50, self.y + 800)
+        mouse1.position = (self.x + 30, self.y + 820)
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime*2)
 
         mouse1.release(Button.left)
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime*2)
         return earnedMoney
 
     def moveGameHero(self, hero, newX, newY):
@@ -1384,9 +1433,9 @@ class UnderlordInteract():
 
     def clickUp(self):
 
-        if self.combatType != 0 and not self.checkState:
-            self.strongPunish = True
-            return -1
+        # if self.combatType != 0 and not self.checkState:
+        #     self.strongPunish = True
+        #     return -1
 
         if self.gold < 5:
             self.mediumPunish = True
@@ -1407,9 +1456,9 @@ class UnderlordInteract():
 
     def lockIn(self):
 
-        if self.combatType != 0 and not self.checkState:
-            self.mediumPunish = True
-            return -1
+        # if self.combatType != 0 and not self.checkState:
+        #     self.mediumPunish = True
+        #     return -1
 
         self.openStore(update=False, skipCheck=True)
 
@@ -1421,9 +1470,9 @@ class UnderlordInteract():
 
     def rerollStore(self):
 
-        if self.combatType != 0 and not self.checkState:
-            self.mediumPunish = True
-            return -1
+        # if self.combatType != 0 and not self.checkState:
+        #     self.mediumPunish = True
+        #     return -1
 
         if self.gold < 2:
             self.mediumPunish = True
@@ -1524,7 +1573,7 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        if self.combatType == 0 or self.currentTime < 5 and not self.checkState:
+        if self.combatType != 0 or self.currentTime < 3 and not self.checkState:
             self.mediumPunish = True
             print('invalid phase move unit')
             return -1

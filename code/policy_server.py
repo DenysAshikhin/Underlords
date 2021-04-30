@@ -141,7 +141,18 @@ DEFAULT_CONFIG = with_common_config({
     "input_evaluation": [],
     # "callbacks": MyCallbacks,
     "env_config": {"sleep": True, "framework": 'tf'},
-    "framework": "tf"
+    "framework": "tf",
+    "explore": True,
+    "exploration_config": {
+            # The Exploration class to use. In the simplest case, this is the name
+            # (str) of any class present in the `rllib.utils.exploration` package.
+            # You can also provide the python class directly or the full location
+            # of your class (e.g. "ray.rllib.utils.exploration.epsilon_greedy.
+            # EpsilonGreedy").
+            "type": "StochasticSampling",
+            # "sub_exploration": "StochasticSampling"
+            # Add constructor kwargs here (if any).
+        },
 })
 
 # DEFAULT_CONFIG["num_workers"] = 1
@@ -160,15 +171,15 @@ print(f"runnign on: {args.ip}:55555")
 # trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
 trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
-# checkpoint_path = CHECKPOINT_FILE.format(args.run)
-checkpoint_path = "checkpoints/"
-# # Attempt to restore from checkpoint, if possible.
-if os.path.exists(checkpoint_path):
-    checkpoint_path = open(checkpoint_path).read()
-    print("Restoring from checkpoint path", checkpoint_path)
-    trainer.restore(checkpoint_path)
-else:
-    print("That path does not exist!")
+# # checkpoint_path = CHECKPOINT_FILE.format(args.run)
+# # checkpoint_path = "../checkpoints"
+# # # Attempt to restore from checkpoint, if possible.
+# if os.path.exists(checkpoint_path):
+#     checkpoint_path = open(checkpoint_path).read()
+#     print("Restoring from checkpoint path", checkpoint_path)
+#     trainer.restore(checkpoint_path)
+# else:
+#     print("That path does not exist!")
 
 # Serving and training loop.
 i = 0
