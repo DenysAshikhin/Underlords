@@ -986,7 +986,7 @@ class UnderlordInteract():
 
         if self.itemPicks is not None:
 
-            if selection < -1 or selection > 3:
+            if selection < 0 or selection > 3:
                 print('break 1')
                 self.mediumPunish = True
                 return -1
@@ -1008,7 +1008,7 @@ class UnderlordInteract():
             #     raise RuntimeError("Underlord Uh Oh")
             #     return -1
 
-            if selection < -1 or selection > 3:
+            if selection < 0 or selection > 3:
                 self.mediumPunish = True
                 print('break 2')
                 return -1
@@ -1081,6 +1081,14 @@ class UnderlordInteract():
             holderItem = None
             boughtItemId = itemList[selection]
             foundLocation = False
+            gsiItems = self.gsiItems
+
+            mouse1.position = (
+                self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
+            time.sleep(self.mouseSleepTime)
+            mouse1.click(Button.left, 1)
+            time.sleep(3)
+
 
             for i in range(3):
                 for j in range(4):
@@ -1098,48 +1106,39 @@ class UnderlordInteract():
 
                         # meaning the next item doesn't exit, no more items left to shift
                         if holderItem is None:
-                            mouse1.position = (
-                            self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
-                            time.sleep(self.mouseSleepTime)
-                            mouse1.click(Button.left, 1)
-                            time.sleep(3)
                             return 1
 
 
-                        # meaning it is our first item
-                        if self.gsiItems is None:
-                            item = self.items.itemDataID[boughtItemId]
-                            name = item['icon']
-                            properID = self.items.itemIDMap[name]
+                    # meaning it is our first item
+                    elif self.gsiItems is None:
+                        item = self.items.itemDataID[boughtItemId]
+                        name = item['icon']
+                        properID = self.items.itemIDMap[name]
 
-                            melee = False
-                            ranged = False
-                            preventMana = False
+                        melee = False
+                        ranged = False
+                        preventMana = False
 
-                            if "melee_only" in self.items.itemData[name]:
-                                melee = True
-                            if "ranged_only" in self.items.itemData[name]:
-                                ranged = True
-                            if "requires_ability" in self.items.itemData[name]:
-                                preventMana = True
+                        if "melee_only" in self.items.itemData[name]:
+                            melee = True
+                        if "ranged_only" in self.items.itemData[name]:
+                            ranged = True
+                        if "requires_ability" in self.items.itemData[name]:
+                            preventMana = True
 
-                            holderItem = itemObject
+                        holderItem = itemObject
 
-                            self.itemObjects[i][j] = Item(name, (i, j),
-                                                          ID=properID,
-                                                          melee=melee,
-                                                          ranged=ranged,
-                                                          preventMana=preventMana,
-                                                          localID=self.localItemID,
-                                                          legacyID=boughtItemId)
-                            self.localItemID += 1
-                            self.itemlabels[i][j].config(text=name)
-                            mouse1.position = (
-                                self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
-                            time.sleep(self.mouseSleepTime)
-                            mouse1.click(Button.left, 1)
-                            time.sleep(3)
-                            return 1
+                        self.itemObjects[i][j] = Item(name, (i, j),
+                                                      ID=properID,
+                                                      melee=melee,
+                                                      ranged=ranged,
+                                                      preventMana=preventMana,
+                                                      localID=self.localItemID,
+                                                      legacyID=boughtItemId)
+                        self.localItemID += 1
+                        self.itemlabels[i][j].config(text=name)
+
+                        return 1
 
                     # meaning we are searching for a spot, and the current spots are taken
                     elif itemObject is not None:
@@ -1149,6 +1148,16 @@ class UnderlordInteract():
 
                         # found where the item we bought might go, need to check
                         # or we have found it previously, and are now shifting to after the existing duplicates
+
+
+                        try:
+                            temp = self.gsiItems[idx][1] == boughtItemId or foundLocation
+                        except:
+                            print(self.gsiItems)
+                            print(idx)
+                            raise RuntimeError("This fucking line")
+
+
                         if self.gsiItems[idx][1] == boughtItemId or foundLocation:
 
                             foundLocation = True
@@ -1209,10 +1218,6 @@ class UnderlordInteract():
                                                       legacyID=boughtItemId)
                         self.localItemID += 1
                         self.itemlabels[i][j].config(text=name)
-                        mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
-                        time.sleep(self.mouseSleepTime)
-                        mouse1.click(Button.left, 1)
-                        time.sleep(3)
                         return 1
                     idx += 1
 

@@ -33,9 +33,7 @@ reward = 0
 print('starting main loop')
 replayList = []
 
-
 if args.speed is not None:
-
     print(f"multiply by {args.speed}")
 
     client.env.underlord.mouseSleepTime *= args.speed
@@ -61,7 +59,7 @@ while True:
     print("got action")
     # print("--- %s seconds to get action ---" % (time.time() - start_time))
     # start_time = time.time()
-    print(action)
+    print(action[0], action[1] - 1, action[2] - 1, action[3] - 1)
     print('----')
     reward += client.env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
     # print("--- %s seconds to get do action ---" % (time.time() - start_time))
