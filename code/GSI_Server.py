@@ -56,6 +56,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                         elif not publicData['is_human_player']:
                             continue
 
+                        print(publicData)
+
                         if 'combat_type' in publicData:
                             self.server.env.combatType = publicData['combat_type']
                         if 'combat_result' in publicData:
