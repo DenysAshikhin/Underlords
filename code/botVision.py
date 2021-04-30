@@ -147,7 +147,7 @@ class UnderlordInteract():
         self.speedUpFactor = 1
 
         self.shopSleepTime = 0.3 / self.speedUpFactor
-        self.mouseSleepTime = 0.15 / self.speedUpFactor
+        self.mouseSleepTime = 0.2 / self.speedUpFactor
 
         self.shop = Shop()
         self.HUD = HUD()
@@ -161,11 +161,11 @@ class UnderlordInteract():
         self.storeMap = [350, 450, 575, 700, 800]  # super dumb and outdated to get X offset for purchase unit. change
         # later if I ever feel like it
         self.purchaseHistory = []
-        self.gold = -1
-        self.health = -1
-        self.remainingEXP = -1
-        self.level = -1
-        self.round = -1
+        self.gold = 0
+        self.health = 0
+        self.remainingEXP = 0
+        self.level = 0
+        self.round = 0
         self.freeRerollAvailable = False
         self.lockedIn = False
         self.leveledUp = False
@@ -182,6 +182,7 @@ class UnderlordInteract():
         self.losses = 0
         self.round = 0
         self.newRoundStarted = False
+        self.currentTime = 0
 
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -449,11 +450,11 @@ class UnderlordInteract():
         self.storeMap = [350, 450, 575, 700, 800]  # super dumb and outdated to get X offset for purchase unit. change
         # later if I ever feel like it
         self.purchaseHistory = []
-        self.gold = -1
-        self.health = -1
-        self.remainingEXP = -1
-        self.level = -1
-        self.round = -1
+        self.gold = 0
+        self.health = 0
+        self.remainingEXP = 0
+        self.level = 0
+        self.round = 0
         self.freeRerollAvailable = False
         self.lockedIn = False
         self.leveledUp = False
@@ -470,6 +471,7 @@ class UnderlordInteract():
         self.losses = 0
         self.round = 0
         self.newRoundStarted = False
+        self.currentTime = 0
 
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -575,7 +577,7 @@ class UnderlordInteract():
             if phase is not None:
                 flag = False
 
-        self.closeStore()
+        # self.closeStore()
 
     def getObservation(self):
 
@@ -803,10 +805,13 @@ class UnderlordInteract():
         if self.rerolledItem:
             rerolledItem = 1
 
+        clockTime = time.time()
+        self.currentTime = self.HUD.getClockTimeLeft()
+
         obs = (
             self.finalPlacement, self.health, self.gold, self.level, self.remainingEXP, self.round, self.lockedIn,
             self.combatType,
-            heroToMove, itemToMove, self.rerollCost, rerolledItem,
+            heroToMove, itemToMove, self.rerollCost, rerolledItem, self.currentTime,
             # store heros
             shopHeros,
             # bench heroes
@@ -824,11 +829,10 @@ class UnderlordInteract():
             itemPick
         )
 
-        clockTime = time.time()
-        print(f"Time left: {self.HUD.getClockTimeLeft()}")
+
+        print(f"Round: {self.round} - Time Left: {self.currentTime}")
         print("--- %s seconds to get clock observation ---" % (time.time() - clockTime))
 
-        print(f"Current Round: {self.round}")
         # print("--- %s seconds to get observation ---" % (time.time() - overallTime))
 
         return obs
@@ -962,7 +966,7 @@ class UnderlordInteract():
 
         # self.gamePhase = self.gameStateLoader.getPhase()
 
-        self.round = self.HUD.getRound()
+        # self.round = self.HUD.getRound()
         return self.gameStateLoader.getPhase()
 
     def selectItem(self, x=-1, y=-1, selection=-1):
@@ -1037,6 +1041,10 @@ class UnderlordInteract():
                 self.itemToMove = self.itemObjects[x][y]
 
     def buyItem(self, selection, itemList):
+
+        if selection > 3:
+            self.mediumPunish = True
+            return -1
 
         if selection == 3:
             if self.rerolledItem:
@@ -1377,7 +1385,7 @@ class UnderlordInteract():
         if self.remainingEXP <= 5:
             self.leveledUp = True
 
-        # self.openStore(update=False, skipCheck=True)
+        self.openStore(update=False, skipCheck=True)
         mouse1.position = (self.clickUpX, self.clickUpY)
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
@@ -1389,7 +1397,7 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        # self.openStore(update=False, skipCheck=True)
+        self.openStore(update=False, skipCheck=True)
 
         mouse1.position = (self.lockInX, self.lockInY)
         time.sleep(self.mouseSleepTime)
@@ -1407,7 +1415,7 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        # self.openStore(update=False, skipCheck=True)
+        self.openStore(update=False, skipCheck=True)
         mouse1.position = (self.rerollX, self.rerollY)
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
@@ -1431,17 +1439,17 @@ class UnderlordInteract():
 
         # self.updateWindowCoords()
 
-        if not skipCheck:
+        if self.combatType != 0 or self.round < 2:
             shopOpen = self.shop.shopOpen()
 
             if not shopOpen:
                 mouse1.position = (self.shopX, self.shopY)
                 mouse1.click(Button.left, 1)
                 time.sleep(self.shopSleepTime)
-        else:
-            mouse1.position = (self.shopX, self.shopY)
-            mouse1.click(Button.left, 1)
-            time.sleep(self.mouseSleepTime)
+        # else:
+        #     mouse1.position = (self.shopX, self.shopY)
+        #     mouse1.click(Button.left, 1)
+        #     time.sleep(self.mouseSleepTime)
         # if update:
         #     self.shopChoices = self.shop.labelShop()
 
@@ -1502,7 +1510,7 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        if self.combatType == 0 and not self.checkState:
+        if self.combatType == 0 or self.currentTime < 2 and not self.checkState:
             self.mediumPunish = True
             print('invalid phase move unit')
             return -1
@@ -1579,6 +1587,12 @@ class UnderlordInteract():
                     self.itemToMove = None
                     return -1
             else:
+
+                if x > 3 or y > 7:
+                    print('the new wrong x 2')
+                    self.mediumPunish = True
+                    return -1
+
                 if self.boardHeroes[x][y] is not None:  # Making sure board spot has a hero
                     if self.boardHeroes[x][y].underlord:
                         # print("Can't attach items to Underlords!")
@@ -1728,7 +1742,7 @@ class UnderlordInteract():
             self.strongPunish = True
             return -1
 
-        # self.openStore(skipCheck=True)
+        self.openStore(skipCheck=True)
         validIDX = [0, 1, 2, 3, 4]
 
         if idx not in validIDX:
@@ -1744,7 +1758,7 @@ class UnderlordInteract():
         result = self.benchLevelUp(idx)
 
         if result == -1:  # not hopefully this doesn't break things
-            self.closeStore()
+            # self.closeStore()
             return -1
 
         if result == 10:  # meaning it tiered up, no need to create a new underlord on bench

@@ -62,6 +62,7 @@ class UnderlordEnv(ExternalEnv):
              spaces.Discrete(250),  # itemToMove: localID*,
              spaces.Discrete(3),  # reRoll cost
              spaces.Discrete(2),  # rerolled (item)
+             spaces.Discrete(35), # current round timer
              # below are the store heros
              spaces.MultiDiscrete([71, 71, 71, 71, 71]),
              # below are the bench heroes
@@ -277,7 +278,7 @@ class _ExternalEnvEpisode:
         else:
             self.new_observation = observation
         self._send()
-        return self.action_queue.get(True, timeout=60.0)
+        return self.action_queue.get(True, timeout=500.0)
 
     def done(self, observation):
         if self.multiagent:

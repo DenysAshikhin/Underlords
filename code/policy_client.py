@@ -3,11 +3,13 @@ from ray.rllib.env import PolicyClient
 from ray.tune.registry import register_env
 
 from environment import UnderlordEnv
-
+import logging
 import time
 import argparse
 
 from logger import logger
+
+logging.basicConfig(level=logging.INFO)
 
 parser = argparse.ArgumentParser(description='Optional app description')
 parser.add_argument('-ip', type=str,
