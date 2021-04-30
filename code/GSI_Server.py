@@ -56,6 +56,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         elif not publicData['is_human_player']:
                             continue
 
+                        print("PUBLIC")
                         print(publicData)
 
                         if 'combat_type' in publicData:
