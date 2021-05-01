@@ -532,8 +532,8 @@ class UnderlordInteract():
         print(self.getObservation())
         print("--- %s seconds to get observation ---" % (time.time() - start_time))
 
-        if self.underlordPicks is not None or self.itemPicks is not None:
-            print(f"result of running out: {self.timeRunningOut()}")
+        # if self.underlordPicks is not None or self.itemPicks is not None:
+        #     print(f"result of running out: {self.timeRunningOut()}")
 
         # self.startNewGame()
 
@@ -1099,13 +1099,19 @@ class UnderlordInteract():
             holderItem = None
             boughtItemId = itemList[selection]
             foundLocation = False
-            gsiItems = self.gsiItems
+
 
             mouse1.position = (
                 self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
             time.sleep(self.mouseSleepTime)
             mouse1.click(Button.left, 1)
             time.sleep(3)
+            gsiItems = []
+
+            for itemy in self.gsiItems:
+                gsiItems.append(itemy[1])
+
+            gsiItems.sort()
 
             for i in range(3):
                 for j in range(4):
@@ -1167,13 +1173,13 @@ class UnderlordInteract():
                         # or we have found it previously, and are now shifting to after the existing duplicates
 
                         try:
-                            temp = gsiItems[idx][1] == boughtItemId or foundLocation
+                            temp = gsiItems[idx] == boughtItemId or foundLocation
                         except:
                             print(gsiItems)
                             print(idx)
                             raise RuntimeError("This fucking line")
 
-                        if gsiItems[idx][1] == boughtItemId or foundLocation:
+                        if gsiItems[idx] == boughtItemId or foundLocation:
 
                             foundLocation = True
                             # if we already have this item before, then it goes to next spot

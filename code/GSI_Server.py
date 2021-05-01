@@ -92,7 +92,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                         if 'next_level_xp' in publicData:
                             self.server.env.remainingEXP = publicData['next_level_xp'] - publicData['xp']
                         if 'final_place' in publicData:
-                            self.server.env.finalPlace = publicData['final_place']
+                            if publicData['final_place'] != 0:
+                                self.server.env.finalPlace = publicData['final_place']
 
                         if 'units' in publicData:
                             units = publicData['units']  # It's all units
@@ -107,6 +108,11 @@ class RequestHandler(BaseHTTPRequestHandler):
                     elif 'private_player_state' in data:
 
                         privateData = data['private_player_state']
+
+                        if 'is_human_player' not in privateData:
+                            continue
+                        elif not privateData['is_human_player']:
+                            continue
 
                         if 'shopLocked' in privateData:
                             self.server.env.lockedIn = privateData['shopLocked']
