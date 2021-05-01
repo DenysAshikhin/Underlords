@@ -839,6 +839,7 @@ class UnderlordInteract():
 
         print(
             f"Round: {self.round} - Time Left: {self.currentTime} - Pick Time? : {self.itemPicks is not None or self.underlordPicks is not None}")
+        print(f"Final placement: {self.finalPlacement}")
         print("--- %s seconds to get clock observation ---" % (time.time() - clockTime))
 
         # print("--- %s seconds to get observation ---" % (time.time() - overallTime))
@@ -1121,7 +1122,7 @@ class UnderlordInteract():
 
 
                     # meaning it is our first item
-                    elif self.gsiItems is None:
+                    elif gsiItems is None:
                         item = self.items.itemDataID[boughtItemId]
                         name = item['icon']
                         properID = self.items.itemIDMap[name]
@@ -1161,13 +1162,13 @@ class UnderlordInteract():
                         # or we have found it previously, and are now shifting to after the existing duplicates
 
                         try:
-                            temp = self.gsiItems[idx][1] == boughtItemId or foundLocation
+                            temp = gsiItems[idx][1] == boughtItemId or foundLocation
                         except:
-                            print(self.gsiItems)
+                            print(gsiItems)
                             print(idx)
                             raise RuntimeError("This fucking line")
 
-                        if self.gsiItems[idx][1] == boughtItemId or foundLocation:
+                        if gsiItems[idx][1] == boughtItemId or foundLocation:
 
                             foundLocation = True
                             # if we already have this item before, then it goes to next spot

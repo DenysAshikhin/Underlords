@@ -72,7 +72,7 @@ while True:
 
     replayList.append((gameObservation, action, finalPosition))
 
-    if finalPosition != -1:
+    if finalPosition != 0:
         print(f"GAME OVER! final position: {finalPosition} ")
         reward = 0
         # need to call a reset of env here
