@@ -1412,6 +1412,10 @@ class UnderlordInteract():
                 # print(f"No hero on board spot {x + 1}-{y + 1} to sell!")
                 self.mediumPunish = True
                 return -1
+            elif self.boardHeroes[x][y] is not None:
+                if self.boardHeroes[x][y].underlord:
+                    self.strongPunish = True
+                    return -1
 
         earnedMoney = 0
 
