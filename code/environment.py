@@ -62,7 +62,7 @@ class UnderlordEnv(ExternalEnv):
              spaces.Discrete(250),  # itemToMove: localID*,
              spaces.Discrete(3),  # reRoll cost
              spaces.Discrete(2),  # rerolled (item)
-             spaces.Discrete(35), # current round timer
+             spaces.Discrete(35),  # current round timer
              # below are the store heros
              spaces.MultiDiscrete([71, 71, 71, 71, 71]),
              # below are the bench heroes
@@ -86,7 +86,12 @@ class UnderlordEnv(ExternalEnv):
              spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
              spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
              # below are the items to pick from
-             spaces.MultiDiscrete([70, 70, 70]))
+             spaces.MultiDiscrete([70, 70, 70])),
+            # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
+            spaces.multiDiscrete([9, 101, 100, 11, 71, 4]), spaces.multiDiscrete([9, 101, 100, 11, 71, 4]),
+            spaces.multiDiscrete([9, 101, 100, 11, 71, 4]), spaces.multiDiscrete([9, 101, 100, 11, 71, 4]),
+            spaces.multiDiscrete([9, 101, 100, 11, 71, 4]), spaces.multiDiscrete([9, 101, 100, 11, 71, 4]),
+            spaces.multiDiscrete([9, 101, 100, 11, 71, 4])
         )
 
         self.action_space = spaces.MultiDiscrete(

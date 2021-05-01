@@ -186,6 +186,15 @@ class UnderlordInteract():
         self.currentTime = 0
         self.pickTime = False
 
+        self.otherPlayersDict = {2: {'slot': 2, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 3: {'slot': 3, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 4: {'slot': 4, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 5: {'slot': 5, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 6: {'slot': 6, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 7: {'slot': 7, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 8: {'slot': 8, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 }
+
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
         # self.shopImages
@@ -476,6 +485,7 @@ class UnderlordInteract():
         self.currentTime = 0
         self.allowMove = False
         self.pickTime = False
+        self.otherPlayersDict = {}
 
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -830,6 +840,35 @@ class UnderlordInteract():
         if not self.lockedIn:
             lockedIn = 0
 
+        otherPlayers = []
+        for otherPlayer in self.otherPlayersDict:
+            other = self.otherPlayersDict[otherPlayer]
+            temp = [other['slot'], other['health'], other['gold'], other['level']]
+
+            units = other['units']
+
+            for unit in units:
+                tier = unit['rank']
+                tempID = unit['unit_id']
+                fullData = self.underlords.underlordDataID[tempID]
+
+                if ('texturename' not in fullData) or ('can_be_sold' not in unit):
+                    continue
+                if not unit['can_be_sold']:
+                    continue
+
+                name = fullData['texturename']
+
+                if name == 'anessix' or name == 'hobgen' or name == 'jull' or name == 'enno':
+                    continue
+
+                goodID = self.shop.classIDMap[name]
+                # print(f"Adding {name}-{tier}-{goodID}")
+                temp.append(goodID)
+                temp.append(tier)
+
+            otherPlayers.append(temp)
+
         obs = (
             self.finalPlacement, self.health, self.gold, self.level, self.remainingEXP, self.round, lockedIn,
             self.combatType,
@@ -848,7 +887,10 @@ class UnderlordInteract():
             localItems[0], localItems[1], localItems[2], localItems[3], localItems[4], localItems[5],
             localItems[6], localItems[7], localItems[8], localItems[9], localItems[10], localItems[11],
             # items to pick
-            itemPick
+            itemPick,
+            # other players
+            otherPlayers[0], otherPlayers[1], otherPlayers[2], otherPlayers[3], otherPlayers[4], otherPlayers[5],
+            otherPlayers[6],
         )
 
         print("--- %s seconds to get clock observation ---" % (time.time() - clockTime))
@@ -898,11 +940,18 @@ class UnderlordInteract():
 
         numHeroes = 0
 
-        if not self.leveledUp:
+        numBenchHeroes = 0
+
+        for i in range(8):
+            if self.benchHeroes[i] is not None:
+                numBenchHeroes += 1
+
+        if (not self.leveledUp) or (numBenchHeroes == 0):
             for i in range(4):
                 for j in range(8):
                     if self.boardHeroes[i][j] is not None:
-                        numHeroes += 1
+                        if not self.boardHeroes[i][j].underlord:
+                            numHeroes += 1
 
             reward -= (self.level - numHeroes) * (firstPlace * 0.05)
 
@@ -1116,6 +1165,13 @@ class UnderlordInteract():
             holderItem = None
             boughtItemId = itemList[selection]
             foundLocation = False
+
+            item = self.items.itemDataID[boughtItemId]
+            name = item['icon']
+
+            if name in self.items.banned:
+                self.strongPunish = True
+                return -1
 
             mouse1.position = (
                 self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
@@ -2125,4 +2181,5 @@ def openVision():
 
     root.mainloop()
 
-# openVision()
+
+openVision()
