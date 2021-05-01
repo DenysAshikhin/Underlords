@@ -958,8 +958,19 @@ class UnderlordInteract():
 
         if self.currentTime <= 8:
 
-            self.selectItem(selection=0)
-            return -100
+            if self.itemPicks is not None:
+
+                for i in range(3):
+                    boughtItemId = self.itemPicks[i]
+                    item = self.items.itemDataID[boughtItemId]
+                    name = item['icon']
+                    if name not in self.items.banned:
+
+                        self.selectItem(selection=i)
+                        return -100
+            elif self.underlordPicks is not None:
+                self.selectItem(selection=0)
+                return -100
         else:
             return 0
 
