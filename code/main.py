@@ -42,7 +42,12 @@ def imageGrab(x = 0,y = 0,w = 0, h = 0, yoffset = 0, xoffset = 0):
         win32gui.SetWindowPos(hwnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0,
                               win32con.SWP_SHOWWINDOW | win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
 
-        x0, y0, _, _ = dimensions
+        x0, y0, w0, h0 = dimensions
+        if (x+xoffset+w) == 0:
+            w = w0
+
+        if(y+ yoffset+h) == 0:
+            h = h0
 
         crop_dimensions = (x0 + x + xoffset, y0 + y + yoffset, x0 + x + w + xoffset, y0 + y + h + yoffset)
         # grab screen region set in `dimensions`
@@ -50,7 +55,6 @@ def imageGrab(x = 0,y = 0,w = 0, h = 0, yoffset = 0, xoffset = 0):
         return image
     except pywintypes.error:
         print("Dota Underlords not OPEN!!!!")
-        sys.exit()
 
 
 
