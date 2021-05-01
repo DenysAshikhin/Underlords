@@ -50,8 +50,8 @@ while True:
     # start_time = time.time()
 
     action = None
-    print('trying to get action')
-    print(gameObservation)
+    # print('trying to get action')
+    # print(gameObservation)
     try:
         action = client.get_action(episode_id=episode_id, observation=gameObservation)
     except:
@@ -60,13 +60,13 @@ while True:
     # print("--- %s seconds to get action ---" % (time.time() - start_time))
     # start_time = time.time()
     print(action[0], action[1] - 1, action[2] - 1, action[3] - 1)
-    print('----')
+
     reward += client.env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
     # print("--- %s seconds to get do action ---" % (time.time() - start_time))
     # start_time = time.time()
     print(f"running reward: {reward}")
     client.log_returns(episode_id=episode_id, reward=reward)
-    print('finished logging step')
+    # print('finished logging step')
     finalPosition = client.env.underlord.finished()
     # print("--- %s seconds to get finish logging return ---" % (time.time() - start_time))
 
@@ -84,3 +84,5 @@ while True:
         replayList.clear()
 
         episode_id = client.start_episode(episode_id=None)
+
+    print('----')

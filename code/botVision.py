@@ -147,7 +147,7 @@ class UnderlordInteract():
         self.speedUpFactor = 1
 
         self.shopSleepTime = 0.3 / self.speedUpFactor
-        self.mouseSleepTime = 0.2 / self.speedUpFactor
+        self.mouseSleepTime = 0.25 / self.speedUpFactor
 
         self.shop = Shop()
         self.HUD = HUD()
@@ -854,6 +854,8 @@ class UnderlordInteract():
         firstPlace = 1000
         earnedMoney = -1
 
+        acted = -1
+
         if action == 0:
             self.rerollStore()
         elif action == 1:
@@ -865,9 +867,9 @@ class UnderlordInteract():
         elif action == 4:
             earnedMoney = self.sellHero(x, y)
         elif action == 5:
-            self.selectItem(x, y, selection)
+            acted = self.selectItem(x, y, selection)
         elif action == 6:
-            self.selectItem(x, y, selection)
+            acted = self.selectItem(x, y, selection)
         elif action == 7:
             self.moveUnit(x, y)
         elif action == 8:
@@ -943,8 +945,9 @@ class UnderlordInteract():
             elif self.finalPlacement == 8:
                 reward == firstPlace * 0
 
-        if self.underlordPicks is not None or self.itemPicks is not None:
-            reward -= self.timeRunningOut()
+        if (action == 5 or action == 6) and acted < 1:
+            if self.underlordPicks is not None or self.itemPicks is not None:
+                reward -= self.timeRunningOut()
 
         # self.closeStore(skipCheck=True)
 
@@ -1008,7 +1011,7 @@ class UnderlordInteract():
             #     raise RuntimeError("item select Uh Oh")
             #     return -1
 
-            self.buyItem(selection, self.itemPicks)
+            return self.buyItem(selection, self.itemPicks)
 
         elif self.underlordPicks is not None:
 
@@ -1024,7 +1027,7 @@ class UnderlordInteract():
                 print('break 2')
                 return -1
 
-            self.buyUnderlord(self.underlordPicks, selection)
+            return self.buyUnderlord(self.underlordPicks, selection)
 
         else:
 
@@ -1309,7 +1312,7 @@ class UnderlordInteract():
                 time.sleep(self.mouseSleepTime)
                 mouse1.click(Button.left, 1)
                 time.sleep(3)
-                return
+                return 1
 
     def updateShop(self, units=True, hud=True, skipCheck=False):
 
@@ -1395,18 +1398,18 @@ class UnderlordInteract():
 
         # self.updateWindowCoords()
 
-        time.sleep(self.mouseSleepTime*2)
+        time.sleep(self.mouseSleepTime)
 
         mouse1.press(Button.left)
 
-        time.sleep(self.mouseSleepTime*2)
+        time.sleep(self.mouseSleepTime)
 
         mouse1.position = (self.x + 30, self.y + 820)
 
-        time.sleep(self.mouseSleepTime*2)
+        time.sleep(self.mouseSleepTime)
 
         mouse1.release(Button.left)
-        time.sleep(self.mouseSleepTime*2)
+        time.sleep(self.mouseSleepTime)
         return earnedMoney
 
     def moveGameHero(self, hero, newX, newY):
