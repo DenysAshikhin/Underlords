@@ -84,10 +84,10 @@ DEFAULT_CONFIG = with_common_config({
     # Initial coefficient for KL divergence.
     "kl_coeff": 0.2,
     # Size of batches collected from each worker.
-    "rollout_fragment_length": 50,
+    "rollout_fragment_length": 20,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 50,
+    "train_batch_size": 100,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
     "sgd_minibatch_size": 10,
@@ -117,7 +117,7 @@ DEFAULT_CONFIG = with_common_config({
     "clip_param": 0.3,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
-    "vf_clip_param": 10.0,
+    "vf_clip_param": 10000.0,
     # If specified, clip the global norm of gradients by this amount.
     "grad_clip": None,
     # Target value for KL divergence.
