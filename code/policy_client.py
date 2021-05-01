@@ -67,7 +67,7 @@ while True:
     print(f"running reward: {reward}")
     client.log_returns(episode_id=episode_id, reward=reward)
     # print('finished logging step')
-    finalPosition = client.env.underlord.finished()
+    finalPosition = client.env.underlord.finalPlacement
     # print("--- %s seconds to get finish logging return ---" % (time.time() - start_time))
 
     replayList.append((gameObservation, action, finalPosition))
@@ -77,7 +77,7 @@ while True:
         reward = 0
         # need to call a reset of env here
         client.end_episode(episode_id=episode_id, observation=gameObservation)
-        client.env.resetEnv()
+        client.env.underlord.resetEnv()
         fileWriter = logger(episode_id)
         fileWriter.createLog()
         fileWriter.writeLog(replayList)

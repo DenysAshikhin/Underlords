@@ -924,7 +924,7 @@ class UnderlordInteract():
 
         # finished = self.finished()
 
-        if self.finalPlacement != -1:
+        if self.finalPlacement != 0:
 
             if self.finalPlacement == 1:
                 reward == firstPlace
