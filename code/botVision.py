@@ -1318,7 +1318,7 @@ class UnderlordInteract():
                 self.localHeroID += 1
                 self.updateHeroLabel(self.underlord)
                 self.boardHeroes[x][y] = self.underlord
-                mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
+                mouse1.position = (self.itemSelectX - 20 + (self.itemSelectXOffset * selection), self.itemSelectY + 30)
                 time.sleep(self.mouseSleepTime)
                 mouse1.click(Button.left, 1)
                 time.sleep(3)
