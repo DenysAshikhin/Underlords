@@ -177,6 +177,7 @@ class UnderlordInteract():
         self.shopUnits = None
         self.gsiItems = None
         self.combatType = 0
+        self.allowMove = False
         self.combatResult = -1
         self.wins = 0
         self.losses = 0
@@ -473,6 +474,7 @@ class UnderlordInteract():
         self.round = 0
         self.newRoundStarted = False
         self.currentTime = 0
+        self.allowMove = False
         self.pickTime = False
 
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
@@ -624,11 +626,14 @@ class UnderlordInteract():
         # if phase not in ['select', 'choose']:
 
         self.pickTime = (self.itemPicks is not None) or (self.underlordPicks is not None)
+        if self.combatType == 0:
+            self.allowMove = True
+        else:
+            self.allowMove = False
 
         print(
             f"Round: {self.round} - Time Left: {self.currentTime} - Pick Time? : {self.pickTime}")
         print(f"Final placement: {self.finalPlacement}")
-
 
         # making sure it is not time to pick an underlord or
         if self.itemPicks is None and self.underlordPicks is None:
@@ -845,7 +850,6 @@ class UnderlordInteract():
             # items to pick
             itemPick
         )
-
 
         print("--- %s seconds to get clock observation ---" % (time.time() - clockTime))
 
@@ -1112,7 +1116,6 @@ class UnderlordInteract():
             holderItem = None
             boughtItemId = itemList[selection]
             foundLocation = False
-
 
             mouse1.position = (
                 self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
@@ -1460,7 +1463,7 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        if self.combatType != 0 or self.currentTime < 6 and not self.checkState:
+        if (not self.allowMove) or (self.currentTime < 6) and (not self.checkState):
             self.mediumPunish = True
             print('invalid phase move unit')
             return -1
@@ -1520,7 +1523,7 @@ class UnderlordInteract():
                     self.heroToMove.coords = (x, y)
                     self.updateHeroLabel(self.heroToMove)
                     self.heroToMove = None
-                    # print(f"successfully moved unit onto board: {x}-{y}")
+                    print(f"successfully moved unit onto board: {x}-{y}:::{self.allowMove}")
 
                 else:
                     print("Board Spot Taken!")
