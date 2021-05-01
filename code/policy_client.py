@@ -51,7 +51,7 @@ while True:
 
     action = None
     # print('trying to get action')
-    # print(gameObservation)
+    print(gameObservation)
     try:
         action = client.get_action(episode_id=episode_id, observation=gameObservation)
     except:
