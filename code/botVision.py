@@ -183,6 +183,7 @@ class UnderlordInteract():
         self.round = 0
         self.newRoundStarted = False
         self.currentTime = 0
+        self.pickTime = False
 
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -472,6 +473,7 @@ class UnderlordInteract():
         self.round = 0
         self.newRoundStarted = False
         self.currentTime = 0
+        self.pickTime = False
 
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -621,8 +623,10 @@ class UnderlordInteract():
 
         # if phase not in ['select', 'choose']:
 
+        self.pickTime = (self.itemPicks is not None) or (self.underlordPicks is not None)
+
         print(
-            f"Round: {self.round} - Time Left: {self.currentTime} - Pick Time? : {(self.itemPicks is not None) or (self.underlordPicks is not None)}")
+            f"Round: {self.round} - Time Left: {self.currentTime} - Pick Time? : {self.pickTime}")
         print(f"Final placement: {self.finalPlacement}")
 
 
@@ -946,12 +950,13 @@ class UnderlordInteract():
             elif self.finalPlacement == 8:
                 reward == firstPlace * 0
 
-        if self.underlordPicks is not None or self.itemPicks is not None:
+        if self.pickTime:
 
             if acted < 1:
-                print('it dun goofed')
-                reward -= self.timeRunningOut()
-                print(f"extra punish from item: {reward}")
+                print(f"it dun goofed: {acted}")
+                res = self.timeRunningOut()
+                reward -= res
+                print(f"extra punish from item: {res}")
 
         # self.closeStore(skipCheck=True)
 
@@ -1001,36 +1006,38 @@ class UnderlordInteract():
 
         # print(f"gamePhase: {gamePhase}")
 
-        if self.itemPicks is not None:
+        if self.pickTime:
 
-            if selection < 0 or selection > 3:
-                print('break 1')
-                self.mediumPunish = True
-                return -1
+            if self.itemPicks is not None:
 
-            # items = self.items.checkItems()
-            #
-            # if items[0] is None:
-            #     raise RuntimeError("item select Uh Oh")
-            #     return -1
+                if selection < 0 or selection > 3:
+                    print('break 1')
+                    self.mediumPunish = True
+                    return -1
 
-            return self.buyItem(selection, self.itemPicks)
+                # items = self.items.checkItems()
+                #
+                # if items[0] is None:
+                #     raise RuntimeError("item select Uh Oh")
+                #     return -1
 
-        elif self.underlordPicks is not None:
+                return self.buyItem(selection, self.itemPicks)
 
-            # underlords = self.underlords.checkUnderlords()
-            #
-            # if underlords[0] is None:
-            #     print("No Underlord or item available for selection!")
-            #     raise RuntimeError("Underlord Uh Oh")
-            #     return -1
+            elif self.underlordPicks is not None:
 
-            if selection < 0 or selection > 3:
-                self.mediumPunish = True
-                print('break 2')
-                return -1
+                # underlords = self.underlords.checkUnderlords()
+                #
+                # if underlords[0] is None:
+                #     print("No Underlord or item available for selection!")
+                #     raise RuntimeError("Underlord Uh Oh")
+                #     return -1
 
-            return self.buyUnderlord(self.underlordPicks, selection)
+                if selection < 0 or selection > 3:
+                    self.mediumPunish = True
+                    print('break 2')
+                    return -1
+
+                return self.buyUnderlord(self.underlordPicks, selection)
 
         else:
 
