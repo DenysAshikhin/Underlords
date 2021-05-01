@@ -26,14 +26,13 @@ def on_release(key):
     #     Shop.labelShop()
 
 
-def imageGrab():
+def imageGrab(x = 0,y = 0,w = 0, h = 0, yoffset = 0, xoffset = 0):
     ctypes.windll.user32.SetProcessDPIAware()
     # get window handle and dimensions
     hwnd = win32gui.FindWindow(None, 'Dota Underlords')
     try:
 
         dimensions = win32gui.GetWindowRect(hwnd)
-
         # this gets the window size, comparing it to `dimensions` will show a difference
         # winsize = win32gui.GetClientRect(hwnd)
 
@@ -43,8 +42,11 @@ def imageGrab():
         win32gui.SetWindowPos(hwnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0,
                               win32con.SWP_SHOWWINDOW | win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
 
+        x0, y0, _, _ = dimensions
+
+        crop_dimensions = (x0 + x + xoffset, y0 + y + yoffset, x0 + x + w + xoffset, y0 + y + h + yoffset)
         # grab screen region set in `dimensions`
-        image = ImageGrab.grab(dimensions)
+        image = ImageGrab.grab(crop_dimensions)
         return image
     except pywintypes.error:
         print("Dota Underlords not OPEN!!!!")
@@ -52,10 +54,7 @@ def imageGrab():
 
 
 
-def main():
-    with Listener(
-            on_release=on_release) as listener:
-        listener.join()
+# imageGrab(550, 10, 50, 56, 32, 3).save("test.jpg")
 
 # cropGold(imageGrab())
 # cropShop(imageGrab())
