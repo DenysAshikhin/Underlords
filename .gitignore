@@ -15,12 +15,20 @@
 /runs
 /code/__pycache__
 /code/__pycache__/
+code/__pycache__
+code/__pycache__/
 /checkpoints
 code/__pycache__
 
 .idea/
 .idea\
 code\__pycache__
+code\__pycache__\
+
+code\checkpoints
+code/checkpoints
+checkpoints\
+checkpoints/
 
 # User-specific stuff
 .idea/**/workspace.xml
