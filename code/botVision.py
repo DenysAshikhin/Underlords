@@ -1447,6 +1447,145 @@ class UnderlordInteract():
         time.sleep(self.mouseSleepTime)
         return earnedMoney
 
+    def moveUnit(self, x=-1, y=-1):
+
+        print(f"base cords: {x} - {y}")
+
+        if x < -1:
+            print('moveUnit wrong x')
+            self.mediumPunish = True
+            return -1
+        if y < -1:
+            print('moveUnit wrong y')
+            self.mediumPunish = True
+            return -1
+
+        if self.combatType != 0 or self.currentTime < 3 and not self.checkState:
+            self.mediumPunish = True
+            print('invalid phase move unit')
+            return -1
+
+        if self.heroToMove:  # If a hero has been selected to move previously
+            if y == -1:  # Meaning we are moving onto a bench spot
+
+                if x > 7:
+                    self.mediumPunish = True
+                    return -1
+
+                if self.heroToMove.underlord:
+                    print("Can't place an underlord onto a bench!")
+                    self.mediumPunish = True
+                    self.heroToMove = None
+                    return -1
+
+                elif self.benchHeroes[x] is None:  # Making sure bench spot is open
+                    self.benchHeroes[x] = self.heroToMove
+                    self.resetLabel(self.heroToMove)
+                    self.moveGameHero(self.heroToMove, x, -1)
+                    self.heroToMove.coords = (x, -1)
+                    self.updateHeroLabel(self.heroToMove)
+                    self.heroToMove = None
+
+                else:
+                    print("Bench Spot Taken!")
+                    self.mediumPunish = True
+                    self.heroToMove = None
+                    return -1
+
+            else:  # Meaning we are moving onto a board spot
+
+                if x > 3 or y > 7:
+                    print('the new wrong')
+                    self.mediumPunish = True
+                    return -1
+
+                numHeroes = 0
+
+                for i in range(3):
+                    for j in range(7):
+                        if self.boardHeroes[i][j] is not None:
+                            if not self.boardHeroes[i][j].underlord:
+                                numHeroes += 1
+
+                if numHeroes >= self.level:  # Meaning we have no space on the board for more heroes
+                    self.mediumPunish = True
+                    self.heroToMove = None
+                    return -1
+
+                if self.boardHeroes[x][y] is None:  # Making sure board spot is open
+                    self.boardHeroes[x][y] = self.heroToMove
+                    print(f"moved: {self.boardHeroes[x][y].name} from {self.boardHeroes[x][y].coords}")
+                    self.resetLabel(self.heroToMove)
+                    self.moveGameHero(self.heroToMove, x, y)
+                    self.heroToMove.coords = (x, y)
+                    self.updateHeroLabel(self.heroToMove)
+                    self.heroToMove = None
+                    print(f"successfully moved unit onto board: {x}-{y}")
+
+                else:
+                    print("Board Spot Taken!")
+                    self.mediumPunish = True
+                    self.heroToMove = None
+                    return -1
+
+        elif self.itemToMove:  # Meaning we are trying to attach an item to a hero
+
+            if y == -1:  # Meaning we are attaching an item to a unit on bench
+                if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
+                    self.updateHeroItem(self.benchHeroes[x])
+
+                else:
+                    # print("No Hero On This Bench!")
+                    self.mediumPunish = True
+                    self.itemToMove = None
+                    return -1
+            else:
+
+                if x > 3 or y > 7:
+                    print('the new wrong x 2')
+                    self.mediumPunish = True
+                    return -1
+
+                if self.boardHeroes[x][y] is not None:  # Making sure board spot has a hero
+                    if self.boardHeroes[x][y].underlord:
+                        # print("Can't attach items to Underlords!")
+                        self.mediumPunish = True
+                        self.itemToMove = None
+                        return -1
+
+                    self.updateHeroItem(self.boardHeroes[x][y])
+
+                else:
+                    print("No Hero On This Board!")
+                    self.mediumPunish = True
+                    self.itemToMove = None
+                    return -1
+
+        else:  # Meaning a hero has not yet been selected for movement, mark this hero as one to move
+            if y == -1:  # Meaning we are moving onto a bench spot
+                if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
+                    self.heroToMove = self.benchHeroes[x]
+                else:
+                    print("No Hero On This Bench!")
+                    self.mediumPunish = True
+                    self.heroToMove = None
+                    return -1
+            else:
+
+                check = self.boardHeroCoordCheck(x, y)
+                if check == -1:
+                    return check
+
+                if self.boardHeroes[x][y] is not None:  # Making sure board spot has a hero
+                    self.heroToMove = self.boardHeroes[x][y]
+                else:
+                    print("No Hero On This Board!")
+                    self.mediumPunish = True
+                    self.heroToMove = None
+                    return -1
+
+        return 1
+
     def moveGameHero(self, hero, newX, newY):
 
         # self.updateWindowCoords()
@@ -1616,142 +1755,6 @@ class UnderlordInteract():
 
         self.itemMoveY = self.y + offset + 185
         self.itemMoveYOffset = 35
-
-    def moveUnit(self, x=-1, y=-1):
-
-        print(f"base cords: {x} - {y}")
-
-        if x < -1:
-            print('moveUnit wrong x')
-            self.mediumPunish = True
-            return -1
-        if y < -1:
-            print('moveUnit wrong y')
-            self.mediumPunish = True
-            return -1
-
-        if self.combatType != 0 or self.currentTime < 3 and not self.checkState:
-            self.mediumPunish = True
-            print('invalid phase move unit')
-            return -1
-
-        if self.heroToMove:  # If a hero has been selected to move previously
-            if y == -1:  # Meaning we are moving onto a bench spot
-
-                if x > 7:
-                    self.mediumPunish = True
-                    return -1
-
-                if self.heroToMove.underlord:
-                    print("Can't place an underlord onto a bench!")
-                    self.mediumPunish = True
-                    self.heroToMove = None
-                    return -1
-
-                elif self.benchHeroes[x] is None:  # Making sure bench spot is open
-                    self.benchHeroes[x] = self.heroToMove
-                    self.resetLabel(self.heroToMove)
-                    self.moveGameHero(self.heroToMove, x, -1)
-                    self.heroToMove.coords = (x, -1)
-                    self.updateHeroLabel(self.heroToMove)
-                    self.heroToMove = None
-
-                else:
-                    print("Bench Spot Taken!")
-                    self.mediumPunish = True
-                    self.heroToMove = None
-                    return -1
-
-            else:  # Meaning we are moving onto a board spot
-
-                if x > 3 or y > 7:
-                    print('the new wrong')
-                    self.mediumPunish = True
-                    return -1
-
-                numHeroes = 0
-
-                for i in range(3):
-                    for j in range(7):
-                        if self.boardHeroes[i][j] is not None:
-                            numHeroes += 1
-
-                if numHeroes >= self.level:  # Meaning we have no space on the board for more heroes
-                    self.mediumPunish = True
-                    self.heroToMove = None
-                    return -1
-
-                if self.boardHeroes[x][y] is None:  # Making sure board spot is open
-                    self.boardHeroes[x][y] = self.heroToMove
-                    self.resetLabel(self.heroToMove)
-                    self.moveGameHero(self.heroToMove, x, y)
-                    self.heroToMove.coords = (x, y)
-                    self.updateHeroLabel(self.heroToMove)
-                    self.heroToMove = None
-
-                else:
-                    print("Board Spot Taken!")
-                    self.mediumPunish = True
-                    self.heroToMove = None
-                    return -1
-
-        elif self.itemToMove:  # Meaning we are trying to attach an item to a hero
-
-            if y == -1:  # Meaning we are attaching an item to a unit on bench
-                if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
-                    self.updateHeroItem(self.benchHeroes[x])
-
-                else:
-                    # print("No Hero On This Bench!")
-                    self.mediumPunish = True
-                    self.itemToMove = None
-                    return -1
-            else:
-
-                if x > 3 or y > 7:
-                    print('the new wrong x 2')
-                    self.mediumPunish = True
-                    return -1
-
-                if self.boardHeroes[x][y] is not None:  # Making sure board spot has a hero
-                    if self.boardHeroes[x][y].underlord:
-                        # print("Can't attach items to Underlords!")
-                        self.mediumPunish = True
-                        self.itemToMove = None
-                        return -1
-
-                    self.updateHeroItem(self.boardHeroes[x][y])
-
-                else:
-                    print("No Hero On This Board!")
-                    self.mediumPunish = True
-                    self.itemToMove = None
-                    return -1
-
-        else:  # Meaning a hero has not yet been selected for movement, mark this hero as one to move
-            if y == -1:  # Meaning we are moving onto a bench spot
-                if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
-                    self.heroToMove = self.benchHeroes[x]
-                else:
-                    print("No Hero On This Bench!")
-                    self.mediumPunish = True
-                    self.heroToMove = None
-                    return -1
-            else:
-
-                check = self.boardHeroCoordCheck(x, y)
-                if check == -1:
-                    return check
-
-                if self.boardHeroes[x][y] is not None:  # Making sure board spot has a hero
-                    self.heroToMove = self.boardHeroes[x][y]
-                else:
-                    print("No Hero On This Board!")
-                    self.mediumPunish = True
-                    self.heroToMove = None
-                    return -1
-
-        return 1
 
     def boardHeroCoordCheck(self, x, y):
         if x > 3 or y > 7:
