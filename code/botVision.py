@@ -183,6 +183,7 @@ class UnderlordInteract():
         self.round = 0
         self.newRoundStarted = False
         self.currentTime = 0
+        self.pickTime = False
 
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -472,6 +473,7 @@ class UnderlordInteract():
         self.round = 0
         self.newRoundStarted = False
         self.currentTime = 0
+        self.pickTime = False
 
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -621,8 +623,10 @@ class UnderlordInteract():
 
         # if phase not in ['select', 'choose']:
 
+        self.pickTime = (self.itemPicks is not None) or (self.underlordPicks is not None)
+
         print(
-            f"Round: {self.round} - Time Left: {self.currentTime} - Pick Time? : {(self.itemPicks is not None) or (self.underlordPicks is not None)}")
+            f"Round: {self.round} - Time Left: {self.currentTime} - Pick Time? : {self.pickTime}")
         print(f"Final placement: {self.finalPlacement}")
 
 
@@ -946,11 +950,13 @@ class UnderlordInteract():
             elif self.finalPlacement == 8:
                 reward == firstPlace * 0
 
-        if (action == 5 or action == 6) and acted < 1:
-            print('it dun goofed')
-            if self.underlordPicks is not None or self.itemPicks is not None:
-                reward -= self.timeRunningOut()
-                print(f"extra punish from item: {reward}")
+        if self.pickTime:
+
+            if acted < 1:
+                print(f"it dun goofed: {acted}")
+                res = self.timeRunningOut()
+                reward -= res
+                print(f"extra punish from item: {res}")
 
         # self.closeStore(skipCheck=True)
 
@@ -1000,36 +1006,38 @@ class UnderlordInteract():
 
         # print(f"gamePhase: {gamePhase}")
 
-        if self.itemPicks is not None:
+        if self.pickTime:
 
-            if selection < 0 or selection > 3:
-                print('break 1')
-                self.mediumPunish = True
-                return -1
+            if self.itemPicks is not None:
 
-            # items = self.items.checkItems()
-            #
-            # if items[0] is None:
-            #     raise RuntimeError("item select Uh Oh")
-            #     return -1
+                if selection < 0 or selection > 3:
+                    print('break 1')
+                    self.mediumPunish = True
+                    return -1
 
-            return self.buyItem(selection, self.itemPicks)
+                # items = self.items.checkItems()
+                #
+                # if items[0] is None:
+                #     raise RuntimeError("item select Uh Oh")
+                #     return -1
 
-        elif self.underlordPicks is not None:
+                return self.buyItem(selection, self.itemPicks)
 
-            # underlords = self.underlords.checkUnderlords()
-            #
-            # if underlords[0] is None:
-            #     print("No Underlord or item available for selection!")
-            #     raise RuntimeError("Underlord Uh Oh")
-            #     return -1
+            elif self.underlordPicks is not None:
 
-            if selection < 0 or selection > 3:
-                self.mediumPunish = True
-                print('break 2')
-                return -1
+                # underlords = self.underlords.checkUnderlords()
+                #
+                # if underlords[0] is None:
+                #     print("No Underlord or item available for selection!")
+                #     raise RuntimeError("Underlord Uh Oh")
+                #     return -1
 
-            return self.buyUnderlord(self.underlordPicks, selection)
+                if selection < 0 or selection > 3:
+                    self.mediumPunish = True
+                    print('break 2')
+                    return -1
+
+                return self.buyUnderlord(self.underlordPicks, selection)
 
         else:
 
@@ -1318,7 +1326,7 @@ class UnderlordInteract():
                 self.localHeroID += 1
                 self.updateHeroLabel(self.underlord)
                 self.boardHeroes[x][y] = self.underlord
-                mouse1.position = (self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
+                mouse1.position = (self.itemSelectX - 20 + (self.itemSelectXOffset * selection), self.itemSelectY + 30)
                 time.sleep(self.mouseSleepTime)
                 mouse1.click(Button.left, 1)
                 time.sleep(3)
@@ -1335,6 +1343,11 @@ class UnderlordInteract():
         # itemCounts = self.HUD.getHUD()
         # # print("--- %s seconds to get actual hud stats ---" % (time.time() - start_time))
 
+        color = 'black'
+
+        if self.lockedIn:
+            color = 'gray'
+
         for i in range(5):
 
             try:
@@ -1342,13 +1355,21 @@ class UnderlordInteract():
                 tempImage = self.profilePics[heroName]
                 self.shopImages.append(tempImage)
                 self.shopLabels[i].config(image=tempImage,
-                                          text=f"{heroName}")
+                                          text=f"{heroName}", bg=color)
             except:  # meaning we haven't recieved data for store yet
                 return 1
 
         tempString = "\nUnit Count %d" % self.level + "\nGold Count: %d" % self.gold \
                      + "\nHealth Count: %d" % self.health + "\nRemaining EXP: %d" % self.remainingEXP
         self.hudLabel.config(text=tempString)
+
+        rerollText = "Reroll 2"
+
+        if self.rerollCost == 0:
+            # print('got free reroll')
+            rerollText = 'Reroll 0'
+
+        self.rerollButton.config(text=rerollText)
 
     def checkBetweenCombat(self):
 
@@ -1391,6 +1412,10 @@ class UnderlordInteract():
                 # print(f"No hero on board spot {x + 1}-{y + 1} to sell!")
                 self.mediumPunish = True
                 return -1
+            elif self.boardHeroes[x][y] is not None:
+                if self.boardHeroes[x][y].underlord:
+                    self.strongPunish = True
+                    return -1
 
         earnedMoney = 0
 
@@ -1434,6 +1459,8 @@ class UnderlordInteract():
             mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
         # print(f"Moving to board {mouse1.position}")
 
+        time.sleep(self.mouseSleepTime)
+
         mouse1.press(Button.left)
 
         time.sleep(self.mouseSleepTime)
@@ -1447,6 +1474,7 @@ class UnderlordInteract():
         # print(f"Moving to board {mouse1.position}")
         time.sleep(self.mouseSleepTime)
         mouse1.release(Button.left)
+        time.sleep(self.mouseSleepTime)
 
     def getPunishment(self):
 
