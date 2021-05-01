@@ -1451,7 +1451,7 @@ class UnderlordInteract():
 
         print(f"base cords: {x} - {y}")
 
-        if x < -1:
+        if x < 0:
             print('moveUnit wrong x')
             self.mediumPunish = True
             return -1
@@ -1460,7 +1460,7 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        if self.combatType != 0 or self.currentTime < 3 and not self.checkState:
+        if self.combatType != 0 or self.currentTime < 6 and not self.checkState:
             self.mediumPunish = True
             print('invalid phase move unit')
             return -1
@@ -1514,13 +1514,13 @@ class UnderlordInteract():
 
                 if self.boardHeroes[x][y] is None:  # Making sure board spot is open
                     self.boardHeroes[x][y] = self.heroToMove
-                    print(f"moved: {self.boardHeroes[x][y].name} from {self.boardHeroes[x][y].coords}")
+                    # print(f"moved: {self.boardHeroes[x][y].name} from {self.boardHeroes[x][y].coords}")
                     self.resetLabel(self.heroToMove)
                     self.moveGameHero(self.heroToMove, x, y)
                     self.heroToMove.coords = (x, y)
                     self.updateHeroLabel(self.heroToMove)
                     self.heroToMove = None
-                    print(f"successfully moved unit onto board: {x}-{y}")
+                    # print(f"successfully moved unit onto board: {x}-{y}")
 
                 else:
                     print("Board Spot Taken!")

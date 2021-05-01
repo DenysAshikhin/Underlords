@@ -12,7 +12,7 @@ import torch
 class HUD:
     def __init__(self):
         super().__init__()
-        self.clockModel = self.createModdel()
+        self.clockModel = self.createModel()
         self.gold = 0
         self.health = 0
         self.units = 3

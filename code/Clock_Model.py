@@ -6,10 +6,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
-from ray.tune.suggest.bayesopt import BayesOptSearch
 from ray.tune.suggest.bohb import TuneBOHB
 from torch.utils.data.sampler import SubsetRandomSampler
-from bayes_opt import UtilityFunction
 from torch.utils.tensorboard import SummaryWriter
 
 import ray

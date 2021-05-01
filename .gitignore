@@ -18,6 +18,10 @@
 /checkpoints
 code/__pycache__
 
+.idea/
+.idea\
+code\__pycache__
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
