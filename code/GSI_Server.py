@@ -109,11 +109,6 @@ class RequestHandler(BaseHTTPRequestHandler):
 
                         privateData = data['private_player_state']
 
-                        if 'is_human_player' not in privateData:
-                            continue
-                        elif not privateData['is_human_player']:
-                            continue
-
                         if 'shopLocked' in privateData:
                             self.server.env.lockedIn = privateData['shopLocked']
 
