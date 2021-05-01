@@ -532,11 +532,8 @@ class UnderlordInteract():
         print(self.getObservation())
         print("--- %s seconds to get observation ---" % (time.time() - start_time))
 
-
-
         if self.underlordPicks is not None or self.itemPicks is not None:
             print(f"result of running out: {self.timeRunningOut()}")
-
 
         # self.startNewGame()
 
@@ -673,7 +670,7 @@ class UnderlordInteract():
                 uniqueID = self.shop.classIDMap[name]
 
                 shopHeros.append(int(uniqueID) + 1)
-        except:# meaning we haven't yet received data about the store units
+        except:  # meaning we haven't yet received data about the store units
             shopHeros = [0, 0, 0, 0, 0]
 
         benchHeros = []
@@ -822,7 +819,7 @@ class UnderlordInteract():
         obs = (
             self.finalPlacement, self.health, self.gold, self.level, self.remainingEXP, self.round, lockedIn,
             self.combatType,
-            heroToMove, itemToMove, self.rerollCost, rerolledItem, self.currentTime+1,
+            heroToMove, itemToMove, self.rerollCost, rerolledItem, self.currentTime + 1,
             # store heros
             shopHeros,
             # bench heroes
@@ -840,8 +837,8 @@ class UnderlordInteract():
             itemPick
         )
 
-
-        print(f"Round: {self.round} - Time Left: {self.currentTime}")
+        print(
+            f"Round: {self.round} - Time Left: {self.currentTime} - Pick Time? : {self.itemPicks is not None or self.underlordPicks is not None}")
         print("--- %s seconds to get clock observation ---" % (time.time() - clockTime))
 
         # print("--- %s seconds to get observation ---" % (time.time() - overallTime))
@@ -968,7 +965,6 @@ class UnderlordInteract():
                     item = self.items.itemDataID[boughtItemId]
                     name = item['icon']
                     if name not in self.items.banned:
-
                         self.selectItem(selection=i)
                         return -100
             elif self.underlordPicks is not None:
@@ -1079,7 +1075,9 @@ class UnderlordInteract():
             else:
                 # self.updateWindowCoords()
                 mouse1.position = (self.itemRerollX, self.itemRerollY)
+                time.sleep(self.mouseSleepTime)
                 mouse1.click(Button.left, 1)
+                return 1
                 # self.rerolledItem = True
                 # self.choseItem = False
                 # self.selected = False
@@ -1102,7 +1100,6 @@ class UnderlordInteract():
             time.sleep(self.mouseSleepTime)
             mouse1.click(Button.left, 1)
             time.sleep(3)
-
 
             for i in range(3):
                 for j in range(4):
@@ -1163,14 +1160,12 @@ class UnderlordInteract():
                         # found where the item we bought might go, need to check
                         # or we have found it previously, and are now shifting to after the existing duplicates
 
-
                         try:
                             temp = self.gsiItems[idx][1] == boughtItemId or foundLocation
                         except:
                             print(self.gsiItems)
                             print(idx)
                             raise RuntimeError("This fucking line")
-
 
                         if self.gsiItems[idx][1] == boughtItemId or foundLocation:
 
@@ -1235,11 +1230,9 @@ class UnderlordInteract():
                         return 1
                     idx += 1
 
-
     def buyUnderlord(self, underlords, selection):
 
         # self.updateWindowCoords()
-
 
         AnnaPreferences = [(2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7)]
         JullPreferences = [(0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (3, 0), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7)]
