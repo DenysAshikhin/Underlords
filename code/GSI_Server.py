@@ -109,8 +109,8 @@ class RequestHandler(BaseHTTPRequestHandler):
 
                         privateData = data['private_player_state']
 
-                        if 'shopLocked' in privateData:
-                            self.server.env.lockedIn = privateData['shopLocked']
+                        if 'shop_locked' in privateData:
+                            self.server.env.lockedIn = privateData['shop_locked']
 
                         if 'reroll_cost' in privateData:
                             self.server.env.rerollCost = privateData['reroll_cost']

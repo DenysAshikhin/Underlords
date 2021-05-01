@@ -1343,6 +1343,11 @@ class UnderlordInteract():
         # itemCounts = self.HUD.getHUD()
         # # print("--- %s seconds to get actual hud stats ---" % (time.time() - start_time))
 
+        color = 'black'
+
+        if self.lockedIn:
+            color = 'gray'
+
         for i in range(5):
 
             try:
@@ -1350,13 +1355,21 @@ class UnderlordInteract():
                 tempImage = self.profilePics[heroName]
                 self.shopImages.append(tempImage)
                 self.shopLabels[i].config(image=tempImage,
-                                          text=f"{heroName}")
+                                          text=f"{heroName}", bg=color)
             except:  # meaning we haven't recieved data for store yet
                 return 1
 
         tempString = "\nUnit Count %d" % self.level + "\nGold Count: %d" % self.gold \
                      + "\nHealth Count: %d" % self.health + "\nRemaining EXP: %d" % self.remainingEXP
         self.hudLabel.config(text=tempString)
+
+        rerollText = "Reroll 2"
+
+        if self.rerollCost == 0:
+            # print('got free reroll')
+            rerollText = 'Reroll 0'
+
+        self.rerollButton.config(text=rerollText)
 
     def checkBetweenCombat(self):
 
