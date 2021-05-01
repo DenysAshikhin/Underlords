@@ -1455,6 +1455,8 @@ class UnderlordInteract():
             mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
         # print(f"Moving to board {mouse1.position}")
 
+        time.sleep(self.mouseSleepTime)
+
         mouse1.press(Button.left)
 
         time.sleep(self.mouseSleepTime)
@@ -1468,6 +1470,7 @@ class UnderlordInteract():
         # print(f"Moving to board {mouse1.position}")
         time.sleep(self.mouseSleepTime)
         mouse1.release(Button.left)
+        time.sleep(self.mouseSleepTime)
 
     def getPunishment(self):
 
@@ -2112,4 +2115,4 @@ def openVision():
 
     root.mainloop()
 
-# openVision()
+openVision()
