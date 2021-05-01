@@ -1060,6 +1060,11 @@ class UnderlordInteract():
 
                 self.itemToMove = self.itemObjects[x][y]
 
+                if self.itemToMove is not None:
+                    return 1
+                else:
+                    return 1
+
     def buyItem(self, selection, itemList):
 
         if selection > 3:
