@@ -946,9 +946,10 @@ class UnderlordInteract():
             elif self.finalPlacement == 8:
                 reward == firstPlace * 0
 
-        if (action == 5 or action == 6) and acted < 1:
-            print('it dun goofed')
-            if self.underlordPicks is not None or self.itemPicks is not None:
+        if self.underlordPicks is not None or self.itemPicks is not None:
+
+            if acted < 1:
+                print('it dun goofed')
                 reward -= self.timeRunningOut()
                 print(f"extra punish from item: {reward}")
 
