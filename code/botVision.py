@@ -621,6 +621,11 @@ class UnderlordInteract():
 
         # if phase not in ['select', 'choose']:
 
+        print(
+            f"Round: {self.round} - Time Left: {self.currentTime} - Pick Time? : {(self.itemPicks is not None) or (self.underlordPicks is not None)}")
+        print(f"Final placement: {self.finalPlacement}")
+
+
         # making sure it is not time to pick an underlord or
         if self.itemPicks is None and self.underlordPicks is None:
             self.updateShop(skipCheck=True)
@@ -837,9 +842,7 @@ class UnderlordInteract():
             itemPick
         )
 
-        print(
-            f"Round: {self.round} - Time Left: {self.currentTime} - Pick Time? : {self.itemPicks is not None or self.underlordPicks is not None}")
-        print(f"Final placement: {self.finalPlacement}")
+
         print("--- %s seconds to get clock observation ---" % (time.time() - clockTime))
 
         # print("--- %s seconds to get observation ---" % (time.time() - overallTime))
@@ -944,8 +947,10 @@ class UnderlordInteract():
                 reward == firstPlace * 0
 
         if (action == 5 or action == 6) and acted < 1:
+            print('it dun goofed')
             if self.underlordPicks is not None or self.itemPicks is not None:
                 reward -= self.timeRunningOut()
+                print(f"extra punish from item: {reward}")
 
         # self.closeStore(skipCheck=True)
 
@@ -957,7 +962,7 @@ class UnderlordInteract():
 
     def timeRunningOut(self):
 
-        if self.currentTime <= 8:
+        if self.currentTime <= 10:
 
             if self.itemPicks is not None:
 
