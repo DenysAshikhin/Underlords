@@ -51,59 +51,76 @@ class RequestHandler(BaseHTTPRequestHandler):
 
                         publicData = data['public_player_state']
 
-                        if 'is_human_player' not in publicData:
+                        if not publicData['is_human_player']:
+
+                            slot = publicData['player_slot']
+
+                            if 'health' in publicData:
+                                self.server.env.otherPlayersDict[slot]['health'] = publicData['health']
+
+                            if 'gold' in publicData:
+                                self.server.env.otherPlayersDict[slot]['gold'] = publicData['gold']
+
+                            if 'level' in publicData:
+                                self.server.env.otherPlayersDict[slot]['level'] = publicData['level']
+
+                            if 'net_worth' in publicData:
+                                self.server.env.otherPlayersDict[slot]['net_worth'] = publicData['net_worth']
+
+                            if 'units' in publicData:
+                                self.server.env.otherPlayersDict[slot]['units'] = publicData['units']
+
                             continue
-                        elif not publicData['is_human_player']:
-                            continue
+                        else:
 
-                        if 'combat_type' in publicData:
-                            self.server.env.combatType = publicData['combat_type']
-                        if 'combat_result' in publicData:
-                            combatResult = publicData['combat_result']
+                            if 'combat_type' in publicData:
+                                self.server.env.combatType = publicData['combat_type']
+                            if 'combat_result' in publicData:
+                                combatResult = publicData['combat_result']
 
-                            if publicData['wins'] != self.server.env.wins:
-                                self.server.env.wins = publicData['wins']
-                                self.server.env.round += 1
-                                self.server.env.newRoundStarted = True
-                                # print(f"it is now round WIN: {self.server.env.round}")
-                                # print(self.server.env.combatResult)
-                            elif publicData['losses'] != self.server.env.losses:
-                                self.server.env.losses = publicData['losses']
-                                self.server.env.round += 1
-                                self.server.env.newRoundStarted = True
-                                # print(f"it is now round LOSS: {self.server.env.round}")
-                                # print(self.server.env.combatResult)
-                            elif self.server.env.combatResult != combatResult and combatResult != 1 and combatResult != 2:
-                                print("There was a draw?")
-                                self.server.env.combatResult = combatResult
-                                self.server.env.round += 1
-                                self.server.env.newRoundStarted = True
-                                # print(f"it is now round DRAW: {self.server.env.round}")
-                                # print(self.server.env.combatResult)
-                            else:
-                                self.server.env.newRoundStarted = False
+                                if publicData['wins'] != self.server.env.wins:
+                                    self.server.env.wins = publicData['wins']
+                                    self.server.env.round += 1
+                                    self.server.env.newRoundStarted = True
+                                    # print(f"it is now round WIN: {self.server.env.round}")
+                                    # print(self.server.env.combatResult)
+                                elif publicData['losses'] != self.server.env.losses:
+                                    self.server.env.losses = publicData['losses']
+                                    self.server.env.round += 1
+                                    self.server.env.newRoundStarted = True
+                                    # print(f"it is now round LOSS: {self.server.env.round}")
+                                    # print(self.server.env.combatResult)
+                                elif self.server.env.combatResult != combatResult and combatResult != 1 and combatResult != 2:
+                                    print("There was a draw?")
+                                    self.server.env.combatResult = combatResult
+                                    self.server.env.round += 1
+                                    self.server.env.newRoundStarted = True
+                                    # print(f"it is now round DRAW: {self.server.env.round}")
+                                    # print(self.server.env.combatResult)
+                                else:
+                                    self.server.env.newRoundStarted = False
 
-                        if 'health' in publicData:
-                            self.server.env.health = publicData['health']
-                        if 'gold' in publicData:
-                            self.server.env.gold = publicData['gold']
-                        if 'board_unit_limit' in publicData:
-                            self.server.env.level = publicData['board_unit_limit']
-                        if 'next_level_xp' in publicData:
-                            self.server.env.remainingEXP = publicData['next_level_xp'] - publicData['xp']
-                        if 'final_place' in publicData:
-                            if publicData['final_place'] != 0:
-                                self.server.env.finalPlacement = publicData['final_place']
+                            if 'health' in publicData:
+                                self.server.env.health = publicData['health']
+                            if 'gold' in publicData:
+                                self.server.env.gold = publicData['gold']
+                            if 'board_unit_limit' in publicData:
+                                self.server.env.level = publicData['board_unit_limit']
+                            if 'next_level_xp' in publicData:
+                                self.server.env.remainingEXP = publicData['next_level_xp'] - publicData['xp']
+                            if 'final_place' in publicData:
+                                if publicData['final_place'] != 0:
+                                    self.server.env.finalPlacement = publicData['final_place']
 
-                        if 'units' in publicData:
-                            units = publicData['units']  # It's all units
+                            if 'units' in publicData:
+                                units = publicData['units']  # It's all units
 
-                        if 'item_slots' in publicData:
+                            if 'item_slots' in publicData:
 
-                            items = []
-                            for item in publicData['item_slots']:
-                                items.append((item['slot_index'], item['item_id']))
-                            self.server.env.gsiItems = items
+                                items = []
+                                for item in publicData['item_slots']:
+                                    items.append((item['slot_index'], item['item_id']))
+                                self.server.env.gsiItems = items
 
                     elif 'private_player_state' in data:
 
@@ -156,6 +173,9 @@ class RequestHandler(BaseHTTPRequestHandler):
 
                     else:
                         print("lol what now?")
+
+                    privateData = {}
+                    publicData = {}
 
         # self.server.running = True
         #

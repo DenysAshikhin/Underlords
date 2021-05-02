@@ -62,7 +62,7 @@ class UnderlordEnv(ExternalEnv):
              spaces.Discrete(250),  # itemToMove: localID*,
              spaces.Discrete(3),  # reRoll cost
              spaces.Discrete(2),  # rerolled (item)
-             spaces.Discrete(35), # current round timer
+             spaces.Discrete(35),  # current round timer
              # below are the store heros
              spaces.MultiDiscrete([71, 71, 71, 71, 71]),
              # below are the bench heroes
@@ -77,7 +77,7 @@ class UnderlordEnv(ExternalEnv):
              spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
              spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
              # below are underlords to pick (whenever valid) -> underlord ID - specialty
-             spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3, ]),
+             spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
              # below are the items
              spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
              spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
@@ -86,8 +86,24 @@ class UnderlordEnv(ExternalEnv):
              spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
              spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
              # below are the items to pick from
-             spaces.MultiDiscrete([70, 70, 70]))
-        )
+             spaces.MultiDiscrete([70, 70, 70]),
+             # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4])
+
+             ))
 
         self.action_space = spaces.MultiDiscrete(
             [  # 0=reroll, 1 = lock in, 2 = level up, 3 = buy unit from store, 4 = sell unit, 5 = choose item,

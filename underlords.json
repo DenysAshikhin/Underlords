@@ -505,7 +505,7 @@
       "movespeed": 295,
       "healthBarOffset": -90
     },
-    "doom": {
+    "doom_bringer": {
       "abilities": [
         "doom_bringer_doom"
       ],
@@ -6472,7 +6472,7 @@
       "healthBarOffset": -90,
       "content_enable_group": "rotation"
     },
-    "doom": {
+    "doom_bringer": {
       "abilities": [
         "doom_bringer_doom"
       ],

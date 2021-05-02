@@ -43,6 +43,7 @@ while True:
     # print('getting observation')
     # start_time = time.time()
     gameObservation = client.env.underlord.getObservation()
+    print(gameObservation)
     # print("--- %s seconds to get observation ---" % (time.time() - start_time))
     # start_time = time.time()
     client.env.root.update()
@@ -51,11 +52,8 @@ while True:
 
     action = None
     # print('trying to get action')
-    print(gameObservation)
-    try:
-        action = client.get_action(episode_id=episode_id, observation=gameObservation)
-    except:
-        action = client.get_action(episode_id=episode_id, observation=gameObservation)
+
+    action = client.get_action(episode_id=episode_id, observation=gameObservation)
     print("got action")
     # print("--- %s seconds to get action ---" % (time.time() - start_time))
     # start_time = time.time()
@@ -84,5 +82,6 @@ while True:
         replayList.clear()
 
         episode_id = client.start_episode(episode_id=None)
+        print('got past restarting of the new episode, for loop should begin anew!')
 
     print('----')
