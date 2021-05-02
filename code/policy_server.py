@@ -123,7 +123,8 @@ DEFAULT_CONFIG = with_common_config({
     # Target value for KL divergence.
     "kl_target": 0.01,
     # Whether to rollout "complete_episodes" or "truncate_episodes".
-    "batch_mode": "complete_episodes",
+    # "batch_mode": "complete_episodes",
+    "batch_mode": "truncate_episodes",
     # Which observation filter to apply to the observation.
     "observation_filter": "NoFilter",
     # Uses the sync samples optimizer instead of the multi-gpu one. This is
@@ -171,7 +172,8 @@ ray.init()
 print(f"running on: {args.ip}:55555")
 
 # trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
-trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
+# trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
+trainer = APPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
 # checkpoint_path = CHECKPOINT_FILE.format(args.run)
 checkpoint_path = "checkpoints/"

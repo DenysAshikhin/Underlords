@@ -21,7 +21,7 @@ parser.add_argument('-speed', type=float,
 args = parser.parse_args()
 
 print('trying to launch policy client')
-client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=600.0)
+client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=10.0)
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
