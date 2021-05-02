@@ -245,8 +245,10 @@ class UnderlordInteract():
             label = Label(master=self.shopFrame, foreground='white', background='black',
                           text=f"Ignore", compound='top')
             label.grid(row=0, column=i, padx=5, pady=5)
+            self.shopLabels.append(label)
+
             if not training:
-                self.shopLabels.append(label)
+                
                 button = tkinter.Button(
                     master=self.shopFrame,
                     text="Purchase",
