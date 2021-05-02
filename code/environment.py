@@ -77,7 +77,7 @@ class UnderlordEnv(ExternalEnv):
              spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
              spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
              # below are underlords to pick (whenever valid) -> underlord ID - specialty
-             spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3 ]),
+             spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
              # below are the items
              spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
              spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
@@ -89,17 +89,17 @@ class UnderlordEnv(ExternalEnv):
              spaces.MultiDiscrete([70, 70, 70]),
              # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
              spaces.MultiDiscrete(
-                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4 ]),
+                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
              spaces.MultiDiscrete(
-                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4 ]),
-             spaces.MultiDiscrete(
-                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4 ]),
+                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
              spaces.MultiDiscrete(
                  [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
              spaces.MultiDiscrete(
                  [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
              spaces.MultiDiscrete(
-                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4 ]),
+                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
              spaces.MultiDiscrete(
                  [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4])
 
