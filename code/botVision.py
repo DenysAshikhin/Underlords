@@ -248,7 +248,7 @@ class UnderlordInteract():
             self.shopLabels.append(label)
 
             if not training:
-                
+
                 button = tkinter.Button(
                     master=self.shopFrame,
                     text="Purchase",
@@ -621,8 +621,13 @@ class UnderlordInteract():
 
         mouse1.position = (self.shopX, self.shopY + 720)
         time.sleep(self.shopSleepTime * 3)
-
         mouse1.click(Button.left, 1)
+        time.sleep(self.mouseSleepTime)
+        mouse1.click(Button.left, 1)
+        time.sleep(self.mouseSleepTime)
+        mouse1.click(Button.left, 1)
+        
+
         flag = True
 
         while flag:
