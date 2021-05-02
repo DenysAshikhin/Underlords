@@ -20,6 +20,8 @@ code/__pycache__/
 /checkpoints
 code/__pycache__
 
+config.ini
+
 .idea/
 .idea\
 code\__pycache__

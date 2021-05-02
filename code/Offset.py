@@ -53,3 +53,6 @@ def getConfig():
     y = config['Offset'].getint('y')
 
     return x, y
+
+
+writeConfig()
