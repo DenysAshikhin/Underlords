@@ -18,7 +18,7 @@ class logger:
             with open(self.logDir, "a+") as f:
                 for line in lines:
                     f.write("\n")
-                    f.write(line)
+                    f.write(str(line[0]) + "-" + str(line[1]) + "-" + str(line[2]))
         except IOError:
             print("Log")
 

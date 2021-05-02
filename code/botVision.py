@@ -485,7 +485,16 @@ class UnderlordInteract():
         self.currentTime = 0
         self.allowMove = False
         self.pickTime = False
-        self.otherPlayersDict = {}
+        self.pickTime = False
+
+        self.otherPlayersDict = {2: {'slot': 2, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 3: {'slot': 3, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 4: {'slot': 4, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 5: {'slot': 5, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 6: {'slot': 6, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 7: {'slot': 7, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 8: {'slot': 8, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
+                                 }
 
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
@@ -846,6 +855,7 @@ class UnderlordInteract():
             temp = [other['slot'], other['health'], other['gold'], other['level']]
 
             units = other['units']
+            idx = 0
 
             for unit in units:
                 tier = unit['rank']
@@ -866,6 +876,13 @@ class UnderlordInteract():
                 # print(f"Adding {name}-{tier}-{goodID}")
                 temp.append(goodID)
                 temp.append(tier)
+                idx += 1
+
+            blankUnits = 10 - idx  # adding blank 0's for units on board if there are less than 10 of them
+
+            for i in range(blankUnits):
+                temp.append(0)
+                temp.append(0)
 
             otherPlayers.append(temp)
 
@@ -946,14 +963,15 @@ class UnderlordInteract():
             if self.benchHeroes[i] is not None:
                 numBenchHeroes += 1
 
-        if (not self.leveledUp) or (numBenchHeroes == 0):
-            for i in range(4):
-                for j in range(8):
-                    if self.boardHeroes[i][j] is not None:
-                        if not self.boardHeroes[i][j].underlord:
-                            numHeroes += 1
+        if (tieredUp != 10) and (tieredUp != 11):
+            if (not self.leveledUp) or (numBenchHeroes == 0):
+                for i in range(4):
+                    for j in range(8):
+                        if self.boardHeroes[i][j] is not None:
+                            if not self.boardHeroes[i][j].underlord:
+                                numHeroes += 1
 
-            reward -= (self.level - numHeroes) * (firstPlace * 0.05)
+                reward -= (self.level - numHeroes) * (firstPlace * 0.05)
 
         # punish for having too much gold regardless
         if self.gold > 40:
@@ -1103,6 +1121,10 @@ class UnderlordInteract():
             if x > 2 or y > 3:
                 self.mediumPunish = True
                 print('uh oh 3')
+                return -1
+
+            if (y < 0) or (x < 0):
+                self.mediumPunish = True
                 return -1
 
             if self.itemObjects[x][y] is None:
@@ -1385,10 +1407,14 @@ class UnderlordInteract():
                 self.localHeroID += 1
                 self.updateHeroLabel(self.underlord)
                 self.boardHeroes[x][y] = self.underlord
-                mouse1.position = (self.itemSelectX - 20 + (self.itemSelectXOffset * selection), self.itemSelectY + 30)
+
+                mouse1.position = (self.itemSelectX - 20 + (self.itemSelectXOffset * selection), self.itemSelectY + 100)
                 time.sleep(self.mouseSleepTime)
                 mouse1.click(Button.left, 1)
+                self.underlordPicks = None
                 time.sleep(3)
+                if self.underlordPicks is not None:
+                    print("Underlord picks are still available")
                 return 1
 
     def updateShop(self, units=True, hud=True, skipCheck=False):
@@ -1519,7 +1545,7 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        if (not self.allowMove) or (self.currentTime < 6) and (not self.checkState):
+        if (self.combatType != 0) or (self.currentTime < 6) and (not self.checkState):
             self.mediumPunish = True
             print('invalid phase move unit')
             return -1
@@ -2180,6 +2206,5 @@ def openVision():
     # shopFrame.pack()
 
     root.mainloop()
-
 
 # openVision()
