@@ -9,6 +9,7 @@ import numpy
 import win32gui
 from PIL import ImageTk, Image
 
+import Offset
 from GSI_Server import GSI_Server
 from Game_State import state
 from HUD import HUD
@@ -55,6 +56,11 @@ def itemNameList():
         itemList.append(file[: -4])
     return itemList
 
+"""
+Loads in the offset between different monitor resolutions, offset is calculated by calling Offset.py writeConfig() 
+"""
+def loadScreenOffset():
+    Offset.getConfig()
 
 class UnderlordInteract():
     def __init__(self, rootWindow, training=False):
@@ -150,7 +156,8 @@ class UnderlordInteract():
         self.mouseSleepTime = 0.25 / self.speedUpFactor
 
         self.shop = Shop()
-        self.HUD = HUD()
+        self.screenOffsetX, self.screenOffsetY = loadScreenOffset()
+        self.HUD = HUD(self.screenOffsetX, self.screenOffsetY)
         self.itemIDmap = self.items.itemIDMap
         self.underlords = Underlords()
         self.bench = numpy.zeros([1, 8])

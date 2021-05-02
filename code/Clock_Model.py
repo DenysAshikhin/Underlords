@@ -136,7 +136,9 @@ def training_loop(num_epochs, optimizer, model, criterion, train_loader, valid_l
     valid_losses = []
     training_accuracy = []
     validation_accuracy = []
-    device = torch.device('cpu')
+
+    device = (torch.device('cuda') if torch.cuda.is_available()
+              else torch.device('cpu'))
     # print(f"Training on device {device}.")
 
     # for epoch in range(1, num_epochs + 1):
@@ -241,7 +243,8 @@ def train(config):
     model = Net(n_chans1=config['finalOutput'], stride1=config['stride1'], stride2=config['stride2'],
                 finalChannel=config['finalChannel'])
 
-    # model.cuda()
+    if torch.cuda.is_available():
+         model.cuda()
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=config['lr'], momentum=0.9)
     writer = SummaryWriter()
@@ -283,17 +286,17 @@ def tunerTrain():
         metric="mean_loss",
         mode="max",
         )
-    analysis = tune.run(train, config=searchSpace, scheduler=bohb, search_alg=algo, num_samples= 100)
+    analysis = tune.run(train, config=searchSpace, scheduler=bohb, search_alg=algo, num_samples= 10)
     # bayesopt = BayesOptSearch( metric="mean_loss", mode="max", random_search_steps = 3)
 
     # tune.run(train, search_alg=bayesopt, config= searchSpace, scheduler=ASHAScheduler("mean_loss","max"))
     print("Best config: ", analysis.get_best_config(metric="mean_loss", mode="max"))
     # df = analysis.results_df
 
-
-#train()
-#tunerTrain()
 #
+# train()
+# tunerTrain()
+
 #
 # train({'lr': 0.0133266,
 #         'finalOutput': 35,
