@@ -1224,10 +1224,12 @@ class UnderlordInteract():
             time.sleep(3)
             gsiItems = []
 
-            for itemy in self.gsiItems:
-                gsiItems.append(itemy[1])
+            if self.gsiItems is not None:
 
-            gsiItems.sort()
+                for itemy in self.gsiItems:
+                    gsiItems.append(itemy[1])
+
+                gsiItems.sort()
 
             for i in range(3):
                 for j in range(4):
