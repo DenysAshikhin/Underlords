@@ -2329,5 +2329,4 @@ def openVision():
     # shopFrame.pack()
 
     root.mainloop()
-
-# openVision()
+openVision()
