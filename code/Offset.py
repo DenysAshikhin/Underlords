@@ -34,6 +34,7 @@ def detectOffset():
 
         x_offset = x - 16
         y_offset = y - 22
+        print(x_offset,y_offset)
         return x_offset, y_offset
 
 def writeConfig():
@@ -57,7 +58,7 @@ def getConfig():
     config.read("config.ini")
     x = config['Offset'].getint('x')
     y = config['Offset'].getint('y')
-
+    print(x,y)
     return x, y
 
 

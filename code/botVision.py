@@ -558,11 +558,11 @@ class UnderlordInteract():
         self.shopFrame.pack()
 
     def testFunction(self, param1, param2):
-
-        self.updateWindowCoords()
-        start_time = time.time()
-        print(self.getObservation())
-        print("--- %s seconds to get observation ---" % (time.time() - start_time))
+        print(self.HUD.getClockTimeLeft())
+        # self.updateWindowCoords()
+        # start_time = time.time()
+        # print(self.getObservation())
+        # print("--- %s seconds to get observation ---" % (time.time() - start_time))
 
         # if self.underlordPicks is not None or self.itemPicks is not None:
         #     print(f"result of running out: {self.timeRunningOut()}")

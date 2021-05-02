@@ -26,7 +26,7 @@ def on_release(key):
     #     Shop.labelShop()
 
 
-def imageGrab(x = 0,y = 0,w = 0, h = 0, yoffset = 0, xoffset = 0):
+def imageGrab(x = 0,y = 0,w = 0, h = 0, xoffset = 0, yoffset = 0):
     ctypes.windll.user32.SetProcessDPIAware()
     # get window handle and dimensions
     hwnd = win32gui.FindWindow(None, 'Dota Underlords')
