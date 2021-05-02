@@ -12,6 +12,8 @@ def detectOffset():
     offsetTemplate = cv2.imread("../Header Texts/F.jpg")
     template = [("F", offsetTemplate)]
     img = imageGrab(845,750 ,75,150 ,0 ,0)
+    if img is None:
+        return (None, None)
     img_cv = cv2.cvtColor(numpy.asarray(img), cv2.COLOR_RGB2BGR)
 
     hits = MTM.matchTemplates(
@@ -36,6 +38,10 @@ def detectOffset():
 
 def writeConfig():
     x, y = detectOffset()
+
+    if x is None:
+        return None
+
     config = configparser.ConfigParser()
     config['Offset'] = {}
     config['Offset']['x'] = str(x)

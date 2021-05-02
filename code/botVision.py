@@ -192,7 +192,7 @@ class UnderlordInteract():
         self.round = 0
         self.newRoundStarted = False
         self.currentTime = 0
-        self.pickTime = False
+        # self.pickTime = False
 
         self.otherPlayersDict = {2: {'slot': 2, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
                                  3: {'slot': 3, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
@@ -426,6 +426,7 @@ class UnderlordInteract():
 
     def resetEnv(self, training=False):
 
+        print('rest ENV CALLED!')
         self.gamePhase = None
         self.gameStateLoader = state()
 
@@ -492,8 +493,8 @@ class UnderlordInteract():
         self.newRoundStarted = False
         self.currentTime = 0
         # self.allowMove = False
-        self.pickTime = False
-        self.pickTime = False
+        # self.pickTime = False
+        # self.pickTime = False
 
         self.otherPlayersDict = {2: {'slot': 2, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
                                  3: {'slot': 3, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
@@ -578,8 +579,11 @@ class UnderlordInteract():
     def returnToMainScreen(self):
         self.updateWindowCoords()
         mouse1.position = (self.shopX, self.shopY + 100)
+        time.sleep(1)
         mouse1.click(Button.left, 1)
-
+        time.sleep(1)
+        mouse1.click(Button.left, 1)
+        time.sleep(2)
         self.gameStateLoader.currentPhase = None
         time.sleep(8)
 
@@ -612,6 +616,8 @@ class UnderlordInteract():
                 flag = False
 
         # self.closeStore()
+        self.resetEnv()
+        self.finalPlacement = 0
 
     def pickTime(self):
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
@@ -1037,7 +1043,7 @@ class UnderlordInteract():
             elif self.finalPlacement == 8:
                 reward == firstPlace * 0
 
-        if self.pickTime:
+        if self.pickTime():
 
             if acted < 1:
                 print(f"it dun goofed: {acted}")
@@ -2239,4 +2245,4 @@ def openVision():
 
     root.mainloop()
 
-openVision()
+# openVision()
