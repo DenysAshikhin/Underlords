@@ -807,19 +807,19 @@ class UnderlordInteract():
                                 itemID, self.boardHeroes[i][j].coords[0] + 1,
                                 self.boardHeroes[i][j].coords[1] + 1, isUnderlord]
 
-                    if (self.boardHeroes[i].id + 1) > 70:
+                    if (self.boardHeroes[i][j].id + 1) > 70:
                         raise RuntimeError('error 11')
-                    if self.boardHeroes[i].localID > 249:
+                    if self.boardHeroes[i][j].localID > 249:
                         raise RuntimeError('error 12')
-                    if self.boardHeroes[i].tier > 3:
+                    if self.boardHeroes[i][j].tier > 3:
                         raise RuntimeError('error 13')
-                    if self.boardHeroes[i].gold > 5:
+                    if self.boardHeroes[i][j].gold > 5:
                         raise RuntimeError('error 14')
                     if itemID > 13:
                         raise RuntimeError('error 15')
-                    if (self.boardHeroes[i].coords[0] + 1) > 8:
+                    if (self.boardHeroes[i][j].coords[0] + 1) > 8:
                         raise RuntimeError('error 16')
-                    if (self.boardHeroes[i].coords[1] + 1) > 8:
+                    if (self.boardHeroes[i][j].coords[1] + 1) > 8:
                         raise RuntimeError('error 17')
                     if isUnderlord > 2:
                         raise RuntimeError('error 18')
