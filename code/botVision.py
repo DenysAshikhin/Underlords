@@ -60,7 +60,8 @@ def itemNameList():
 Loads in the offset between different monitor resolutions, offset is calculated by calling Offset.py writeConfig() 
 """
 def loadScreenOffset():
-    Offset.getConfig()
+    x,y = Offset.detectOffset()
+    return x, y
 
 class UnderlordInteract():
     def __init__(self, rootWindow, training=False):
@@ -2238,4 +2239,4 @@ def openVision():
 
     root.mainloop()
 
-# openVision()
+openVision()
