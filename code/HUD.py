@@ -5,18 +5,19 @@ from torchvision.transforms import transforms
 
 from main import imageGrab
 import numpy
-from Clock_Model import Net
 import torch
 
 
 class HUD:
-    def __init__(self):
+    def __init__(self, offsetX, offsetY):
         super().__init__()
-        self.clockModel = self.createModel()
+
         self.gold = 0
         self.health = 0
         self.units = 3
         self.round = 1
+        self.offsetX = offsetX
+        self.offsetY = offsetY
         self.goldTemplates = self.loadDigits("gold")
         self.healthTemplates = self.loadDigits("health")
         self.unitTemplates = self.loadDigits("unit")
@@ -29,14 +30,14 @@ class HUD:
         self.hero = False
         self.clock = 0
 
-    def createModel(self, n_chans1=35, stride1=1, stride2=1, finalChannel=38):
-        net = Net(n_chans1=n_chans1, stride1 = stride1, stride2 = stride2, finalChannel= finalChannel)
-        if torch.cuda.is_available():
-            net = net.cuda()
-            net.load_state_dict(torch.load("digits_model.pth"))
-        else:
-            net.load_state_dict(torch.load("digits_model.pth", map_location=torch.device('cpu')))
-        return net
+    # def createModel(self, n_chans1=35, stride1=1, stride2=1, finalChannel=38):
+    #     net = Net(n_chans1=n_chans1, stride1 = stride1, stride2 = stride2, finalChannel= finalChannel)
+    #     if torch.cuda.is_available():
+    #         net = net.cuda()
+    #         net.load_state_dict(torch.load("digits_model.pth"))
+    #     else:
+    #         net.load_state_dict(torch.load("digits_model.pth", map_location=torch.device('cpu')))
+    #     return net
 
     def predict(self, imageList):
         data_transform = transforms.Compose([transforms.ToTensor(),
@@ -67,8 +68,10 @@ class HUD:
         return self.round
 
     def getClockTimeLeft(self):
-        gameScreen = imageGrab()
-        self.clock = self.countHUD(self.cropClock(gameScreen), self.clockTemplates)
+        # gameScreen = imageGrab()
+        print(self.offsetY)
+        clockImg = imageGrab(550,10, 50,56,self.offsetX,self.offsetY)
+        self.clock = self.countHUD(clockImg, self.clockTemplates)
         return self.clock
 
     def getHUD(self):

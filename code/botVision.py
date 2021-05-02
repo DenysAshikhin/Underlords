@@ -9,6 +9,7 @@ import numpy
 import win32gui
 from PIL import ImageTk, Image
 
+import Offset
 from GSI_Server import GSI_Server
 from Game_State import state
 from HUD import HUD
@@ -55,6 +56,12 @@ def itemNameList():
         itemList.append(file[: -4])
     return itemList
 
+"""
+Loads in the offset between different monitor resolutions, offset is calculated by calling Offset.py writeConfig() 
+"""
+def loadScreenOffset():
+    x,y = Offset.detectOffset()
+    return x, y
 
 class UnderlordInteract():
     def __init__(self, rootWindow, training=False):
@@ -150,7 +157,8 @@ class UnderlordInteract():
         self.mouseSleepTime = 0.25 / self.speedUpFactor
 
         self.shop = Shop()
-        self.HUD = HUD()
+        self.screenOffsetX, self.screenOffsetY = loadScreenOffset()
+        self.HUD = HUD(self.screenOffsetX, self.screenOffsetY)
         self.itemIDmap = self.items.itemIDMap
         self.underlords = Underlords()
         self.bench = numpy.zeros([1, 8])
@@ -177,14 +185,14 @@ class UnderlordInteract():
         self.shopUnits = None
         self.gsiItems = None
         self.combatType = 0
-        self.allowMove = False
+        # self.allowMove = False
         self.combatResult = -1
         self.wins = 0
         self.losses = 0
         self.round = 0
         self.newRoundStarted = False
         self.currentTime = 0
-        self.pickTime = False
+        # self.pickTime = False
 
         self.otherPlayersDict = {2: {'slot': 2, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
                                  3: {'slot': 3, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
@@ -418,6 +426,7 @@ class UnderlordInteract():
 
     def resetEnv(self, training=False):
 
+        print('rest ENV CALLED!')
         self.gamePhase = None
         self.gameStateLoader = state()
 
@@ -483,9 +492,9 @@ class UnderlordInteract():
         self.round = 0
         self.newRoundStarted = False
         self.currentTime = 0
-        self.allowMove = False
-        self.pickTime = False
-        self.pickTime = False
+        # self.allowMove = False
+        # self.pickTime = False
+        # self.pickTime = False
 
         self.otherPlayersDict = {2: {'slot': 2, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
                                  3: {'slot': 3, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
@@ -549,11 +558,11 @@ class UnderlordInteract():
         self.shopFrame.pack()
 
     def testFunction(self, param1, param2):
-
-        self.updateWindowCoords()
-        start_time = time.time()
-        print(self.getObservation())
-        print("--- %s seconds to get observation ---" % (time.time() - start_time))
+        print(self.HUD.getClockTimeLeft())
+        # self.updateWindowCoords()
+        # start_time = time.time()
+        # print(self.getObservation())
+        # print("--- %s seconds to get observation ---" % (time.time() - start_time))
 
         # if self.underlordPicks is not None or self.itemPicks is not None:
         #     print(f"result of running out: {self.timeRunningOut()}")
@@ -570,8 +579,11 @@ class UnderlordInteract():
     def returnToMainScreen(self):
         self.updateWindowCoords()
         mouse1.position = (self.shopX, self.shopY + 100)
+        time.sleep(1)
         mouse1.click(Button.left, 1)
-
+        time.sleep(1)
+        mouse1.click(Button.left, 1)
+        time.sleep(2)
         self.gameStateLoader.currentPhase = None
         time.sleep(8)
 
@@ -604,6 +616,14 @@ class UnderlordInteract():
                 flag = False
 
         # self.closeStore()
+        self.resetEnv()
+        self.finalPlacement = 0
+
+    def pickTime(self):
+        return (self.itemPicks is not None) or (self.underlordPicks is not None)
+
+    def allowMove(self):
+        return self.combatType == 0 and not self.pickTime()
 
     def getObservation(self):
 
@@ -633,7 +653,15 @@ class UnderlordInteract():
                 [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0],
                 # items to pick
-                [0, 0, 0]
+                [0, 0, 0],
+                # other players
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             )
             return obs
 
@@ -644,14 +672,8 @@ class UnderlordInteract():
 
         # if phase not in ['select', 'choose']:
 
-        self.pickTime = (self.itemPicks is not None) or (self.underlordPicks is not None)
-        if self.combatType == 0:
-            self.allowMove = True
-        else:
-            self.allowMove = False
-
         print(
-            f"Round: {self.round} - Time Left: {self.currentTime} - Pick Time? : {self.pickTime}")
+            f"Round: {self.round} - Time Left: {self.currentTime} - Pick Time? : {self.pickTime()}")
         print(f"Final placement: {self.finalPlacement}")
 
         # making sure it is not time to pick an underlord or
@@ -1021,7 +1043,7 @@ class UnderlordInteract():
             elif self.finalPlacement == 8:
                 reward == firstPlace * 0
 
-        if self.pickTime:
+        if self.pickTime():
 
             if acted < 1:
                 print(f"it dun goofed: {acted}")
@@ -1077,7 +1099,7 @@ class UnderlordInteract():
 
         # print(f"gamePhase: {gamePhase}")
 
-        if self.pickTime:
+        if self.pickTime():
 
             if self.itemPicks is not None:
 
@@ -1111,6 +1133,10 @@ class UnderlordInteract():
                 return self.buyUnderlord(self.underlordPicks, selection)
 
         else:
+
+            if not self.allowMove():
+                self.mediumPunish = True
+                return -1
 
             if self.heroToMove:
                 # print("You have a hero selected to move, move it first!")
@@ -1147,11 +1173,7 @@ class UnderlordInteract():
                     return -1
 
                 self.itemToMove = self.itemObjects[x][y]
-
-                if self.itemToMove is not None:
-                    return 1
-                else:
-                    return 1
+                return 1
 
     def buyItem(self, selection, itemList):
 
@@ -1202,10 +1224,12 @@ class UnderlordInteract():
             time.sleep(3)
             gsiItems = []
 
-            for itemy in self.gsiItems:
-                gsiItems.append(itemy[1])
+            if self.gsiItems is not None:
 
-            gsiItems.sort()
+                for itemy in self.gsiItems:
+                    gsiItems.append(itemy[1])
+
+                gsiItems.sort()
 
             for i in range(3):
                 for j in range(4):
@@ -1462,7 +1486,7 @@ class UnderlordInteract():
 
     def sellHero(self, x=-1, y=-1):
 
-        if self.checkBetweenCombat():
+        if not self.allowMove():
             self.mediumPunish = True
             return -1
 
@@ -1545,7 +1569,7 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        if (self.combatType != 0) or (self.currentTime < 6) and (not self.checkState):
+        if not self.allowMove():
             self.mediumPunish = True
             print('invalid phase move unit')
             return -1
@@ -1601,11 +1625,11 @@ class UnderlordInteract():
                     self.boardHeroes[x][y] = self.heroToMove
                     # print(f"moved: {self.boardHeroes[x][y].name} from {self.boardHeroes[x][y].coords}")
                     self.resetLabel(self.heroToMove)
+                    print(f"successfully moved unit onto board: {x}-{y}:::{self.allowMove()}")
                     self.moveGameHero(self.heroToMove, x, y)
                     self.heroToMove.coords = (x, y)
                     self.updateHeroLabel(self.heroToMove)
                     self.heroToMove = None
-                    print(f"successfully moved unit onto board: {x}-{y}:::{self.allowMove}")
 
                 else:
                     print("Board Spot Taken!")
@@ -1718,6 +1742,10 @@ class UnderlordInteract():
         #     self.strongPunish = True
         #     return -1
 
+        if self.pickTime():
+            self.mediumPunish = True
+            return -1
+
         if self.gold < 5:
             self.mediumPunish = True
             return -1
@@ -1741,6 +1769,10 @@ class UnderlordInteract():
         #     self.mediumPunish = True
         #     return -1
 
+        if self.pickTime():
+            self.mediumPunish = True
+            return -1
+
         self.openStore(update=False, skipCheck=True)
 
         mouse1.position = (self.lockInX, self.lockInY)
@@ -1754,6 +1786,10 @@ class UnderlordInteract():
         # if self.combatType != 0 and not self.checkState:
         #     self.mediumPunish = True
         #     return -1
+
+        if self.pickTime():
+            self.mediumPunish = True
+            return -1
 
         if self.gold < 2:
             self.mediumPunish = True
@@ -1946,8 +1982,12 @@ class UnderlordInteract():
 
     def buy(self, idx=0):
 
-        if self.checkBetweenCombat():
-            self.strongPunish = True
+        # if self.checkBetweenCombat():
+        #     self.strongPunish = True
+        #     return -1
+
+        if self.pickTime():
+            self.mediumPunish = True
             return -1
 
         if self.shopUnits is None:
