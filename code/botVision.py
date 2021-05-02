@@ -261,33 +261,44 @@ class UnderlordInteract():
         self.itemFrame = Frame(master=self.shopFrame, relief=tkinter.RAISED, borderwidth=1)
         self.itemFrame.grid(row=0, column=5)
 
-        for i in range(3):
-            for j in range(4):
+        if not training:
+            for i in range(3):
+                for j in range(4):
 
-                label = Label(master=self.itemFrame, foreground='white', background='black',
-                              text=f"item #{i}-{j}", compound='top')
-                label.grid(row=2 * i, column=j, padx=5, pady=5)
+                    label = Label(master=self.itemFrame, foreground='white', background='black',
+                                  text=f"", compound='top')
+                    label.grid(row=2 * i, column=j, padx=5, pady=5)
 
-                self.itemlabels[i][j] = label
+                    self.itemlabels[i][j] = label
 
-                if not training:
-                    button = tkinter.Button(
-                        master=self.itemFrame,
-                        text="Move",
-                        width=10,
-                        height=1,
-                        bg="blue",
-                        fg="yellow",
-                        command=lambda X=i, y=j: self.selectItem(x=X, y=y)
-                    )
-                    button.grid(row=2 * i + 1, column=j)
+                    if not training:
+                        button = tkinter.Button(
+                            master=self.itemFrame,
+                            text="Move",
+                            width=10,
+                            height=1,
+                            bg="blue",
+                            fg="yellow",
+                            command=lambda X=i, y=j: self.selectItem(x=X, y=y)
+                        )
+                        button.grid(row=2 * i + 1, column=j)
+        else:
+            for i in range(3):
+                for j in range(4):
+                    label = Label(master=self.itemFrame, foreground='white', background='black',
+                                  text=f"", compound='top')
+                    label.grid(row=i, column=j, padx=5, pady=5)
+
+                    self.itemlabels[i][j] = label
+
+
 
         hudRow = 14
 
         # 8 bench portrait slots
         for x in range(8):
             newLabel = Label(master=self.shopFrame, foreground='white', background='black',
-                             text=f"None", compound='top')
+                             text=f"", compound='top')
             newLabel.grid(row=hudRow + 2, column=x, padx=5, pady=5)
             self.benchLabels.append(newLabel)
             if not training:
@@ -412,7 +423,7 @@ class UnderlordInteract():
         for i in range(4):
             for j in range(8):
                 newLabel = Label(master=self.shopFrame, foreground='white', background='black',
-                                 text=f"None", compound='top')
+                                 text=f"", compound='top')
                 newLabel.grid(row=3 + (2 * i), column=j, padx=3, pady=2)
                 self.boardLabels[i][j] = newLabel
 
@@ -541,14 +552,14 @@ class UnderlordInteract():
         for i in range(3):
             for j in range(4):
                 self.itemlabels[i][j].config(foreground='white', background='black',
-                                             text=f"item #{i}-{j}", compound='top', image='')
+                                             text=f"", compound='top', image='')
 
         hudRow = 14
 
         # 8 bench portrait slots
         for x in range(8):
             self.benchLabels[x].config(foreground='white', background='black',
-                                       text=f"None", compound='top', image='')
+                                       text=f"", compound='top', image='')
 
         # self.shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
         self.hudLabel.config(foreground='white', background='black',
@@ -557,7 +568,7 @@ class UnderlordInteract():
         for i in range(4):
             for j in range(8):
                 self.boardLabels[i][j].config(foreground='white', background='black',
-                                              text=f"None", compound='top', image='')
+                                              text=f"", compound='top', image='')
 
         self.shopFrame.pack()
 
@@ -2028,10 +2039,10 @@ class UnderlordInteract():
 
         x, y = hero.coords
         if y == -1:
-            self.benchLabels[x].config(text="None", bg='black', image=self.profilePics['None'])
+            self.benchLabels[x].config(text="", bg='black', image=self.profilePics['None'])
             self.benchHeroes[x] = None
         else:
-            self.boardLabels[x][y].config(text="None", bg='black', image=self.profilePics['None'])
+            self.boardLabels[x][y].config(text="", bg='black', image=self.profilePics['None'])
             self.boardHeroes[x][y] = None
 
     def updateHeroLabel(self, hero):
@@ -2322,7 +2333,7 @@ def openVision():
     # root.geometry("600x105")
     root.resizable(0, 0)
     stopFlag = Event()
-    thread = UnderlordInteract(root)
+    thread = UnderlordInteract(root, training=True)
     # thread.start()
     # this will stop the timer
     # stopFlag.set()
@@ -2330,4 +2341,4 @@ def openVision():
 
     root.mainloop()
 
-# openVision()
+openVision()
