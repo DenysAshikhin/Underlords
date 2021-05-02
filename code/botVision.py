@@ -56,12 +56,16 @@ def itemNameList():
         itemList.append(file[: -4])
     return itemList
 
+
 """
 Loads in the offset between different monitor resolutions, offset is calculated by calling Offset.py writeConfig() 
 """
+
+
 def loadScreenOffset():
-    x,y = Offset.detectOffset()
+    x, y = Offset.detectOffset()
     return x, y
+
 
 class UnderlordInteract():
     def __init__(self, rootWindow, training=False):
@@ -661,7 +665,7 @@ class UnderlordInteract():
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             )
             return obs
 
@@ -725,6 +729,8 @@ class UnderlordInteract():
                 uniqueID = self.shop.classIDMap[name]
 
                 shopHeros.append(int(uniqueID) + 1)
+                if (int(uniqueID) + 1) > 70:
+                    raise RuntimeError('error 1')
         except:  # meaning we haven't yet received data about the store units
             shopHeros = [0, 0, 0, 0, 0]
 
@@ -750,6 +756,24 @@ class UnderlordInteract():
                             self.benchHeroes[i].gold, itemID,
                             self.benchHeroes[i].coords[0] + 1,
                             self.benchHeroes[i].coords[1] + 1, isUnderlord]
+
+                if (self.benchHeroes[i].id + 1) > 70:
+                    raise RuntimeError('error 2')
+                if self.benchHeroes[i].localID > 249:
+                    raise RuntimeError('error 3')
+                if self.benchHeroes[i].tier > 3:
+                    raise RuntimeError('error 4')
+                if self.benchHeroes[i].gold > 5:
+                    raise RuntimeError('error 5')
+                if itemID > 13:
+                    raise RuntimeError('error 6')
+                if (self.benchHeroes[i].coords[0] + 1) > 8:
+                    raise RuntimeError('error 7')
+                if (self.benchHeroes[i].coords[1] + 1) > 8:
+                    raise RuntimeError('error 7')
+                if isUnderlord > 2:
+                    raise RuntimeError('error 8')
+
             else:
                 tempHero = [0, 0, 0, 0, 0, 0, 0, 0]
             benchHeros.append(tempHero)
@@ -783,6 +807,23 @@ class UnderlordInteract():
                                 itemID, self.boardHeroes[i][j].coords[0] + 1,
                                 self.boardHeroes[i][j].coords[1] + 1, isUnderlord]
 
+                    if (self.boardHeroes[i].id + 1) > 70:
+                        raise RuntimeError('error 11')
+                    if self.boardHeroes[i].localID > 249:
+                        raise RuntimeError('error 12')
+                    if self.boardHeroes[i].tier > 3:
+                        raise RuntimeError('error 13')
+                    if self.boardHeroes[i].gold > 5:
+                        raise RuntimeError('error 14')
+                    if itemID > 13:
+                        raise RuntimeError('error 15')
+                    if (self.boardHeroes[i].coords[0] + 1) > 8:
+                        raise RuntimeError('error 16')
+                    if (self.boardHeroes[i].coords[1] + 1) > 8:
+                        raise RuntimeError('error 17')
+                    if isUnderlord > 2:
+                        raise RuntimeError('error 18')
+
                     boardHeroes[idx] = tempHero
                     idx += 1
 
@@ -800,6 +841,9 @@ class UnderlordInteract():
                     name = item['icon']
                     properID = self.items.itemIDMap[name]
                     itemPick.append(properID)
+
+                    if properID > 69:
+                        raise RuntimeError('error 19')
                 except:
                     print(self.itemIDmap)
                     print(item)
@@ -817,6 +861,11 @@ class UnderlordInteract():
 
                 underlordsPick.append(underlord[0])
                 underlordsPick.append(underlord[1])
+
+                if underlord[0] > 4:
+                    raise RuntimeError('error 20')
+                if underlord[1] > 2:
+                    raise RuntimeError('error 21')
 
                 # underlordID = None
                 #
@@ -855,6 +904,18 @@ class UnderlordInteract():
                         heroID = item.hero.localID
 
                     localItems.append([item.ID + 1, item.localID, heroID, item.coords[0] + 1, item.coords[1] + 1])
+
+                    if item.ID > 69:
+                        raise RuntimeError('error 22')
+                    if item.localID > 13:
+                        raise RuntimeError('error 23')
+                    if heroID > 249:
+                        raise RuntimeError('24')
+                    if (item.coords[0] + 1) > 3:
+                        raise RuntimeError('25')
+                    if (item.coords[1] + 1) > 4:
+                        raise RuntimeError('26')
+
                 else:
                     localItems.append([0, 0, 0, 0, 0])
 
@@ -894,11 +955,25 @@ class UnderlordInteract():
                 if name == 'anessix' or name == 'hobgen' or name == 'jull' or name == 'enno':
                     continue
 
-                goodID = self.shop.classIDMap[name]
+                goodID = self.shop.classIDMap[name]+1
                 # print(f"Adding {name}-{tier}-{goodID}")
                 temp.append(goodID)
                 temp.append(tier)
                 idx += 1
+
+                if other['slot'] > 8:
+                    raise RuntimeError('error 27')
+                if other['health'] > 100:
+                    raise RuntimeError('error 28')
+                if other['gold'] > 99:
+                    raise RuntimeError('error 29')
+                if other['level'] > 10:
+                    raise RuntimeError('error 30')
+                if goodID > 70:
+                    raise RuntimeError('error 31')
+                if tier > 3:
+                    raise RuntimeError('error 32')
+
 
             blankUnits = 10 - idx  # adding blank 0's for units on board if there are less than 10 of them
 
@@ -1217,11 +1292,15 @@ class UnderlordInteract():
                 self.strongPunish = True
                 return -1
 
+            print(f"chose item: {name}")
             mouse1.position = (
                 self.itemSelectX + (self.itemSelectXOffset * selection), self.itemSelectY)
             time.sleep(self.mouseSleepTime)
-            mouse1.click(Button.left, 1)
-            time.sleep(3)
+
+            while self.pickTime():
+                mouse1.click(Button.left, 1)
+                time.sleep(self.mouseSleepTime)
+
             gsiItems = []
 
             if self.gsiItems is not None:
@@ -1434,9 +1513,13 @@ class UnderlordInteract():
 
                 mouse1.position = (self.itemSelectX - 20 + (self.itemSelectXOffset * selection), self.itemSelectY + 100)
                 time.sleep(self.mouseSleepTime)
-                mouse1.click(Button.left, 1)
+
+                while self.pickTime():
+                    mouse1.click(Button.left, 1)
+                    time.sleep(self.mouseSleepTime)
+
                 self.underlordPicks = None
-                time.sleep(3)
+
                 if self.underlordPicks is not None:
                     print("Underlord picks are still available")
                 return 1
