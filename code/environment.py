@@ -121,6 +121,7 @@ class UnderlordEnv(ExternalEnv):
 
         self.root = Tk()
         self.root.resizable(0, 0)
+        self.geometry('500x500+0+0')
         self.underlord = UnderlordInteract(self.root)
         # self.root.update()
         # root.mainloop()
