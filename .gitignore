@@ -15,8 +15,22 @@
 /runs
 /code/__pycache__
 /code/__pycache__/
+code/__pycache__
+code/__pycache__/
 /checkpoints
+code/__pycache__
 
+config.ini
+
+.idea/
+.idea\
+code\__pycache__
+code\__pycache__\
+
+code\checkpoints
+code/checkpoints
+checkpoints\
+checkpoints/
 
 # User-specific stuff
 .idea/**/workspace.xml
@@ -40,6 +54,7 @@
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
+.idea/
 
 # Gradle and Maven with auto-import
 # When using Gradle or Maven with auto-import, you should exclude module files,

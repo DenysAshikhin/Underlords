@@ -1,17 +1,23 @@
 import os
 import cv2
 import MTM
+from torchvision.transforms import transforms
+
 from main import imageGrab
 import numpy
+import torch
 
 
 class HUD:
-    def __init__(self):
+    def __init__(self, offsetX, offsetY):
         super().__init__()
+
         self.gold = 0
         self.health = 0
         self.units = 3
         self.round = 1
+        self.offsetX = offsetX
+        self.offsetY = offsetY
         self.goldTemplates = self.loadDigits("gold")
         self.healthTemplates = self.loadDigits("health")
         self.unitTemplates = self.loadDigits("unit")
@@ -24,6 +30,36 @@ class HUD:
         self.hero = False
         self.clock = 0
 
+    # def createModel(self, n_chans1=35, stride1=1, stride2=1, finalChannel=38):
+    #     net = Net(n_chans1=n_chans1, stride1 = stride1, stride2 = stride2, finalChannel= finalChannel)
+    #     if torch.cuda.is_available():
+    #         net = net.cuda()
+    #         net.load_state_dict(torch.load("digits_model.pth"))
+    #     else:
+    #         net.load_state_dict(torch.load("digits_model.pth", map_location=torch.device('cpu')))
+    #     return net
+
+    def predict(self, imageList):
+        data_transform = transforms.Compose([transforms.ToTensor(),
+                                             transforms.Normalize((0.5,), (0.5,), (0.5,)),
+                                             ])
+        data = []
+
+        for img in imageList:
+            data.append(data_transform(img))
+
+        out = torch.stack(data, dim=0)  # output all images as one tensor
+        m = torch.nn.Softmax(dim=1)
+        # Perform forward pass with ANN
+
+        if torch.cuda.is_available():
+            out = out.cuda()
+
+        out = self.model(out)  # use model to evaluate
+        out = m(out)  # apply softmax
+        value, inspect = torch.max(out, 1)
+        return value, inspect
+
     def getRound(self):
         gameScreen = imageGrab()
         roundTemp = self.countHUD(self.cropRound(gameScreen), self.roundTemplates)
@@ -32,8 +68,10 @@ class HUD:
         return self.round
 
     def getClockTimeLeft(self):
-        gameScreen = imageGrab()
-        self.clock = self.countHUD(self.cropClock(gameScreen), self.clockTemplates)
+        # gameScreen = imageGrab()
+        print(self.offsetY)
+        clockImg = imageGrab(550,10, 50,56,self.offsetX,self.offsetY)
+        self.clock = self.countHUD(clockImg, self.clockTemplates)
         return self.clock
 
     def getHUD(self):

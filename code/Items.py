@@ -31,7 +31,6 @@ class Items:
         for item in self.itemData:
             # print(item)
 
-
             # print(self.itemData[self.itemData[item]['icon']])
 
             # if biggestNum < int(self.itemData[item]['id']):
@@ -40,9 +39,8 @@ class Items:
             self.itemDataID[self.itemData[item]['id']] = self.itemData[item]
         # print(f"biggest item ID: biggestNum: {biggestNum}")
 
-
-
-        self.banned = ['mango_tree', 'divine_rapier', 'barricade', 'vesture_of_the_tyrant', 'target_buddy', 'barricade_rot1']  # might allow them later
+        self.banned = ['mango_tree', 'divine_rapier', 'barricade', 'vesture_of_the_tyrant', 'target_buddy',
+                       'barricade_rot1']  # might allow them later
         self.unique = ['battle fury', 'dragon lance', 'refresher orb', 'void stone']
         self.bannedUnderlords = {  # Making this list sucks :c
             'battle fury': ['bat rider', 'crystal maiden', 'dazzle', 'death prophet', 'drow ranger', 'enchantress',
@@ -61,7 +59,7 @@ class Items:
                               'slark', 'troll warrior'],
             't3 refresher orb': ['life stealer', 'luna', 'slark'],
             'octarine essence': ['anti mage', 'drow ranger', 'life stealer', 'luna', 'phantom assassin',
-                              'slark', 'troll warrior'],
+                                 'slark', 'troll warrior'],
             't3 refresher orb': ['life stealer', 'luna', 'slark'],
             'refresher orb': ['anti mage', 'drow ranger', 'life stealer', 'luna', 'phantom assassin',
                               'slark', 'troll warrior'],

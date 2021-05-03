@@ -18,10 +18,20 @@ parser.add_argument('-ip', type=str,
 parser.add_argument('-speed', type=float,
                     help='gameFactor, default 1.0')
 
+parser.add_argument('-update', type=float,
+                    help='seconds how often to update from main process')
+
 args = parser.parse_args()
 
+update = 3600.0
+
+if args.update:
+    update = args.update
+
+print(f"Going to update at {update} seconds interval")
+
 print('trying to launch policy client')
-client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=600.0)
+client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=update)
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
@@ -33,9 +43,7 @@ reward = 0
 print('starting main loop')
 replayList = []
 
-
 if args.speed is not None:
-
     print(f"multiply by {args.speed}")
 
     client.env.underlord.mouseSleepTime *= args.speed
@@ -45,6 +53,7 @@ while True:
     # print('getting observation')
     # start_time = time.time()
     gameObservation = client.env.underlord.getObservation()
+    print(gameObservation)
     # print("--- %s seconds to get observation ---" % (time.time() - start_time))
     # start_time = time.time()
     client.env.root.update()
@@ -52,37 +61,37 @@ while True:
     # start_time = time.time()
 
     action = None
-    print('trying to get action')
-    print(gameObservation)
-    try:
-        action = client.get_action(episode_id=episode_id, observation=gameObservation)
-    except:
-        action = client.get_action(episode_id=episode_id, observation=gameObservation)
+    # print('trying to get action')
+
+    action = client.get_action(episode_id=episode_id, observation=gameObservation)
     print("got action")
     # print("--- %s seconds to get action ---" % (time.time() - start_time))
     # start_time = time.time()
-    print(action)
-    print('----')
+    print(action[0], action[1] - 1, action[2] - 1, action[3] - 1)
+
     reward += client.env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
     # print("--- %s seconds to get do action ---" % (time.time() - start_time))
     # start_time = time.time()
     print(f"running reward: {reward}")
     client.log_returns(episode_id=episode_id, reward=reward)
-    print('finished logging step')
-    finalPosition = client.env.underlord.finished()
+    # print('finished logging step')
+    finalPosition = client.env.underlord.finalPlacement
     # print("--- %s seconds to get finish logging return ---" % (time.time() - start_time))
 
     replayList.append((gameObservation, action, finalPosition))
 
-    if finalPosition != -1:
+    if finalPosition != 0:
         print(f"GAME OVER! final position: {finalPosition} ")
         reward = 0
         # need to call a reset of env here
         client.end_episode(episode_id=episode_id, observation=gameObservation)
-        client.env.resetEnv()
+        client.env.underlord.resetEnv()
         fileWriter = logger(episode_id)
         fileWriter.createLog()
         fileWriter.writeLog(replayList)
         replayList.clear()
 
         episode_id = client.start_episode(episode_id=None)
+        print('got past restarting of the new episode, for loop should begin anew!')
+
+    print('----')
