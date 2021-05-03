@@ -18,10 +18,18 @@ parser.add_argument('-ip', type=str,
 parser.add_argument('-speed', type=float,
                     help='gameFactor, default 1.0')
 
+parser.add_argument('-update', type=float,
+                    help='seconds how often to update from main process')
+
 args = parser.parse_args()
 
+update = 3600
+
+if args.update:
+    update = args.update
+
 print('trying to launch policy client')
-client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=600.0)
+client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=update)
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
