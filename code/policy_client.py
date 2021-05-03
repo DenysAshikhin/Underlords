@@ -23,10 +23,12 @@ parser.add_argument('-update', type=float,
 
 args = parser.parse_args()
 
-update = 3600
+update = 3600.0
 
 if args.update:
     update = args.update
+
+print(f"Going to update at {update} seconds interval")
 
 print('trying to launch policy client')
 client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=update)
