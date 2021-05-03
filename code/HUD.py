@@ -69,7 +69,7 @@ class HUD:
 
     def getClockTimeLeft(self):
         # gameScreen = imageGrab()
-        print(self.offsetY)
+        # print(self.offsetY)
         clockImg = imageGrab(550,10, 50,56,self.offsetX,self.offsetY)
         self.clock = self.countHUD(clockImg, self.clockTemplates)
         return self.clock
