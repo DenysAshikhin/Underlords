@@ -640,6 +640,7 @@ class UnderlordInteract():
         # self.closeStore()
         self.resetEnv()
         self.finalPlacement = 0
+        self.openStore()
 
     def pickTime(self):
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
