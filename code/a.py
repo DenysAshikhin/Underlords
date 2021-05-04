@@ -6,6 +6,8 @@ from ray.rllib.examples.custom_metrics_and_callbacks import MyCallbacks
 from ray.tune.logger import pretty_print
 from ray.util.client import ray
 
+from environment import UnderlordEnv
+
 parser = argparse.ArgumentParser(description='Optional app description')
 parser.add_argument('-ip', type=str, help='IP of this device')
 
@@ -59,7 +61,7 @@ DEFAULT_CONFIG = ppo.PPOTrainer.merge_trainer_configs(
         "input_evaluation": [],
         "callbacks": MyCallbacks,
         "env_config": {"sleep": True},
-        'env': "CartPole-v0"
+        'env': UnderlordEnv
     },
     _allow_unknown_configs=True,
 )
@@ -69,10 +71,10 @@ ray.init()
 print(f"running on: {args.ip}:55555")
 
 trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
-i = 0
+i = 1
 while True:
     print(pretty_print(trainer.train()))
-    print(f"Finished train run #{i + 1}")
+    print(f"Finished train run #{i}")
     i += 1
     # checkpoint = trainer.save(checkpoint_path)
     # print("Last checkpoint", checkpoint)

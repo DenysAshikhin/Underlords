@@ -67,7 +67,7 @@ DEFAULT_CONFIG = ppo.PPOTrainer.merge_trainer_configs(
         "input_evaluation": [],
         "callbacks": MyCallbacks,
         "env_config": {"sleep": True},
-        'env': "CartPole-v0"
+        'env': UnderlordEnv
     },
     _allow_unknown_configs=True,
 )
@@ -174,7 +174,7 @@ trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
 # trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
 # checkpoint_path = CHECKPOINT_FILE.format(args.run)
-checkpoint_path = "checkpoints/"
+# checkpoint_path = "checkpoints/"
 
 
 # if args.checkpoint:
@@ -192,5 +192,5 @@ while True:
     print(pretty_print(trainer.train()))
     print(f"Finished train run #{i + 1}")
     i += 1
-    checkpoint = trainer.save(checkpoint_path)
-    print("Last checkpoint", checkpoint)
+    # checkpoint = trainer.save(checkpoint_path)
+    # print("Last checkpoint", checkpoint)
