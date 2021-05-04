@@ -17,7 +17,9 @@ class state:
         self.currentPhase = None
 
     def getPhase(self):
-        combatCrop = imageGrab(504,6,40,20,self.xoffset,self.yoffset)
+        print(self.yoffset)
+        combatCrop = imageGrab(505,6,40,26,self.xoffset,self.yoffset)
+        combatCrop.show()
         combatPhase = self.detectPhase(combatCrop, self.combatTemplates)
         return combatPhase
 

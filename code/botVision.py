@@ -124,7 +124,6 @@ class UnderlordInteract():
         self.itemMoveY = self.y + 185
         self.itemMoveYOffset = 35
         self.gamePhase = None
-        self.gameStateLoader = state()
 
         # Punishments to be received at reward calculation if previously did illegal actions.
         self.smallPunish = False
@@ -163,6 +162,7 @@ class UnderlordInteract():
         self.shop = Shop()
         self.screenOffsetX, self.screenOffsetY = loadScreenOffset()
         self.HUD = HUD(self.screenOffsetX, self.screenOffsetY)
+        self.gameStateLoader = state(self.screenOffsetX,self.screenOffsetY)
         self.itemIDmap = self.items.itemIDMap
         self.underlords = Underlords()
         self.bench = numpy.zeros([1, 8])
