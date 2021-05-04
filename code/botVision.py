@@ -659,7 +659,7 @@ class UnderlordInteract():
 
         if self.finalPlacement != 0:
             obs = (
-                self.finalPlacement, 0, 0, 0, 0, 0, 0, 0,
+                self.finalPlacement, 0, 0, 0, 0, self.round, 0, 0,
                 [0, 0], 0, 0, 0,
                 # store heros
                 [0, 0, 0, 0, 0],
