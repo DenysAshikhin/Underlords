@@ -640,6 +640,7 @@ class UnderlordInteract():
         # self.closeStore()
         self.resetEnv()
         self.finalPlacement = 0
+        self.openStore()
 
     def pickTime(self):
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
@@ -1135,6 +1136,16 @@ class UnderlordInteract():
                 reward == firstPlace * 0.1
             elif self.finalPlacement == 8:
                 reward == firstPlace * 0
+
+            if self.round < 11:
+                reward += firstPlace*0.01 * self.round
+            elif self.round < 16:
+                reward += firstPlace*0.02 * self.round
+            elif self.round < 26:
+                reward += firstPlace*0.03 * self.round
+            else:
+                reward += firstPlace*0.03 * 25
+
 
         if self.pickTime():
 

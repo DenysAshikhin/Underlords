@@ -84,16 +84,16 @@ DEFAULT_CONFIG = with_common_config({
     # Initial coefficient for KL divergence.
     "kl_coeff": 0.2,
     # Size of batches collected from each worker.
-    "rollout_fragment_length": 10,
+    "rollout_fragment_length": 25,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 100,
+    "train_batch_size": 2000,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 20,
+    "sgd_minibatch_size": 100,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 30,
+    "num_sgd_iter": 20,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": True,
     # Stepsize of SGD.
@@ -123,7 +123,7 @@ DEFAULT_CONFIG = with_common_config({
     # Target value for KL divergence.
     "kl_target": 0.01,
     # Whether to rollout "complete_episodes" or "truncate_episodes".
-    "batch_mode": "complete_episodes",
+    "batch_mode": "truncate_episodes",
     # Which observation filter to apply to the observation.
     "observation_filter": "NoFilter",
     # Uses the sync samples optimizer instead of the multi-gpu one. This is
