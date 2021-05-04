@@ -185,7 +185,7 @@ print(f"running on: {args.ip}:55555")
 trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
 # checkpoint_path = CHECKPOINT_FILE.format(args.run)
-checkpoint_path = "checkpoints/"
+checkpoint_path = "checkpointsC/"
 
 
 if args.checkpoint:
