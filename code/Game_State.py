@@ -7,31 +7,19 @@ from main import imageGrab
 
 
 class state:
-    def __init__(self):
+    def __init__(self, xoffset = 0, yoffset = 0):
         super().__init__()
         # combat Phases > combat, intermission, prepartion
         # selection > item selection, underlord selection
+        self.xoffset = xoffset
+        self.yoffset = yoffset
         self.combatTemplates = self.loadTemplates("../Header Texts/Combat State/")
-        self.selectionTemplates = self.loadTemplates("../Header Texts/Selection State/")
-        self.placeTemplates = self.loadTemplates("../Header Texts/Place State/")
         self.currentPhase = None
 
     def getPhase(self):
-        gameScreen = imageGrab()
-
-        combatCrop = gameScreen.crop((480, 35) + (600, 60))
-
-        selectionCrop = gameScreen.crop((240, 235) + (580, 390))
-
+        combatCrop = imageGrab(504,6,40,20,self.xoffset,self.yoffset)
         combatPhase = self.detectPhase(combatCrop, self.combatTemplates)
-        selectionPhase = self.detectPhase(selectionCrop, self.selectionTemplates)
-
-        if selectionPhase is not None:
-            self.currentPhase = selectionPhase
-        elif combatPhase is not None:
-            self.currentPhase = combatPhase
-
-        return self.currentPhase
+        return combatPhase
 
     def loadTemplates(self, root):
         templates = []
