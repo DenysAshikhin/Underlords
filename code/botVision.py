@@ -1137,6 +1137,16 @@ class UnderlordInteract():
             elif self.finalPlacement == 8:
                 reward == firstPlace * 0
 
+            if self.round < 11:
+                reward += firstPlace*0.01 * self.round
+            elif self.round < 16:
+                reward += firstPlace*0.02 * self.round
+            elif self.round < 26:
+                reward += firstPlace*0.03 * self.round
+            else:
+                reward += firstPlace*0.03 * 25
+
+
         if self.pickTime():
 
             if acted < 1:
