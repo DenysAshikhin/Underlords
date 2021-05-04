@@ -78,7 +78,7 @@ while True:
     finalPosition = client.env.underlord.finalPlacement
     # print("--- %s seconds to get finish logging return ---" % (time.time() - start_time))
 
-    replayList.append((gameObservation, action, finalPosition))
+    replayList.append((gameObservation, action, reward))
 
     if finalPosition != 0:
         print(f"GAME OVER! final position: {finalPosition} ")
