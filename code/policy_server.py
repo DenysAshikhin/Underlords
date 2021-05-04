@@ -84,7 +84,7 @@ DEFAULT_CONFIG = with_common_config({
     # Initial coefficient for KL divergence.
     "kl_coeff": 0.2,
     # Size of batches collected from each worker.
-    "rollout_fragment_length": 25,
+    "rollout_fragment_length": 50,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
     "train_batch_size": 2000,
@@ -93,7 +93,7 @@ DEFAULT_CONFIG = with_common_config({
     "sgd_minibatch_size": 100,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 20,
+    "num_sgd_iter": 35,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": True,
     # Stepsize of SGD.
@@ -146,14 +146,25 @@ DEFAULT_CONFIG = with_common_config({
     "framework": "tf",
     "explore": True,
     "exploration_config": {
-        # The Exploration class to use. In the simplest case, this is the name
-        # (str) of any class present in the `rllib.utils.exploration` package.
-        # You can also provide the python class directly or the full location
-        # of your class (e.g. "ray.rllib.utils.exploration.epsilon_greedy.
-        # EpsilonGreedy").
-        "type": "StochasticSampling",
-        # "sub_exploration": "StochasticSampling"
-        # Add constructor kwargs here (if any).
+        "type": "Curiosity",  # <- Use the Curiosity module for exploring.
+        "eta": 1.0,  # Weight for intrinsic rewards before being added to extrinsic ones.
+        "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
+        "feature_dim": 288,  # Dimensionality of the generated feature vectors.
+        # Setup of the feature net (used to encode observations into feature (latent) vectors).
+        "feature_net_config": {
+            "fcnet_hiddens": [],
+            "fcnet_activation": "relu",
+        },
+        "inverse_net_hiddens": [256],  # Hidden layers of the "inverse" model.
+        "inverse_net_activation": "relu",  # Activation of the "inverse" model.
+        "forward_net_hiddens": [256],  # Hidden layers of the "forward" model.
+        "forward_net_activation": "relu",  # Activation of the "forward" model.
+        "beta": 0.2,  # Weight for the "forward" loss (beta) over the "inverse" loss (1.0 - beta).
+        # Specify, which exploration sub-type to use (usually, the algo's "default"
+        # exploration, e.g. EpsilonGreedy for DQN, StochasticSampling for PG/SAC).
+        "sub_exploration": {
+            "type": "StochasticSampling",
+        }
     },
 })
 
@@ -174,7 +185,7 @@ print(f"running on: {args.ip}:55555")
 trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
 # checkpoint_path = CHECKPOINT_FILE.format(args.run)
-checkpoint_path = "checkpoints/"
+checkpoint_path = "checkpointsC/"
 
 
 if args.checkpoint:
