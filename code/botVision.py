@@ -248,7 +248,6 @@ class UnderlordInteract():
             self.shopLabels.append(label)
 
             if not training:
-
                 button = tkinter.Button(
                     master=self.shopFrame,
                     text="Purchase",
@@ -292,8 +291,6 @@ class UnderlordInteract():
                     label.grid(row=i, column=j, padx=5, pady=5)
 
                     self.itemlabels[i][j] = label
-
-
 
         hudRow = 14
 
@@ -626,7 +623,6 @@ class UnderlordInteract():
         mouse1.click(Button.left, 1)
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
-        
 
         flag = True
 
@@ -974,7 +970,7 @@ class UnderlordInteract():
                 if name == 'anessix' or name == 'hobgen' or name == 'jull' or name == 'enno':
                     continue
 
-                goodID = self.shop.classIDMap[name]+1
+                goodID = self.shop.classIDMap[name] + 1
                 # print(f"Adding {name}-{tier}-{goodID}")
                 temp.append(goodID)
                 temp.append(tier)
@@ -992,7 +988,6 @@ class UnderlordInteract():
                     raise RuntimeError('error 31')
                 if tier > 3:
                     raise RuntimeError('error 32')
-
 
             blankUnits = 10 - idx  # adding blank 0's for units on board if there are less than 10 of them
 
@@ -1075,23 +1070,23 @@ class UnderlordInteract():
 
         numBenchHeroes = 0
 
-        for i in range(8):
-            if self.benchHeroes[i] is not None:
-                numBenchHeroes += 1
-
-        if (tieredUp != 10) and (tieredUp != 11):
-            if (not self.leveledUp) or (numBenchHeroes == 0):
-                for i in range(4):
-                    for j in range(8):
-                        if self.boardHeroes[i][j] is not None:
-                            if not self.boardHeroes[i][j].underlord:
-                                numHeroes += 1
-
-                reward -= (self.level - numHeroes) * (firstPlace * 0.05)
+        # for i in range(8):
+        #     if self.benchHeroes[i] is not None:
+        #         numBenchHeroes += 1
+        #
+        # if (tieredUp != 10) and (tieredUp != 11):
+        #     if (not self.leveledUp) or (numBenchHeroes == 0):
+        #         for i in range(4):
+        #             for j in range(8):
+        #                 if self.boardHeroes[i][j] is not None:
+        #                     if not self.boardHeroes[i][j].underlord:
+        #                         numHeroes += 1
+        #
+        #         reward -= (self.level - numHeroes) * (firstPlace * 0.05)
 
         # punish for having too much gold regardless
         if self.gold > 40:
-            reward -= 0.05
+            reward -= firstPlace * 0.005
 
         if action in [0, 2, 3]:
 
@@ -1105,13 +1100,24 @@ class UnderlordInteract():
         # note - to do : take into account tier of unit tiered up
 
         if tieredUp == 10:
-            reward += firstPlace * 0.01
+            reward += firstPlace * 0.02
         elif tieredUp == 11:
-            reward += firstPlace * 0.03
+            reward += firstPlace * 0.08
 
         if self.leveledUp:
-            reward += firstPlace * 0.03
-            self.leveledUp = False
+
+            if self.level > 4: #don't want to reward for rushing early levels as I think that's just dumb
+
+                """
+                Reward for getting to level: 5: 12.5
+                Reward for getting to level: 6: 21.6
+                Reward for getting to level: 7: 34.3
+                Reward for getting to level: 8: 51.2
+                Reward for getting to level: 9: 72.9
+                Reward for getting to level: 10: 100.0
+                """
+                reward += firstPlace * 0.0001 * (self.level**3)
+                self.leveledUp = False
 
         if earnedMoney != -1:
             reward += firstPlace * (1 - earnedMoney / 9) * 0.001
@@ -1121,31 +1127,30 @@ class UnderlordInteract():
         if self.finalPlacement != 0:
 
             if self.finalPlacement == 1:
-                reward == firstPlace
+                reward += firstPlace
             elif self.finalPlacement == 2:
-                reward == firstPlace * 0.9
+                reward += firstPlace * 0.9
             elif self.finalPlacement == 3:
-                reward == firstPlace * 0.75
+                reward += firstPlace * 0.75
             elif self.finalPlacement == 4:
-                reward == firstPlace * 0.5
+                reward += firstPlace * 0.5
             elif self.finalPlacement == 5:
-                reward == firstPlace * 0.3
+                reward += firstPlace * 0.3
             elif self.finalPlacement == 6:
-                reward == firstPlace * 0.2
+                reward += firstPlace * 0.2
             elif self.finalPlacement == 7:
-                reward == firstPlace * 0.1
+                reward += firstPlace * 0.1
             elif self.finalPlacement == 8:
-                reward == firstPlace * 0
+                reward += firstPlace * 0
 
             if self.round < 11:
-                reward += firstPlace*0.01 * self.round
+                reward += firstPlace * 0.01 * self.round
             elif self.round < 16:
-                reward += firstPlace*0.02 * self.round
+                reward += firstPlace * 0.02 * self.round
             elif self.round < 26:
-                reward += firstPlace*0.03 * self.round
+                reward += firstPlace * 0.03 * self.round
             else:
-                reward += firstPlace*0.03 * 25
-
+                reward += firstPlace * 0.03 * 25
 
         if self.pickTime():
 
