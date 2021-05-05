@@ -1621,6 +1621,9 @@ class UnderlordInteract():
                 # print("No Hero Selected to Sell")
                 self.mediumPunish = True
                 return -1
+            elif self.heroToMove.underlord:
+                self.mediumPunish = True
+                return -1
             else:
                 x, y = self.heroToMove.coords
         else:
