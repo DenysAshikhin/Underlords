@@ -32,6 +32,11 @@ code/checkpoints
 checkpoints\
 checkpoints/
 
+code\checkpointsC
+code/checkpointsC
+checkpointsC\
+checkpointsC/
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
