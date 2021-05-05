@@ -165,8 +165,7 @@ DEFAULT_CONFIG = with_common_config({
         "sub_exploration": {
             "type": "StochasticSampling",
         }
-    },
-    "reuse_actors": True
+    }
 })
 
 # DEFAULT_CONFIG["num_workers"] = 1
