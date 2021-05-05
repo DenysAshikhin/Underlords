@@ -2232,7 +2232,7 @@ class UnderlordInteract():
             board["tierTwoHeroes"].append(board["tierOneHeroes"][0])
             self.updateHeroLabel(board["tierOneHeroes"][0])  # Updating label to for color to indicate tier
             board["tierTwo"] += 1
-            board["tieredUp"] = True
+            board["tieredUp2"] = True
 
             for x in range(1, len(board["tierOneHeroes"])):
                 specificHero = board["tierOneHeroes"][x]
@@ -2243,7 +2243,7 @@ class UnderlordInteract():
 
             board["tierTwoHeroes"][0].tier += 1
             self.updateHeroLabel(board["tierTwoHeroes"][0])  # Updating label to for color to indicate tier
-            board["tieredUp"] = True
+            board["tieredUp3"] = True
 
             for x in range(1, len(board["tierTwoHeroes"])):
                 specificHero = board["tierTwoHeroes"][x]
