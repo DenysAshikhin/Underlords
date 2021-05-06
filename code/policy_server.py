@@ -93,7 +93,7 @@ DEFAULT_CONFIG = with_common_config({
     "sgd_minibatch_size": 25,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 20,
+    "num_sgd_iter": 10,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": True,
     # Stepsize of SGD.
@@ -133,7 +133,7 @@ DEFAULT_CONFIG = with_common_config({
     # Whether to fake GPUs (using CPUs).
     # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
     "_fake_gpus": False,
-    "num_gpu": 1,
+    # "num_gpu": 1,
     # Use the connector server to generate experiences.
     "input": (
         lambda ioctx: PolicyServerInput(ioctx, args.ip, 55555)
@@ -178,7 +178,7 @@ DEFAULT_CONFIG = with_common_config({
 # ray.init()
 
 
-ray.init(num_gpus=1)
+ray.init()
 
 print(f"running on: {args.ip}:55555")
 
