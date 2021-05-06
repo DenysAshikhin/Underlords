@@ -178,7 +178,7 @@ DEFAULT_CONFIG = with_common_config({
 # ray.init()
 
 
-ray.init()
+ray.init(num_gpus=1)
 
 print(f"running on: {args.ip}:55555")
 
