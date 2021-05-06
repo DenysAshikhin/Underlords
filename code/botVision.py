@@ -642,7 +642,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 4)
+        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 2)
 
     def getObservation(self):
 
