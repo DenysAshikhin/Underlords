@@ -87,13 +87,13 @@ DEFAULT_CONFIG = with_common_config({
     "rollout_fragment_length": 25,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 500,
+    "train_batch_size": 1000,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 25,
+    "sgd_minibatch_size": 100,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 20,
+    "num_sgd_iter": 75,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": True,
     # Stepsize of SGD.
@@ -117,7 +117,7 @@ DEFAULT_CONFIG = with_common_config({
     "clip_param": 0.3,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
-    "vf_clip_param": 10000.0,
+    "vf_clip_param": 4000000.0,
     # If specified, clip the global norm of gradients by this amount.
     "grad_clip": None,
     # Target value for KL divergence.
@@ -133,7 +133,7 @@ DEFAULT_CONFIG = with_common_config({
     # Whether to fake GPUs (using CPUs).
     # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
     "_fake_gpus": False,
-    # "num_gpu": 1,
+    "num_gpus": 1,
     # Use the connector server to generate experiences.
     "input": (
         lambda ioctx: PolicyServerInput(ioctx, args.ip, 55555)
@@ -145,6 +145,7 @@ DEFAULT_CONFIG = with_common_config({
     # "callbacks": MyCallbacks,
     "env_config": {"sleep": True, "framework": 'tf'},
     "framework": "tf",
+    "eager_tracing": False,
     "explore": True,
     "exploration_config": {
         "type": "Curiosity",  # <- Use the Curiosity module for exploring.
@@ -178,7 +179,7 @@ DEFAULT_CONFIG = with_common_config({
 # ray.init()
 
 
-ray.init()
+ray.init(num_gpus=1)
 
 print(f"running on: {args.ip}:55555")
 
