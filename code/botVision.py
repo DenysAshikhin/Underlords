@@ -642,7 +642,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 4)
+        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 2)
 
     def getObservation(self):
 
@@ -1070,6 +1070,15 @@ class UnderlordInteract():
 
         numBenchHeroes = 0
 
+
+        for i in range(4):
+            for j in range(8):
+                if self.boardHeroes[i][j] is not None:
+                    if not self.boardHeroes[i][j].underlord:
+                        numHeroes += 1
+
+
+
         # for i in range(8):
         #     if self.benchHeroes[i] is not None:
         #         numBenchHeroes += 1
@@ -1106,7 +1115,7 @@ class UnderlordInteract():
 
         if self.leveledUp:
 
-            if self.level > 4: #don't want to reward for rushing early levels as I think that's just dumb
+            if (self.level > 4) and ((numHeroes + 1) >= self.level): #don't want to reward for rushing early levels as I think that's just dumb
 
                 """
                 Reward for getting to level: 5: 12.5
@@ -1116,7 +1125,9 @@ class UnderlordInteract():
                 Reward for getting to level: 9: 72.9
                 Reward for getting to level: 10: 100.0
                 """
-                reward += firstPlace * 0.0001 * (self.level**3)
+                award = firstPlace * 0.0001 * (self.level**3)
+                print(f"Awarded: {award} for leveling up with: {numHeroes} heroes!")
+                reward += award
                 self.leveledUp = False
 
         if earnedMoney != -1:
