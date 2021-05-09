@@ -132,7 +132,7 @@ DEFAULT_CONFIG = with_common_config({
     "simple_optimizer": False,
     # Whether to fake GPUs (using CPUs).
     # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
-    "_fake_gpus": False,
+    # "_fake_gpus": True,
     "num_gpus": 1,
     # Use the connector server to generate experiences.
     "input": (
@@ -144,8 +144,8 @@ DEFAULT_CONFIG = with_common_config({
     "input_evaluation": [],
     # "callbacks": MyCallbacks,
     "env_config": {"sleep": True, "framework": 'tf'},
-    "framework": "tf",
-    "eager_tracing": False,
+    "framework": "tfe",
+    "eager_tracing": True,
     "explore": True,
     "exploration_config": {
         "type": "Curiosity",  # <- Use the Curiosity module for exploring.
@@ -179,7 +179,7 @@ DEFAULT_CONFIG = with_common_config({
 # ray.init()
 
 
-ray.init(num_gpus=1)
+ray.init()
 
 print(f"running on: {args.ip}:55555")
 
