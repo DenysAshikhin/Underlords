@@ -1888,7 +1888,7 @@ class UnderlordInteract():
         if self.remainingEXP <= 5:
             self.leveledUp = True
 
-        self.openStore(update=False, skipCheck=True)
+        self.openStore(update=False, skipCheck=False)
         mouse1.position = (self.clickUpX, self.clickUpY)
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
@@ -1904,7 +1904,7 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        self.openStore(update=False, skipCheck=True)
+        self.openStore(update=False, skipCheck=False)
 
         mouse1.position = (self.lockInX, self.lockInY)
         time.sleep(self.mouseSleepTime)
@@ -1926,7 +1926,7 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        self.openStore(update=False, skipCheck=True)
+        self.openStore(update=False, skipCheck=False)
         mouse1.position = (self.rerollX, self.rerollY)
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
@@ -2132,7 +2132,7 @@ class UnderlordInteract():
             self.smallPunish = True
             return -1
 
-        self.openStore(skipCheck=True)
+        self.openStore(skipCheck=False)
         validIDX = [0, 1, 2, 3, 4]
 
         if idx not in validIDX:
