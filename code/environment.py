@@ -111,7 +111,7 @@ class UnderlordEnv(ExternalEnv):
                 9,
                 9,  # x-cordinate *
                 9,  # y-cordinate *
-                4,  # selection -> used only when having to choose an item or underlord
+                4  # selection -> used only when having to choose an item or underlord
             ]
         )
         self._episodes = {}
