@@ -623,7 +623,7 @@ class UnderlordInteract():
         mouse1.click(Button.left, 1)
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
-
+        self.resetEnv()
         flag = True
 
         while flag:
@@ -634,7 +634,7 @@ class UnderlordInteract():
                 flag = False
 
         # self.closeStore()
-        self.resetEnv()
+
         self.finalPlacement = 0
         self.openStore()
 
@@ -1951,6 +1951,13 @@ class UnderlordInteract():
         # self.updateWindowCoords()
 
         if self.combatType != 0 or self.round < 2:
+            shopOpen = self.shop.shopOpen()
+
+            if not shopOpen:
+                mouse1.position = (self.shopX, self.shopY)
+                mouse1.click(Button.left, 1)
+                time.sleep(self.shopSleepTime)
+        elif not skipCheck:
             shopOpen = self.shop.shopOpen()
 
             if not shopOpen:
