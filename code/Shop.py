@@ -26,7 +26,6 @@ class Shop:
             self.classIDMap[clas] = i
             i += 1
 
-
         self.model = self.createModel()
         self.storeIconTemplates, self.freeRerollIcon = self.loadIcons()
         self.red = Image.open("../blank/red.jpg")
@@ -94,9 +93,13 @@ class Shop:
                 crop.save("../WIP/" + str(datetime.now()).replace(":", "") + ".jpg")
         return imageList
 
-    def shopOpen(self):
-        gameScreen = imageGrab()
-        crop = gameScreen.crop((885, 20) + (925, 110))
+    def shopOpen(self, imageCrop=None):
+
+        if imageCrop is None:
+            gameScreen = imageGrab()
+            crop = gameScreen.crop((885, 20) + (925, 110))
+        else:
+            crop = imageCrop.crop((885, 20, 925, 110))
         img_cv = cv2.cvtColor(numpy.asarray(crop), cv2.COLOR_RGB2BGR)
 
         hits = MTM.matchTemplates(self.storeIconTemplates,

@@ -51,9 +51,10 @@ if args.speed is not None:
 
 while True:
     # print('getting observation')
-    # start_time = time.time()
+    start_time = time.time()
     gameObservation = client.env.underlord.getObservation()
-    print(gameObservation)
+    obs_time = time.time() - start_time
+    # print(gameObservation)
     # print("--- %s seconds to get observation ---" % (time.time() - start_time))
     # start_time = time.time()
     client.env.root.update()
@@ -64,15 +65,17 @@ while True:
     # print('trying to get action')
 
     action = client.get_action(episode_id=episode_id, observation=gameObservation)
-    print("got action")
+    # print("got action")
     # print("--- %s seconds to get action ---" % (time.time() - start_time))
     # start_time = time.time()
-    print(action[0], action[1] - 1, action[2] - 1, action[3] - 1)
+    # print(action[0], action[1] - 1, action[2] - 1, action[3] - 1)
 
+    act_time = time.time()
     reward += client.env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
+    act_time = time.time() - act_time
     # print("--- %s seconds to get do action ---" % (time.time() - start_time))
     # start_time = time.time()
-    print(f"running reward: {reward}")
+    # print(f"running reward: {reward}")
     client.log_returns(episode_id=episode_id, reward=reward)
     # print('finished logging step')
     finalPosition = client.env.underlord.finalPlacement
@@ -80,8 +83,11 @@ while True:
 
     replayList.append((gameObservation, action, reward))
 
+    print(
+        f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")
+
     if finalPosition != 0:
-        print(f"GAME OVER! final position: {finalPosition} ")
+        print(f"GAME OVER! final position: {finalPosition} - final reward: {reward}")
         reward = 0
         # need to call a reset of env here
         client.end_episode(episode_id=episode_id, observation=gameObservation)
