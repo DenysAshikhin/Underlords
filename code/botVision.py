@@ -14,6 +14,7 @@ from GSI_Server import GSI_Server
 from Game_State import state
 from HUD import HUD
 from Shop import Shop
+import main
 
 from hero import Hero
 from Items import Items
@@ -196,6 +197,7 @@ class UnderlordInteract():
         self.round = 0
         self.newRoundStarted = False
         self.currentTime = 0
+        self.elapsedTime = 0
         # self.pickTime = False
 
         self.otherPlayersDict = {2: {'slot': 2, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
@@ -210,6 +212,8 @@ class UnderlordInteract():
         # shopImages, classes, value, inspect, statesList = self.shop.labelShop()
 
         # self.shopImages
+
+        self.gameCrop = None
 
         self.shopLabels = []
         self.shopImages = []
@@ -506,6 +510,7 @@ class UnderlordInteract():
         self.round = 0
         self.newRoundStarted = False
         self.currentTime = 0
+        self.elapsedTime = 0
         # self.allowMove = False
         # self.pickTime = False
         # self.pickTime = False
@@ -530,6 +535,8 @@ class UnderlordInteract():
         self.itemObjects = numpy.full((3, 4), None)
 
         self.underlord = None
+
+        self.gameCrop = None
 
         self.checkState = False  # note make sure to False this for production
 
@@ -572,7 +579,14 @@ class UnderlordInteract():
         self.shopFrame.pack()
 
     def testFunction(self, param1, param2):
-        print(self.HUD.getClockTimeLeft())
+        # print(self.HUD.getClockTimeLeft())
+        print(self.getObservation())
+
+        # self.itemObjects[0][1] = Item('claymore', (0,1), melee=True)
+        # self.itemlabels[0][1].config(text='claymore')
+        #
+        # mouse1.position = (self.itemMoveX + (self.itemMoveXOffset * self.itemObjects[0][1].coords[1]),
+        #                    self.itemMoveY + (self.itemMoveYOffset * self.itemObjects[0][1].coords[0]))
         # self.updateWindowCoords()
         # start_time = time.time()
         # print(self.getObservation())
@@ -644,6 +658,17 @@ class UnderlordInteract():
     def allowMove(self):
         return self.combatType == 0 and not self.pickTime() and (self.currentTime > 2)
 
+    def proper_round(self, num, dec=0):
+        print(str(num))
+        print(str(num).index('.'))
+        print(str(num).index('.')+dec+2)
+        num = str(num)[:str(num).index('.')+dec+2]
+        if num[-1]>='5':
+          a = num[:-2-(not dec)]       # integer part
+          b = int(num[-2-(not dec)])+1 # decimal part
+          return float(a)+b**(-dec+1) if a and b == 10 else float(a+str(b))
+        return float(num[:-1])
+
     def getObservation(self):
 
         overallTime = time.time()
@@ -691,9 +716,7 @@ class UnderlordInteract():
 
         # if phase not in ['select', 'choose']:
 
-        print(
-            f"Round: {self.round} - Time Left: {self.currentTime} - Pick Time? : {self.pickTime()}")
-        print(f"Final placement: {self.finalPlacement}")
+
 
         # making sure it is not time to pick an underlord or
         if self.itemPicks is None and self.underlordPicks is None:
@@ -939,8 +962,15 @@ class UnderlordInteract():
         if self.rerolledItem:
             rerolledItem = 1
 
-        clockTime = time.time()
-        self.currentTime = self.HUD.getClockTimeLeft()
+        if (self.currentTime < 3) or self.pickTime():
+            self.gameCrop = main.imageGrab(w=1152,h=864)
+            self.currentTime = self.HUD.getClockTimeLeft(self.gameCrop)
+            self.elapsedTime = time.time()
+        else:
+            self.currentTime -= int(
+                self.proper_round((time.time() - self.elapsedTime))
+            )
+            self.elapsedTime = time.time()
 
         lockedIn = 1
 
@@ -1021,7 +1051,7 @@ class UnderlordInteract():
             otherPlayers[6],
         )
 
-        print("--- %s seconds to get clock observation ---" % (time.time() - clockTime))
+        # print("--- %s seconds to get clock observation ---" % (time.time() - clockTime))
 
         # print("--- %s seconds to get observation ---" % (time.time() - overallTime))
 
@@ -1070,14 +1100,11 @@ class UnderlordInteract():
 
         numBenchHeroes = 0
 
-
         for i in range(4):
             for j in range(8):
                 if self.boardHeroes[i][j] is not None:
                     if not self.boardHeroes[i][j].underlord:
                         numHeroes += 1
-
-
 
         # for i in range(8):
         #     if self.benchHeroes[i] is not None:
@@ -1115,7 +1142,7 @@ class UnderlordInteract():
 
         if self.leveledUp:
 
-            if (self.level > 4) and ((numHeroes + 1) >= self.level): #don't want to reward for rushing early levels as I think that's just dumb
+            if (self.level > 4) and ((numHeroes + 1) >= self.level): # don't want to reward for rushing early levels as I think that's just dumb
 
                 """
                 Reward for getting to level: 5: 12.5
@@ -1125,7 +1152,7 @@ class UnderlordInteract():
                 Reward for getting to level: 9: 72.9
                 Reward for getting to level: 10: 100.0
                 """
-                award = firstPlace * 0.0001 * (self.level**3)
+                award = firstPlace * 0.0001 * (self.level ** 3)
                 print(f"Awarded: {award} for leveling up with: {numHeroes} heroes!")
                 reward += award
                 self.leveledUp = False
@@ -1661,11 +1688,16 @@ class UnderlordInteract():
 
         if y == -1:
             mouse1.position = (self.benchX + (self.benchXOffset * x), self.benchY)
+            if self.benchHeroes[x].item is not None:
+                self.benchHeroes[x].item.hero = None
             earnedMoney = self.benchHeroes[x].gold + (self.benchHeroes[x].tier - 1) * 2
             self.resetLabel(self.benchHeroes[x])
             self.heroToMove = None
         else:
             mouse1.position = (self.boardX + (self.boardXOffset * y), self.boardY + (self.boardYOffset * x))
+            if self.boardHeroes[x][y].item is not None:
+                self.boardHeroes[x][y].item.hero = None
+
             earnedMoney = self.boardHeroes[x][y].gold + (self.boardHeroes[x][y].tier - 1) * 2
             self.resetLabel(self.boardHeroes[x][y])
             self.heroToMove = None
@@ -1951,14 +1983,16 @@ class UnderlordInteract():
         # self.updateWindowCoords()
 
         if self.combatType != 0 or self.round < 2:
-            shopOpen = self.shop.shopOpen()
+            shopOpen = self.shop.shopOpen(imageCrop=self.gameCrop)
+            self.gameCrop = None  # reset crop afterwards
 
             if not shopOpen:
                 mouse1.position = (self.shopX, self.shopY)
                 mouse1.click(Button.left, 1)
                 time.sleep(self.shopSleepTime)
         elif not skipCheck:
-            shopOpen = self.shop.shopOpen()
+            shopOpen = self.shop.shopOpen(imageCrop=self.gameCrop)
+            self.gameCrop = None # reset crop afterwards
 
             if not shopOpen:
                 mouse1.position = (self.shopX, self.shopY)
@@ -2050,7 +2084,7 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     return -1
 
-        # self.updateWindowCoords()
+        self.updateWindowCoords() # Need to leave this to get proper item coords
 
         originalHero = self.itemToMove.hero
 
@@ -2377,7 +2411,7 @@ def openVision():
     # root.geometry("600x105")
     root.resizable(0, 0)
     stopFlag = Event()
-    thread = UnderlordInteract(root, training=True)
+    thread = UnderlordInteract(root, training=False)
     # thread.start()
     # this will stop the timer
     # stopFlag.set()
