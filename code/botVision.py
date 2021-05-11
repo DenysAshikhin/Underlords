@@ -1070,14 +1070,11 @@ class UnderlordInteract():
 
         numBenchHeroes = 0
 
-
         for i in range(4):
             for j in range(8):
                 if self.boardHeroes[i][j] is not None:
                     if not self.boardHeroes[i][j].underlord:
                         numHeroes += 1
-
-
 
         # for i in range(8):
         #     if self.benchHeroes[i] is not None:
@@ -1115,7 +1112,7 @@ class UnderlordInteract():
 
         if self.leveledUp:
 
-            if (self.level > 4) and ((numHeroes + 1) >= self.level): #don't want to reward for rushing early levels as I think that's just dumb
+            if (self.level > 4) and ((numHeroes + 1) >= self.level): # don't want to reward for rushing early levels as I think that's just dumb
 
                 """
                 Reward for getting to level: 5: 12.5
@@ -1125,7 +1122,7 @@ class UnderlordInteract():
                 Reward for getting to level: 9: 72.9
                 Reward for getting to level: 10: 100.0
                 """
-                award = firstPlace * 0.0001 * (self.level**3)
+                award = firstPlace * 0.0001 * (self.level ** 3)
                 print(f"Awarded: {award} for leveling up with: {numHeroes} heroes!")
                 reward += award
                 self.leveledUp = False
@@ -1661,11 +1658,16 @@ class UnderlordInteract():
 
         if y == -1:
             mouse1.position = (self.benchX + (self.benchXOffset * x), self.benchY)
+            if self.benchHeroes[x].item is not None:
+                self.benchHeroes[x].item.hero = None
             earnedMoney = self.benchHeroes[x].gold + (self.benchHeroes[x].tier - 1) * 2
             self.resetLabel(self.benchHeroes[x])
             self.heroToMove = None
         else:
             mouse1.position = (self.boardX + (self.boardXOffset * y), self.boardY + (self.boardYOffset * x))
+            if self.boardHeroes[x][y].item is not None:
+                self.boardHeroes[x][y].item.hero = None
+
             earnedMoney = self.boardHeroes[x][y].gold + (self.boardHeroes[x][y].tier - 1) * 2
             self.resetLabel(self.boardHeroes[x][y])
             self.heroToMove = None
