@@ -659,9 +659,6 @@ class UnderlordInteract():
         return self.combatType == 0 and not self.pickTime() and (self.currentTime > 2)
 
     def proper_round(self, num, dec=0):
-        print(str(num))
-        print(str(num).index('.'))
-        print(str(num).index('.')+dec+2)
         num = str(num)[:str(num).index('.')+dec+2]
         if num[-1]>='5':
           a = num[:-2-(not dec)]       # integer part
