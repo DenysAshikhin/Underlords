@@ -83,6 +83,7 @@ while True:
 
     replayList.append((gameObservation, action, reward))
 
+    print(gameObservation)
     print(
         f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")
 
