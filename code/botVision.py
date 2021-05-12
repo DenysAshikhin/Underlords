@@ -648,7 +648,7 @@ class UnderlordInteract():
                 flag = False
 
         # self.closeStore()
-
+        time.sleep(1)
         self.finalPlacement = 0
         self.openStore()
 
