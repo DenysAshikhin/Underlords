@@ -968,6 +968,7 @@ class UnderlordInteract():
                 self.proper_round((time.time() - self.elapsedTime))
             )
             self.elapsedTime = time.time()
+            self.gameCrop = None
 
         lockedIn = 1
 
@@ -1995,6 +1996,8 @@ class UnderlordInteract():
                 mouse1.position = (self.shopX, self.shopY)
                 mouse1.click(Button.left, 1)
                 time.sleep(self.shopSleepTime)
+        else:
+            self.gameCrop = None
         # else:
         #     mouse1.position = (self.shopX, self.shopY)
         #     mouse1.click(Button.left, 1)
