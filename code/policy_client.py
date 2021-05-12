@@ -1,3 +1,5 @@
+from queue import Queue
+
 import gym
 from ray.rllib.env import PolicyClient
 from ray.tune.registry import register_env
@@ -6,6 +8,7 @@ from environment import UnderlordEnv
 import logging
 import time
 import argparse
+from six.moves import queue
 
 from logger import logger
 
@@ -64,14 +67,29 @@ while True:
     action = None
     # print('trying to get action')
 
-    action = client.get_action(episode_id=episode_id, observation=gameObservation)
     # print("got action")
     # print("--- %s seconds to get action ---" % (time.time() - start_time))
     # start_time = time.time()
     # print(action[0], action[1] - 1, action[2] - 1, action[3] - 1)
 
     act_time = time.time()
+    print(gameObservation)
+    
+    for i in range(10):
+
+        try:
+            action = client.get_action(episode_id=episode_id, observation=gameObservation)
+
+            break
+        except queue.Empty:
+            continue
+
+    if action is None:
+        raise ValueError("Policy failed to return an action after 10 tries")
+
+
     reward += client.env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
+
     act_time = time.time() - act_time
     # print("--- %s seconds to get do action ---" % (time.time() - start_time))
     # start_time = time.time()
@@ -83,7 +101,7 @@ while True:
 
     replayList.append((gameObservation, action, reward))
 
-    print(gameObservation)
+
     print(
         f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")
 
