@@ -168,8 +168,12 @@ class UnderlordInteract():
         self.underlords = Underlords()
         self.bench = numpy.zeros([1, 8])
         self.board = numpy.zeros([4, 8])
-        self.profilePics = loadProfiles()
-        self.underlordPics = loadUnderlodProfiles()
+        try:
+            self.profilePics = loadProfiles()
+            self.underlordPics = loadUnderlodProfiles()
+        except:
+            print('Issue loading profiles')
+        
         self.shopChoices = None
         self.storeMap = [350, 450, 575, 700, 800]  # super dumb and outdated to get X offset for purchase unit. change
         # later if I ever feel like it
