@@ -49,9 +49,18 @@ client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=update,
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
+if local == 'remote':
+    env = UnderlordEnv({'sleep': True})
+else:
+    env = client.env
+
 
 print('trying to get initial eid')
 episode_id = client.start_episode()
+
+if local == 'remote':
+    env.underlord.startNewGame()
+
 # gameObservation = env.underlord.getObservation()
 reward = 0
 print('starting main loop')
@@ -59,10 +68,7 @@ replayList = []
 
 env = None
 
-if local == 'remote':
-    env = UnderlordEnv({'sleep': True})
-else:
-    env = client.env
+
 
 if args.speed is not None:
     print(f"multiply by {args.speed}")
@@ -113,7 +119,7 @@ while True:
     # print(f"running reward: {reward}")
     client.log_returns(episode_id=episode_id, reward=reward)
     # print('finished logging step')
-    finalPosition = client.env.underlord.finalPlacement
+    finalPosition = env.underlord.finalPlacement
     # print("--- %s seconds to get finish logging return ---" % (time.time() - start_time))
 
     replayList.append((gameObservation, action, reward))
@@ -126,13 +132,15 @@ while True:
         reward = 0
         # need to call a reset of env here
         client.end_episode(episode_id=episode_id, observation=gameObservation)
-        client.env.underlord.resetEnv()
+        env.underlord.resetEnv()
         fileWriter = logger(episode_id)
         fileWriter.createLog()
         fileWriter.writeLog(replayList)
         replayList.clear()
 
         episode_id = client.start_episode(episode_id=None)
+        if local == 'remote':
+            env.underlord.startNewGame()
         print('got past restarting of the new episode, for loop should begin anew!')
 
     print('----')
