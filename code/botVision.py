@@ -440,12 +440,15 @@ class UnderlordInteract():
 
         self.shopFrame.pack()
 
+        self.server = True
+
         if rect is not None:
             self.server = GSI_Server(('localhost', 3000), env=self)
             self.server.start_server()
             print('server started!')
             self.profilePics = loadProfiles()
             self.underlordPics = loadUnderlodProfiles()
+            self.server = False
 
     def resetEnv(self, training=False):
 
@@ -621,6 +624,9 @@ class UnderlordInteract():
         time.sleep(8)
 
     def startNewGame(self):
+
+        if self.server:
+            return 1
 
         print('got to startnewGame')
         self.updateWindowCoords()

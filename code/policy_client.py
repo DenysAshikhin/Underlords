@@ -57,21 +57,28 @@ reward = 0
 print('starting main loop')
 replayList = []
 
+env = None
+
+if local == 'remote':
+    env = UnderlordEnv({'sleep': True})
+else:
+    env = client.env
+
 if args.speed is not None:
     print(f"multiply by {args.speed}")
 
-    client.env.underlord.mouseSleepTime *= args.speed
-    client.env.underlord.shopSleepTime *= args.speed
+    env.underlord.mouseSleepTime *= args.speed
+    env.underlord.shopSleepTime *= args.speed
 
 while True:
     # print('getting observation')
     start_time = time.time()
-    gameObservation = client.env.underlord.getObservation()
+    gameObservation = env.underlord.getObservation()
     obs_time = time.time() - start_time
     # print(gameObservation)
     # print("--- %s seconds to get observation ---" % (time.time() - start_time))
     # start_time = time.time()
-    client.env.root.update()
+    env.root.update()
     # print("--- %s seconds to update GUI ---" % (time.time() - start_time))
     # start_time = time.time()
 
@@ -98,7 +105,7 @@ while True:
     if action is None:
         raise ValueError("Policy failed to return an action after 10 tries")
 
-    reward += client.env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
+    reward += env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
 
     act_time = time.time() - act_time
     # print("--- %s seconds to get do action ---" % (time.time() - start_time))
