@@ -86,6 +86,18 @@ class UnderlordInteract():
         except:
             rect = None
 
+
+        self.server = True
+
+        if rect is not None:
+            self.server = GSI_Server(('localhost', 3000), env=self)
+            self.server.start_server()
+            print('server started!')
+            self.profilePics = loadProfiles()
+            self.underlordPics = loadUnderlodProfiles()
+            self.server = False
+            return 1
+
         if rect is None:
             self.x = 0
             self.y = 0
@@ -440,17 +452,12 @@ class UnderlordInteract():
 
         self.shopFrame.pack()
 
-        self.server = True
 
-        if rect is not None:
-            self.server = GSI_Server(('localhost', 3000), env=self)
-            self.server.start_server()
-            print('server started!')
-            self.profilePics = loadProfiles()
-            self.underlordPics = loadUnderlodProfiles()
-            self.server = False
 
     def resetEnv(self, training=False):
+
+        if self.server:
+            return 1
 
         print('rest ENV CALLED!')
         self.gamePhase = None
