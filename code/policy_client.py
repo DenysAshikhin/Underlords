@@ -66,10 +66,6 @@ reward = 0
 print('starting main loop')
 replayList = []
 
-env = None
-
-
-
 if args.speed is not None:
     print(f"multiply by {args.speed}")
 
