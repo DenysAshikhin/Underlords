@@ -24,17 +24,28 @@ parser.add_argument('-speed', type=float,
 parser.add_argument('-update', type=float,
                     help='seconds how often to update from main process')
 
+parser.add_argument('-local', type=str,
+                    help='Whether to create and update a local copy of the AI (adds delay) or query server for each action.'
+                         'possible values: "local" or "remote"')
+
 args = parser.parse_args()
 
 update = 3600.0
 
+local = 'local'
+
+
 if args.update:
     update = args.update
+
+if args.local:
+    local = args.local
+
 
 print(f"Going to update at {update} seconds interval")
 
 print('trying to launch policy client')
-client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=update)
+client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=update, inference_mode=local)
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
@@ -73,8 +84,8 @@ while True:
     # print(action[0], action[1] - 1, action[2] - 1, action[3] - 1)
 
     act_time = time.time()
-    print(gameObservation)
-    
+    # print(gameObservation)
+
     for i in range(10):
 
         try:
@@ -86,7 +97,6 @@ while True:
 
     if action is None:
         raise ValueError("Policy failed to return an action after 10 tries")
-
 
     reward += client.env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
 
@@ -100,7 +110,6 @@ while True:
     # print("--- %s seconds to get finish logging return ---" % (time.time() - start_time))
 
     replayList.append((gameObservation, action, reward))
-
 
     print(
         f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")

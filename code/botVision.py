@@ -168,8 +168,11 @@ class UnderlordInteract():
         self.underlords = Underlords()
         self.bench = numpy.zeros([1, 8])
         self.board = numpy.zeros([4, 8])
-        self.profilePics = loadProfiles()
-        self.underlordPics = loadUnderlodProfiles()
+        # try:
+
+        # except:
+        # print('Issue loading profiles')
+
         self.shopChoices = None
         self.storeMap = [350, 450, 575, 700, 800]  # super dumb and outdated to get X offset for purchase unit. change
         # later if I ever feel like it
@@ -441,6 +444,8 @@ class UnderlordInteract():
             self.server = GSI_Server(('localhost', 3000), env=self)
             self.server.start_server()
             print('server started!')
+            self.profilePics = loadProfiles()
+            self.underlordPics = loadUnderlodProfiles()
 
     def resetEnv(self, training=False):
 
@@ -616,6 +621,8 @@ class UnderlordInteract():
         time.sleep(8)
 
     def startNewGame(self):
+
+        print('got to startnewGame')
         self.updateWindowCoords()
 
         mouse1.position = (self.shopX, self.shopY + 720)
@@ -637,8 +644,15 @@ class UnderlordInteract():
         mouse1.click(Button.left, 1)
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
-        self.resetEnv()
+
+        try:
+            self.resetEnv()
+        except:
+            print('reset Env died')
+
         flag = True
+
+
 
         while flag:
             time.sleep(0.1)
@@ -1988,14 +2002,16 @@ class UnderlordInteract():
                 mouse1.position = (self.shopX, self.shopY)
                 mouse1.click(Button.left, 1)
                 time.sleep(self.shopSleepTime)
-        elif not skipCheck:
-            shopOpen = self.shop.shopOpen(imageCrop=self.gameCrop)
-            self.gameCrop = None # reset crop afterwards
-
-            if not shopOpen:
-                mouse1.position = (self.shopX, self.shopY)
-                mouse1.click(Button.left, 1)
-                time.sleep(self.shopSleepTime)
+        # uncomment below to force the store check. Only closes it by accident if it's internal representation of units
+        # is wrong, and it misclicks empty spot on board
+        # elif not skipCheck:
+        #     shopOpen = self.shop.shopOpen(imageCrop=self.gameCrop)
+        #     self.gameCrop = None # reset crop afterwards
+        #
+        #     if not shopOpen:
+        #         mouse1.position = (self.shopX, self.shopY)
+        #         mouse1.click(Button.left, 1)
+        #         time.sleep(self.shopSleepTime)
         else:
             self.gameCrop = None
         # else:

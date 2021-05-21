@@ -86,7 +86,7 @@ DEFAULT_CONFIG = with_common_config({
     # Whether to fake GPUs (using CPUs).
     # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
     # "_fake_gpus": True,
-    "num_gpus": 1,
+    # "num_gpus": 1,
     # Use the connector server to generate experiences.
     "input": (
         lambda ioctx: PolicyServerInput(ioctx, args.ip, 55555)
@@ -120,7 +120,9 @@ DEFAULT_CONFIG = with_common_config({
         "sub_exploration": {
             "type": "StochasticSampling",
         }
-    }
+    },
+    "create_env_on_driver": False
+
 })
 
 
@@ -211,6 +213,8 @@ DEFAULT_CONFIG = with_common_config({
 #     },
 #     _allow_unknown_configs=True,
 # )
+
+
 
 
 ray.init()
