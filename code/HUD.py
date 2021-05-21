@@ -1,4 +1,6 @@
 import os
+import time
+
 import cv2
 import MTM
 from torchvision.transforms import transforms
@@ -67,11 +69,17 @@ class HUD:
             self.round = roundTemp
         return self.round
 
-    def getClockTimeLeft(self):
+    def getClockTimeLeft(self, imageCrop=None):
         # gameScreen = imageGrab()
         # print(self.offsetY)
-        clockImg = imageGrab(550,10, 50,56,self.offsetX,self.offsetY)
+
+        if imageCrop is None:
+            clockImg = imageGrab(550,10, 50,56,self.offsetX,self.offsetY)
+        else:
+            clockImg = imageCrop.crop((550, 10, 550 + 50 + self.offsetX, 10 + 56 + self.offsetY))
+
         self.clock = self.countHUD(clockImg, self.clockTemplates)
+
         return self.clock
 
     def getHUD(self):

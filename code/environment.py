@@ -1,7 +1,14 @@
+import os
+from tkinter import Tk
+
 from gym import spaces
+from PIL import ImageTk, Image
 import gym
 
-from tkinter import Frame, Tk, Label
+# from tkinter import Frame, Tk, Label
+
+# from mttkinter import mtTkinter
+
 
 from ray.rllib.agents.ppo import DDPPOTrainer, ppo
 from ray.tune import register_env
@@ -119,6 +126,7 @@ class UnderlordEnv(ExternalEnv):
         self._results_avail_condition = threading.Condition()
         self._max_concurrent_episodes = 3  # maybe maybe not, no clue lmao
 
+        # self.root = mtTkinter.Tk()
         self.root = Tk()
         self.root.resizable(0, 0)
         self.root.geometry('+0+0')
@@ -171,9 +179,14 @@ class UnderlordEnv(ExternalEnv):
             episode_id (str): Unique string id for the episode.
         """
 
+        print('start episode?')
         if episode_id is None:
             episode_id = uuid.uuid4().hex
+            print('trying to call new game')
             self.underlord.startNewGame()
+            print('got past new game')
+
+        print('got past is none episode')
 
         if episode_id in self._finished:
             raise ValueError(
