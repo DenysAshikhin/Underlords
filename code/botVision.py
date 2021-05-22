@@ -96,7 +96,7 @@ class UnderlordInteract():
             self.profilePics = loadProfiles()
             self.underlordPics = loadUnderlodProfiles()
             self.server = False
-            return 1
+            return None
 
         if rect is None:
             self.x = 0
@@ -986,7 +986,7 @@ class UnderlordInteract():
         if self.rerolledItem:
             rerolledItem = 1
 
-        if (self.currentTime < 3) or self.pickTime():
+        if (self.currentTime < 5) or self.pickTime():
             self.gameCrop = main.imageGrab(w=1152,h=864)
             self.currentTime = self.HUD.getClockTimeLeft(self.gameCrop)
             self.elapsedTime = time.time()
