@@ -87,6 +87,23 @@ class UnderlordInteract():
             rect = None
 
 
+
+        self.finalPlacement = 0
+        self.rerollCost = 2
+        self.underlordPicks = None
+        self.itemPicks = None
+        self.shopUnits = None
+        self.gsiItems = None
+        self.combatType = 0
+        # self.allowMove = False
+        self.combatResult = -1
+        self.wins = 0
+        self.losses = 0
+        self.round = 0
+        self.newRoundStarted = False
+
+
+
         self.server = True
 
         if rect is not None:
@@ -96,6 +113,7 @@ class UnderlordInteract():
             self.profilePics = loadProfiles()
             self.underlordPics = loadUnderlodProfiles()
             self.server = False
+        else:
             return None
 
         if rect is None:
@@ -198,19 +216,7 @@ class UnderlordInteract():
         self.lockedIn = False
         self.leveledUp = False
 
-        self.finalPlacement = 0
-        self.rerollCost = 2
-        self.underlordPicks = None
-        self.itemPicks = None
-        self.shopUnits = None
-        self.gsiItems = None
-        self.combatType = 0
-        # self.allowMove = False
-        self.combatResult = -1
-        self.wins = 0
-        self.losses = 0
-        self.round = 0
-        self.newRoundStarted = False
+
         self.currentTime = 0
         self.elapsedTime = 0
         # self.pickTime = False
@@ -1121,16 +1127,6 @@ class UnderlordInteract():
             self.strongPunish = False
             reward -= firstPlace * 0.1
 
-        numHeroes = 0
-
-        numBenchHeroes = 0
-
-        for i in range(4):
-            for j in range(8):
-                if self.boardHeroes[i][j] is not None:
-                    if not self.boardHeroes[i][j].underlord:
-                        numHeroes += 1
-
         # for i in range(8):
         #     if self.benchHeroes[i] is not None:
         #         numBenchHeroes += 1
@@ -1167,7 +1163,7 @@ class UnderlordInteract():
 
         if self.leveledUp:
 
-            if (self.level > 4) and ((numHeroes + 1) >= self.level): # don't want to reward for rushing early levels as I think that's just dumb
+            if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level): # don't want to reward for rushing early levels as I think that's just dumb
 
                 """
                 Reward for getting to level: 5: 12.5
@@ -1178,7 +1174,7 @@ class UnderlordInteract():
                 Reward for getting to level: 10: 100.0
                 """
                 award = firstPlace * 0.0001 * (self.level ** 3)
-                print(f"Awarded: {award} for leveling up with: {numHeroes} heroes!")
+                print(f"Awarded: {award} for leveling up with: {self.boardUnitCount()} heroes!")
                 reward += award
                 self.leveledUp = False
 
@@ -1396,7 +1392,7 @@ class UnderlordInteract():
 
             while self.pickTime():
                 mouse1.click(Button.left, 1)
-                time.sleep(self.mouseSleepTime)
+                time.sleep(self.mouseSleepTime * 10)
 
             gsiItems = []
 
@@ -1613,7 +1609,7 @@ class UnderlordInteract():
 
                 while self.pickTime():
                     mouse1.click(Button.left, 1)
-                    time.sleep(self.mouseSleepTime)
+                    time.sleep(self.mouseSleepTime * 10)
 
                 self.underlordPicks = None
 
@@ -1648,7 +1644,7 @@ class UnderlordInteract():
             except:  # meaning we haven't recieved data for store yet
                 return 1
 
-        tempString = "\nUnit Count %d" % self.level + "\nGold Count: %d" % self.gold \
+        tempString = "\nUnit Count %d" % self.boardUnitCount() + "/%d" % self.level + "\nGold Count: %d" % self.gold \
                      + "\nHealth Count: %d" % self.health + "\nRemaining EXP: %d" % self.remainingEXP
         self.hudLabel.config(text=tempString)
 
@@ -1744,6 +1740,20 @@ class UnderlordInteract():
         time.sleep(self.mouseSleepTime)
         return earnedMoney
 
+
+    def boardUnitCount(self):
+
+        numHeroes = 0
+
+        for i in range(4):
+            for j in range(8):
+                if self.boardHeroes[i][j] is not None:
+                    if not self.boardHeroes[i][j].underlord:
+                        numHeroes += 1
+
+        return numHeroes
+
+
     def moveUnit(self, x=-1, y=-1):
 
         print(f"base cords: {x} - {y}")
@@ -1757,10 +1767,10 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        if not self.allowMove():
-            self.mediumPunish = True
-            print('invalid phase move unit')
-            return -1
+        # if not self.allowMove():
+        #     self.mediumPunish = True
+        #     print('invalid phase move unit')
+        #     return -1
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
@@ -1796,15 +1806,7 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     return -1
 
-                numHeroes = 0
-
-                for i in range(3):
-                    for j in range(7):
-                        if self.boardHeroes[i][j] is not None:
-                            if not self.boardHeroes[i][j].underlord:
-                                numHeroes += 1
-
-                if numHeroes >= self.level:  # Meaning we have no space on the board for more heroes
+                if self.boardUnitCount() >= self.level:  # Meaning we have no space on the board for more heroes
                     self.mediumPunish = True
                     self.heroToMove = None
                     return -1
