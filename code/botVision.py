@@ -1734,7 +1734,7 @@ class UnderlordInteract():
 
         mouse1.position = (self.x + 30, self.y + 820)
 
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 1.5)
 
         mouse1.release(Button.left)
         time.sleep(self.mouseSleepTime)
@@ -1767,10 +1767,10 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        # if not self.allowMove():
-        #     self.mediumPunish = True
-        #     print('invalid phase move unit')
-        #     return -1
+        if not self.allowMove():
+            self.mediumPunish = True
+            print('invalid phase move unit')
+            return -1
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
