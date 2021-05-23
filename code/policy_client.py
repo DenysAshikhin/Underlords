@@ -45,9 +45,15 @@ if args.local:
 print(f"Going to update at {update} seconds interval")
 
 print('trying to launch policy client')
-client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=update, inference_mode=local)
+client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=None, inference_mode=local)
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
+
+#for testing purposes, we will force the env ceated in policy client+server to be a random one and use our game wrapper
+#for getting the observation/action/reward
+
+local = 'remote'
+forced = True
 
 if local == 'remote':
     env = UnderlordEnv({'sleep': True})
@@ -134,7 +140,12 @@ while True:
         fileWriter.writeLog(replayList)
         replayList.clear()
 
+        if forced:
+            print("Updating policy weights")
+            client.update_policy_weights()
+
         episode_id = client.start_episode(episode_id=None)
+
         if local == 'remote':
             env.underlord.startNewGame()
         print('got past restarting of the new episode, for loop should begin anew!')
