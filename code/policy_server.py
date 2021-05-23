@@ -11,7 +11,11 @@ from ray.rllib.env import PolicyServerInput
 from ray.rllib.examples.custom_metrics_and_callbacks import MyCallbacks
 from ray.tune.logger import pretty_print
 
-from environment import UnderlordEnv
+# from environment import UnderlordEnv
+
+
+from ray.rllib.examples.env.random_env import RandomEnv
+from gym import spaces
 
 import argparse
 
@@ -20,10 +24,7 @@ parser.add_argument('-ip', type=str, help='IP of this device')
 
 parser.add_argument('-checkpoint', type=str, help='location of checkpoint to restore from')
 
-
 args = parser.parse_args()
-
-
 
 DEFAULT_CONFIG = with_common_config({
     # Should use a critic as a baseline (otherwise don't use value baseline;
@@ -125,109 +126,73 @@ DEFAULT_CONFIG = with_common_config({
 
 })
 
+DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
+    (spaces.Discrete(9),  # final position * (if not 0 means game is over!)
+     spaces.Discrete(101),  # health *
+     spaces.Discrete(100),  # gold
+     spaces.Discrete(11),  # level *
+     spaces.Discrete(99),  # remaining EXP to level up
+     spaces.Discrete(50),  # round
+     spaces.Discrete(2),  # locked in
+     spaces.Discrete(6),  # gamePhase *
+     spaces.MultiDiscrete([250, 3]),  # heroToMove: heroLocalID, isUnderlord
+     spaces.Discrete(250),  # itemToMove: localID*,
+     spaces.Discrete(3),  # reRoll cost
+     spaces.Discrete(2),  # rerolled (item)
+     spaces.Discrete(35),  # current round timer
+     # below are the store heros
+     spaces.MultiDiscrete([71, 71, 71, 71, 71]),
+     # below are the bench heroes
+     spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+     # below are the board heros
+     spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
+     # below are underlords to pick (whenever valid) -> underlord ID - specialty
+     spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
+     # below are the items
+     spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+     spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+     spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+     spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+     spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+     spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+     # below are the items to pick from
+     spaces.MultiDiscrete([70, 70, 70]),
+     # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4])
 
-# DEFAULT_CONFIG = impala.ImpalaTrainer.merge_trainer_configs(
-#     impala.DEFAULT_CONFIG,  # See keys in impala.py, which are also supported.
-#     {
-#         # Whether to use V-trace weighted advantages. If false, PPO GAE
-#         # advantages will be used instead.
-#         "vtrace": True,
-#
-#         # == These two options only apply if vtrace: False ==
-#         # Should use a critic as a baseline (otherwise don't use value
-#         # baseline; required for using GAE).
-#         "use_critic": True,
-#         # If true, use the Generalized Advantage Estimator (GAE)
-#         # with a value function, see https://arxiv.org/pdf/1506.02438.pdf.
-#         "use_gae": True,
-#         # GAE(lambda) parameter
-#         "lambda": 1.0,
-#
-#         # == PPO surrogate loss options ==
-#         "clip_param": 40000000,
-#
-#         # == PPO KL Loss options ==
-#         "use_kl_loss": False,
-#         "kl_coeff": 1.0,
-#         "kl_target": 0.01,
-#
-#         # == IMPALA optimizer params (see documentation in impala.py) ==
-#         "rollout_fragment_length": 25,
-#         "train_batch_size": 4000,
-#         "min_iter_time_s": 10,
-#         "num_workers": 0,
-#         "num_gpus": 0,
-#         "num_data_loader_buffers": 1,
-#         "minibatch_buffer_size": 1,
-#         "num_sgd_iter": 60,
-#         "replay_proportion": 0.0,
-#         "replay_buffer_num_slots": 100,
-#         "learner_queue_size": 16,
-#         "learner_queue_timeout": 30000,
-#         "max_sample_requests_in_flight_per_worker": 2,
-#         "broadcast_interval": 1,
-#         "grad_clip": 40.0,
-#         "opt_type": "adam",
-#         "lr": 0.0005,
-#         "lr_schedule": None,
-#         "decay": 0.99,
-#         "momentum": 0.0,
-#         "epsilon": 0.1,
-#         "vf_loss_coeff": 0.5,
-#         "entropy_coeff": 0.01,
-#         "entropy_coeff_schedule": None,
-#         "input": (
-#             lambda ioctx: PolicyServerInput(ioctx, args.ip, 44444)
-#         ),
-#         # Use a single worker process to run the server.
-#         "num_workers": 1,
-#         # Disable OPE, since the rollouts are coming from online clients.
-#         "input_evaluation": [],
-#         # "callbacks": MyCallbacks,
-#         "env_config": {"sleep": True, "framework": 'tf'},
-#         "framework": "tfe",
-#         "eager_tracing": True,
-#         # "explore": True,
-#         # "exploration_config": {
-#         #     "type": "Curiosity",  # <- Use the Curiosity module for exploring.
-#         #     "eta": 1.0,  # Weight for intrinsic rewards before being added to extrinsic ones.
-#         #     "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
-#         #     "feature_dim": 288,  # Dimensionality of the generated feature vectors.
-#         #     # Setup of the feature net (used to encode observations into feature (latent) vectors).
-#         #     "feature_net_config": {
-#         #         "fcnet_hiddens": [],
-#         #         "fcnet_activation": "relu",
-#         #     },
-#         #     "inverse_net_hiddens": [256],  # Hidden layers of the "inverse" model.
-#         #     "inverse_net_activation": "relu",  # Activation of the "inverse" model.
-#         #     "forward_net_hiddens": [256],  # Hidden layers of the "forward" model.
-#         #     "forward_net_activation": "relu",  # Activation of the "forward" model.
-#         #     "beta": 0.2,  # Weight for the "forward" loss (beta) over the "inverse" loss (1.0 - beta).
-#         #     # Specify, which exploration sub-type to use (usually, the algo's "default"
-#         #     # exploration, e.g. EpsilonGreedy for DQN, StochasticSampling for PG/SAC).
-#         #     "sub_exploration": {
-#         #         "type": "StochasticSampling",
-#         #     }
-#         # },
-#         "_fake_gpus": True
-#     },
-#     _allow_unknown_configs=True,
-# )
-
-
-
+     ))
+DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([9, 9, 9, 4])
 
 ray.init()
 
 print(f"running on: {args.ip}:44444")
 
 # trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
-trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
+trainer = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
 # trainer = APPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
 # checkpoint_path = CHECKPOINT_FILE.format(args.run)
 checkpoint_path = "checkpointsE/"
-
 
 if args.checkpoint:
     # Attempt to restore from checkpoint, if possible.
