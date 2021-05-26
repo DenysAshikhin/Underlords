@@ -689,7 +689,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 2)
+        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 5)
 
     def proper_round(self, num, dec=0):
         num = str(num)[:str(num).index('.')+dec+2]
@@ -992,7 +992,7 @@ class UnderlordInteract():
         if self.rerolledItem:
             rerolledItem = 1
 
-        if (self.currentTime < 5) or self.pickTime():
+        if (self.currentTime < 8) or self.pickTime():
             self.gameCrop = main.imageGrab(w=1152,h=864)
             self.currentTime = self.HUD.getClockTimeLeft(self.gameCrop)
             self.elapsedTime = time.time()
