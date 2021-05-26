@@ -997,9 +997,7 @@ class UnderlordInteract():
             self.currentTime = self.HUD.getClockTimeLeft(self.gameCrop)
             self.elapsedTime = time.time()
         else:
-            self.currentTime -= int(
-                self.proper_round((time.time() - self.elapsedTime))
-            )
+            self.currentTime -= (time.time() - self.elapsedTime)
             self.elapsedTime = time.time()
             self.gameCrop = None
 
@@ -1061,7 +1059,7 @@ class UnderlordInteract():
         obs = (
             self.finalPlacement, self.health, self.gold, self.level, self.remainingEXP, self.round, lockedIn,
             self.combatType,
-            heroToMove, itemToMove, self.rerollCost, rerolledItem, self.currentTime + 1,
+            heroToMove, itemToMove, self.rerollCost, rerolledItem, int(self.proper_round(self.currentTime)) + 1,
             # store heros
             shopHeros,
             # bench heroes
