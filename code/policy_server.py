@@ -86,8 +86,8 @@ DEFAULT_CONFIG = with_common_config({
     # "simple_optimizer": False,
     # Whether to fake GPUs (using CPUs).
     # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
-    # "_fake_gpus": True,
-    # "num_gpus": 1,
+    "_fake_gpus": True,
+    "num_gpus": 1,
     # Use the connector server to generate experiences.
     "input": (
         lambda ioctx: PolicyServerInput(ioctx, args.ip, 55555)
