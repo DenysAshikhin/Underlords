@@ -52,7 +52,7 @@ client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=None, i
 #for testing purposes, we will force the env ceated in policy client+server to be a random one and use our game wrapper
 #for getting the observation/action/reward
 
-# local = 'remote'
+local = 'remote'
 forced = True
 
 if local == 'remote':

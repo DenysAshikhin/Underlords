@@ -1,18 +1,9 @@
-# Adds the following updates to the `PPOTrainer` config in
-# rllib/agents/ppo/ppo.py.
 import os
-
 import ray
 from ray.rllib.agents import with_common_config
-from ray.rllib.agents.impala import impala
-from ray.rllib.agents.ppo import ppo, DDPPOTrainer, APPOTrainer
 from ray.rllib.agents.ppo import PPOTrainer
 from ray.rllib.env import PolicyServerInput
-from ray.rllib.examples.custom_metrics_and_callbacks import MyCallbacks
 from ray.tune.logger import pretty_print
-
-from environment import UnderlordEnv
-
 
 from ray.rllib.examples.env.random_env import RandomEnv
 from gym import spaces
@@ -61,7 +52,10 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "use_lstm": True
+        "fcnet_hiddens": [64, 64],
+        "use_lstm": True,
+        "max_seq_len": 2,
+        "lstm_cell_size": 128
     },
     # Coefficient of the entropy regularizer.
     "entropy_coeff": 0.0,
@@ -87,7 +81,7 @@ DEFAULT_CONFIG = with_common_config({
     # Whether to fake GPUs (using CPUs).
     # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
     # "_fake_gpus": True,
-    "num_gpus": 1,
+    # "num_gpus": 1,
     # Use the connector server to generate experiences.
     "input": (
         lambda ioctx: PolicyServerInput(ioctx, args.ip, 55555)
@@ -111,9 +105,9 @@ DEFAULT_CONFIG = with_common_config({
             "fcnet_hiddens": [],
             "fcnet_activation": "relu",
         },
-        "inverse_net_hiddens": [256],  # Hidden layers of the "inverse" model.
+        "inverse_net_hiddens": [64],  # Hidden layers of the "inverse" model.
         "inverse_net_activation": "relu",  # Activation of the "inverse" model.
-        "forward_net_hiddens": [256],  # Hidden layers of the "forward" model.
+        "forward_net_hiddens": [64],  # Hidden layers of the "forward" model.
         "forward_net_activation": "relu",  # Activation of the "forward" model.
         "beta": 0.2,  # Weight for the "forward" loss (beta) over the "inverse" loss (1.0 - beta).
         # Specify, which exploration sub-type to use (usually, the algo's "default"
@@ -126,12 +120,71 @@ DEFAULT_CONFIG = with_common_config({
 
 })
 
+DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
+    (spaces.Discrete(9),  # final position * (if not 0 means game is over!)
+     spaces.Discrete(101),  # health *
+     spaces.Discrete(100),  # gold
+     spaces.Discrete(11),  # level *
+     spaces.Discrete(99),  # remaining EXP to level up
+     spaces.Discrete(50),  # round
+     spaces.Discrete(2),  # locked in
+     spaces.Discrete(6),  # gamePhase *
+     spaces.MultiDiscrete([250, 3]),  # heroToMove: heroLocalID, isUnderlord
+     spaces.Discrete(250),  # itemToMove: localID*,
+     spaces.Discrete(3),  # reRoll cost
+     spaces.Discrete(2),  # rerolled (item)
+     spaces.Discrete(35),  # current round timer
+     # below are the store heros
+     spaces.MultiDiscrete([71, 71, 71, 71, 71]),
+     # below are the bench heroes
+     spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+     # below are the board heros
+     spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
+     spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
+     # below are underlords to pick (whenever valid) -> underlord ID - specialty
+     spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
+     # below are the items
+     spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+     spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+     spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+     spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+     spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+     spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+     # below are the items to pick from
+     spaces.MultiDiscrete([70, 70, 70]),
+     # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+     spaces.MultiDiscrete(
+         [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4])
+
+     ))
+DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([9, 9, 9, 4])
+
 ray.init()
 
 print(f"running on: {args.ip}:44444")
 
 # trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
-trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
+trainer = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
+
+# trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 # trainer = APPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
 # checkpoint_path = CHECKPOINT_FILE.format(args.run)
