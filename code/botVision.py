@@ -689,9 +689,11 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 2)
+        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 5)
 
     def proper_round(self, num, dec=0):
+        if (str(num).find('.') == -1):
+            return float(num)
         num = str(num)[:str(num).index('.')+dec+2]
         if num[-1]>='5':
           a = num[:-2-(not dec)]       # integer part
@@ -992,14 +994,12 @@ class UnderlordInteract():
         if self.rerolledItem:
             rerolledItem = 1
 
-        if (self.currentTime < 5) or self.pickTime():
+        if (self.currentTime < 8) or self.pickTime():
             self.gameCrop = main.imageGrab(w=1152,h=864)
             self.currentTime = self.HUD.getClockTimeLeft(self.gameCrop)
             self.elapsedTime = time.time()
         else:
-            self.currentTime -= int(
-                self.proper_round((time.time() - self.elapsedTime))
-            )
+            self.currentTime -= (time.time() - self.elapsedTime)
             self.elapsedTime = time.time()
             self.gameCrop = None
 
@@ -1061,7 +1061,7 @@ class UnderlordInteract():
         obs = (
             self.finalPlacement, self.health, self.gold, self.level, self.remainingEXP, self.round, lockedIn,
             self.combatType,
-            heroToMove, itemToMove, self.rerollCost, rerolledItem, self.currentTime + 1,
+            heroToMove, itemToMove, self.rerollCost, rerolledItem, int(self.proper_round(self.currentTime)) + 1,
             # store heros
             shopHeros,
             # bench heroes
@@ -2435,6 +2435,7 @@ class UnderlordInteract():
                 return -1
 
         return tieredUp
+
 
 
 def openVision():
