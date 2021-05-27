@@ -692,6 +692,8 @@ class UnderlordInteract():
         return self.combatType == 0 and not self.pickTime() and (self.currentTime > 5)
 
     def proper_round(self, num, dec=0):
+        if (str(num).find('.') == -1):
+            return float(num)
         num = str(num)[:str(num).index('.')+dec+2]
         if num[-1]>='5':
           a = num[:-2-(not dec)]       # integer part
@@ -2433,6 +2435,7 @@ class UnderlordInteract():
                 return -1
 
         return tieredUp
+
 
 
 def openVision():
