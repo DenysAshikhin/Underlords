@@ -29,16 +29,16 @@ DEFAULT_CONFIG = with_common_config({
     # Initial coefficient for KL divergence.
     "kl_coeff": 0.2,
     # Size of batches collected from each worker.
-    "rollout_fragment_length": 25,
+    "rollout_fragment_length": 100,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 3000,
+    "train_batch_size": 2000,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 375,
+    "sgd_minibatch_size": 200,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 60,
+    "num_sgd_iter": 50,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": True,
     # Stepsize of SGD.
@@ -81,7 +81,7 @@ DEFAULT_CONFIG = with_common_config({
     # Whether to fake GPUs (using CPUs).
     # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
     # "_fake_gpus": True,
-    # "num_gpus": 1,
+    "num_gpus": 1,
     # Use the connector server to generate experiences.
     "input": (
         lambda ioctx: PolicyServerInput(ioctx, args.ip, 55555)
@@ -99,7 +99,7 @@ DEFAULT_CONFIG = with_common_config({
         "type": "Curiosity",  # <- Use the Curiosity module for exploring.
         "eta": 1.0,  # Weight for intrinsic rewards before being added to extrinsic ones.
         "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
-        "feature_dim": 576,  # Dimensionality of the generated feature vectors.
+        "feature_dim": 256,  # Dimensionality of the generated feature vectors.
         # Setup of the feature net (used to encode observations into feature (latent) vectors).
         "feature_net_config": {
             "fcnet_hiddens": [],
