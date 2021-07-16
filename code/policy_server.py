@@ -188,7 +188,7 @@ trainer = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
 # trainer = APPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
 # checkpoint_path = CHECKPOINT_FILE.format(args.run)
-checkpoint_path = "checkpointsE2/"
+checkpoint_path = "checkpointsA/"
 
 if args.checkpoint:
     # Attempt to restore from checkpoint, if possible.
