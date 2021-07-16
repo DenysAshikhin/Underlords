@@ -29,7 +29,7 @@ DEFAULT_CONFIG = with_common_config({
     # Initial coefficient for KL divergence.
     "kl_coeff": 0.2,
     # Size of batches collected from each worker.
-    "rollout_fragment_length": 25,
+    "rollout_fragment_length": 1000,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
     "train_batch_size": 4000,
@@ -77,7 +77,7 @@ DEFAULT_CONFIG = with_common_config({
     # "simple_optimizer": False,
     # Whether to fake GPUs (using CPUs).
     # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
-    # "_fake_gpus": True,
+    "_fake_gpus": True,
     "num_gpus": 1,
     # Use the connector server to generate experiences.
     "input": (

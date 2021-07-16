@@ -149,6 +149,4 @@ while True:
 
         episode_id = client.start_episode(episode_id=None)
         gameObservation = env.reset()
-        print('got past restarting of the new episode, for loop should begin anew!')
-
-    print('----')
+        # print('got past restarting of the new episode, for loop should begin anew!')
