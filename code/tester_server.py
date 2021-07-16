@@ -52,7 +52,10 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "use_lstm": True
+        "fcnet_hiddens": [64, 64],
+        "use_lstm": True,
+        "max_seq_len": 2,
+        "lstm_cell_size": 128
     },
     # Coefficient of the entropy regularizer.
     "entropy_coeff": 0.0,
@@ -77,7 +80,7 @@ DEFAULT_CONFIG = with_common_config({
     # "simple_optimizer": False,
     # Whether to fake GPUs (using CPUs).
     # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
-    "_fake_gpus": True,
+    # "_fake_gpus": True,
     "num_gpus": 1,
     # Use the connector server to generate experiences.
     "input": (
@@ -96,15 +99,15 @@ DEFAULT_CONFIG = with_common_config({
         "type": "Curiosity",  # <- Use the Curiosity module for exploring.
         "eta": 1.0,  # Weight for intrinsic rewards before being added to extrinsic ones.
         "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
-        "feature_dim": 576,  # Dimensionality of the generated feature vectors.
+        "feature_dim": 256,  # Dimensionality of the generated feature vectors.
         # Setup of the feature net (used to encode observations into feature (latent) vectors).
         "feature_net_config": {
             "fcnet_hiddens": [],
             "fcnet_activation": "relu",
         },
-        "inverse_net_hiddens": [256],  # Hidden layers of the "inverse" model.
+        "inverse_net_hiddens": [64],  # Hidden layers of the "inverse" model.
         "inverse_net_activation": "relu",  # Activation of the "inverse" model.
-        "forward_net_hiddens": [256],  # Hidden layers of the "forward" model.
+        "forward_net_hiddens": [64],  # Hidden layers of the "forward" model.
         "forward_net_activation": "relu",  # Activation of the "forward" model.
         "beta": 0.2,  # Weight for the "forward" loss (beta) over the "inverse" loss (1.0 - beta).
         # Specify, which exploration sub-type to use (usually, the algo's "default"
