@@ -50,6 +50,9 @@ checkpointsE/
 checkpointsE2\
 checkpointsE2/
 
+checkpointsA\
+checkpointsA/
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml

@@ -38,7 +38,7 @@ DEFAULT_CONFIG = with_common_config({
     "sgd_minibatch_size": 800,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 50,
+    "num_sgd_iter": 30,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": True,
     # Stepsize of SGD.
