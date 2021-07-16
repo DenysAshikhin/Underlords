@@ -73,7 +73,7 @@ class UnderlordInteract():
         # Thread.__init__(self)
         # self.stopped = event
         self.rootWindow = rootWindow
-
+        self.lockedIn = False
         self.items = Items()
 
         self.hwnd = win32gui.FindWindow(None, 'Dota Underlords')
