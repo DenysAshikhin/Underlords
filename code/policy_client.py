@@ -1,4 +1,5 @@
 from queue import Queue
+from tkinter import Tk
 
 import gym
 from ray.rllib.env import PolicyClient
@@ -54,9 +55,13 @@ client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=None, i
 
 local = 'remote'
 forced = True
+root = None
 
 if local == 'remote':
-    env = UnderlordEnv({'sleep': True})
+    root = Tk()
+    root.resizable(0, 0)
+    root.geometry('+0+0')
+    env = UnderlordEnv(root, {'sleep': True})
 else:
     env = client.env
 
@@ -86,7 +91,7 @@ while True:
     # print(gameObservation)
     # print("--- %s seconds to get observation ---" % (time.time() - start_time))
     # start_time = time.time()
-    env.root.update()
+    root.update()
     # print("--- %s seconds to update GUI ---" % (time.time() - start_time))
     # start_time = time.time()
 
@@ -125,7 +130,7 @@ while True:
     finalPosition = env.underlord.finalPlacement
     # print("--- %s seconds to get finish logging return ---" % (time.time() - start_time))
 
-    replayList.append((gameObservation, action, reward))
+    # replayList.append((gameObservation, action, reward))
 
     print(
         f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")
@@ -136,10 +141,10 @@ while True:
         # need to call a reset of env here
         client.end_episode(episode_id=episode_id, observation=gameObservation)
         env.underlord.resetEnv()
-        fileWriter = logger(episode_id)
-        fileWriter.createLog()
-        fileWriter.writeLog(replayList)
-        replayList.clear()
+        # fileWriter = logger(episode_id)
+        # fileWriter.createLog()
+        # fileWriter.writeLog(replayList)
+        # replayList.clear()
 
         if forced:
             print("Updating policy weights")

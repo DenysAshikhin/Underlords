@@ -40,7 +40,7 @@ from ray.rllib.utils.typing import MultiAgentDict, EnvInfoDict, EnvObsType, EnvA
 
 class UnderlordEnv(ExternalEnv):
 
-    def __init__(self, config=None):
+    def __init__(self, window, config=None):
 
         threading.Thread.__init__(self)
 
@@ -127,10 +127,8 @@ class UnderlordEnv(ExternalEnv):
         self._max_concurrent_episodes = 1  # maybe maybe not, no clue lmao
 
         # self.root = mtTkinter.Tk()
-        self.root = Tk()
-        self.root.resizable(0, 0)
-        self.root.geometry('+0+0')
-        self.underlord = UnderlordInteract(self.root, training=True)
+
+        self.underlord = UnderlordInteract(window, training=True)
         # self.root.update()
         # root.mainloop()
         print('got past main loop')

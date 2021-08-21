@@ -188,16 +188,18 @@ trainer = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
 # trainer = APPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
 # checkpoint_path = CHECKPOINT_FILE.format(args.run)
-checkpoint_path = "checkpointsA/"
 
-if args.checkpoint:
-    # Attempt to restore from checkpoint, if possible.
-    if os.path.exists(args.checkpoint):
-        print('path FOUND!')
-        print("Restoring from checkpoint path", args.checkpoint)
-        trainer.restore(args.checkpoint)
-    else:
-        print("That path does not exist!")
+
+# checkpoint_path = "checkpointsA/"
+#
+# if args.checkpoint:
+#     # Attempt to restore from checkpoint, if possible.
+#     if os.path.exists(args.checkpoint):
+#         print('path FOUND!')
+#         print("Restoring from checkpoint path", args.checkpoint)
+#         trainer.restore(args.checkpoint)
+#     else:
+#         print("That path does not exist!")
 
 # Serving and training loop.
 i = 0
@@ -205,5 +207,5 @@ while True:
     print(pretty_print(trainer.train()))
     print(f"Finished train run #{i + 1}")
     i += 1
-    checkpoint = trainer.save(checkpoint_path)
-    print("Last checkpoint", checkpoint)
+    # checkpoint = trainer.save(checkpoint_path)
+    # print("Last checkpoint", checkpoint)
