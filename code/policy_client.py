@@ -100,15 +100,16 @@ while True:
 
     act_time = time.time()
     # print(gameObservation)
+    #
+    # for i in range(10):
+    #
+    #     try:
 
-    for i in range(10):
+    action = client.get_action(episode_id=episode_id, observation=gameObservation)
 
-        try:
-            action = client.get_action(episode_id=episode_id, observation=gameObservation)
-
-            break
-        except queue.Empty:
-            continue
+        #     break
+        # except queue.Empty:
+        #     continue
 
     if action is None:
         raise ValueError("Policy failed to return an action after 10 tries")

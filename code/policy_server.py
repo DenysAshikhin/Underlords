@@ -29,16 +29,16 @@ DEFAULT_CONFIG = with_common_config({
     # Initial coefficient for KL divergence.
     "kl_coeff": 0.2,
     # Size of batches collected from each worker.
-    "rollout_fragment_length": 1000,
+    "rollout_fragment_length": 750,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 4000,
+    "train_batch_size": 1500,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 800,
+    "sgd_minibatch_size": 500,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 30,
+    "num_sgd_iter": 25,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": True,
     # Stepsize of SGD.
@@ -207,30 +207,3 @@ while True:
     i += 1
     checkpoint = trainer.save(checkpoint_path)
     print("Last checkpoint", checkpoint)
-
-    # temp = (0, 73, 1, 5, 9, 9, 0, 0, [57, 1], 0, 2, 0, 13, [59, 24, 28, 2, 50],
-    #         [50, 2, 1, 2, 0, 1, 0, 1], [49, 12, 1, 2, 0, 2, 0, 1], [3, 15, 1, 1, 0, 3, 0, 1],
-    #         [47, 11, 1, 1, 0, 4, 0, 1],
-    #         [45, 16, 1, 1, 0, 5, 0, 1], [30, 1, 1, 1, 0, 6, 0, 1], [39, 9, 1, 2, 0, 7, 0, 1],
-    #         [15, 17, 1, 1, 0, 8, 0, 1],
-    #
-    #
-    #
-    #         [11, 13, 1, 1, 1, 2, 3, 1], [59, 4, 1, 1, 0, 2, 5, 1], [15, 3, 1, 1, 0, 3, 7, 1],
-    #         [57, 14, 1, 1, 0, 3, 8, 1],            [5, 5, 2, 1, 0, 4, 7, 1],            [0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0, 0, 0, 0],
-    #
-    #
-    #         [0, 0, 0, 0, 0, 0, 0, 0],
-    #         [53, 2, 0, 1, 1], [43, 3, 0, 1, 2], [23, 1, 13, 1, 1],
-    #         [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0],
-    #         [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0],
-    #         [0, 0, 0],
-    #         [2, 87, 21, 5, 20, 1, 18, 1, 5, 1, 23, 1, 48, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [3, 82, 32, 5, 15, 1, 5, 1, 59, 1, 20, 1, 9, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [4, 98, 31, 6, 34, 1, 49, 1, 47, 1, 16, 1, 8, 1, 55, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [5, 96, 28, 6, 22, 1, 42, 1, 24, 1, 49, 1, 48, 1, 23, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [6, 85, 33, 5, 28, 1, 18, 1, 3, 1, 40, 1, 8, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [7, 100, 32, 6, 49, 1, 34, 1, 5, 1, 34, 1, 40, 1, 29, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    #         [8, 96, 30, 6, 15, 1, 59, 1, 18, 1, 6, 1, 35, 1, 62, 1, 0, 0, 0, 0, 0, 0, 0, 0])

@@ -124,7 +124,7 @@ class UnderlordEnv(ExternalEnv):
         self._episodes = {}
         self._finished = set()
         self._results_avail_condition = threading.Condition()
-        self._max_concurrent_episodes = 3  # maybe maybe not, no clue lmao
+        self._max_concurrent_episodes = 1  # maybe maybe not, no clue lmao
 
         # self.root = mtTkinter.Tk()
         self.root = Tk()
@@ -147,24 +147,24 @@ class UnderlordEnv(ExternalEnv):
             5. Wait if nothing to do.
         Multiple episodes may be started at the same time.
         """
-
-        if self.sleep:
-            time.sleep(999999)
-
-        episode_id = None
-        episode_id = self.start_episode(episode_id=episode_id)
-        while True:  # not sure if it should be a literal loop..........?
-            gameObservation = self.underlord.getObservation()
-            self.root.update()
-
-            action = self.get_action(episode_id=episode_id, observation=gameObservation)
-
-            reward = self.underlord.act(action=action[0], x=action[1], y=action[2], selection=action[3])
-            self.log_returns(episode_id=episode_id, reward=reward)
-
-            if self.underlord.finished() != -1:
-                self.end_episode(episode_id=episode_id, observation=gameObservation)
-                episode_id = self.start_episode(episode_id=None)
+        #
+        # if self.sleep:
+        #     time.sleep(999999)
+        #
+        # episode_id = None
+        # episode_id = self.start_episode(episode_id=episode_id)
+        # while True:  # not sure if it should be a literal loop..........?
+        #     gameObservation = self.underlord.getObservation()
+        #     self.root.update()
+        #
+        #     action = self.get_action(episode_id=episode_id, observation=gameObservation)
+        #
+        #     reward = self.underlord.act(action=action[0], x=action[1], y=action[2], selection=action[3])
+        #     self.log_returns(episode_id=episode_id, reward=reward)
+        #
+        #     if self.underlord.finished() != -1:
+        #         self.end_episode(episode_id=episode_id, observation=gameObservation)
+        #         episode_id = self.start_episode(episode_id=None)
 
     def start_episode(self,
                       episode_id: Optional[str] = None,
