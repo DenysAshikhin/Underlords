@@ -123,7 +123,6 @@ while True:
 
     act_time = time.time() - act_time
     # print("--- %s seconds to get do action ---" % (time.time() - start_time))
-    # start_time = time.time()
     # print(f"running reward: {reward}")
     client.log_returns(episode_id=episode_id, reward=reward)
     # print('finished logging step')

@@ -675,8 +675,9 @@ class UnderlordInteract():
 
         while flag:
             time.sleep(0.1)
-
             phase = self.getGamePhase()
+            print('gamephase: ')
+            print(phase)
             if phase is not None:
                 flag = False
 
