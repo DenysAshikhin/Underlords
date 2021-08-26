@@ -46,7 +46,7 @@ if args.local:
 print(f"Going to update at {update} seconds interval")
 
 print('trying to launch policy client')
-client = PolicyClient(address=f"http://{args.ip}:55555", update_interval=None, inference_mode=local)
+client = PolicyClient(address=f"http://{args.ip}:55556", update_interval=None, inference_mode=local)
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
@@ -87,8 +87,10 @@ while True:
     # print('getting observation')
     start_time = time.time()
     gameObservation = env.underlord.getObservation()
+    print(env.observation_space.contains(gameObservation))
     obs_time = time.time() - start_time
-    # print(gameObservation)
+
+# print(gameObservation)
     # print("--- %s seconds to get observation ---" % (time.time() - start_time))
     # start_time = time.time()
     root.update()

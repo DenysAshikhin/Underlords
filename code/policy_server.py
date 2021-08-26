@@ -84,7 +84,7 @@ DEFAULT_CONFIG = with_common_config({
     "num_gpus": 1,
     # Use the connector server to generate experiences.
     "input": (
-        lambda ioctx: PolicyServerInput(ioctx, args.ip, 55555)
+        lambda ioctx: PolicyServerInput(ioctx, args.ip, 55556)
     ),
     # Use a single worker process to run the server.
     "num_workers": 0,
