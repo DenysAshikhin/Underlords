@@ -44,7 +44,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
         for block in payload['block']:
             if len(block) > 0:
-                # print(data)
+                # print(block)
                 for data in block['data']:
 
                     if 'public_player_state' in data:

@@ -602,6 +602,7 @@ class UnderlordInteract():
     def testFunction(self, param1, param2):
         # print(self.HUD.getClockTimeLeft())
         print(self.getObservation())
+        print(self.getGamePhase())
 
         # self.itemObjects[0][1] = Item('claymore', (0,1), melee=True)
         # self.itemlabels[0][1].config(text='claymore')
@@ -670,8 +671,6 @@ class UnderlordInteract():
             print('reset Env died')
 
         flag = True
-
-
 
         while flag:
             time.sleep(0.1)
@@ -1099,22 +1098,31 @@ class UnderlordInteract():
 
         if action == 0:
             self.rerollStore()
+            print('rerolling')
         elif action == 1:
             self.lockIn()
+            print('lock in')
         elif action == 2:
             self.clickUp()
+            print('click up')
         elif action == 3:
             tieredUp = self.buy(x)
+            print('buy')
         elif action == 4:
             earnedMoney = self.sellHero(x, y)
+            print('sell hero')
         elif action == 5:
             acted = self.selectItem(x, y, selection)
+            print('select item')
         elif action == 6:
             acted = self.selectItem(x, y, selection)
+            print('select hero')
         elif action == 7:
             self.moveUnit(x, y)
+            print('move unit')
         elif action == 8:
             self.moveUnit(x, y)
+            print('move item')
 
         reward = 0
 
@@ -1741,7 +1749,6 @@ class UnderlordInteract():
         time.sleep(self.mouseSleepTime)
         return earnedMoney
 
-
     def boardUnitCount(self):
 
         numHeroes = 0
@@ -1753,7 +1760,6 @@ class UnderlordInteract():
                         numHeroes += 1
 
         return numHeroes
-
 
     def moveUnit(self, x=-1, y=-1):
 
@@ -2009,6 +2015,8 @@ class UnderlordInteract():
     def openStore(self, update=True, skipCheck=False):
 
         # self.updateWindowCoords()
+
+        print(self.shop.shopOpen())
 
         if self.combatType != 0 or self.round < 2:
             shopOpen = self.shop.shopOpen(imageCrop=self.gameCrop)

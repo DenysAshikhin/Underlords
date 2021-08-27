@@ -87,8 +87,8 @@ while True:
     # print('getting observation')
     start_time = time.time()
     gameObservation = env.underlord.getObservation()
-    print(gameObservation)
-    print(env.observation_space.contains(gameObservation))
+    # print(gameObservation)
+    # print(env.observation_space.contains(gameObservation))
     obs_time = time.time() - start_time
 
 # print(gameObservation)
@@ -134,11 +134,11 @@ while True:
 
     # replayList.append((gameObservation, action, reward))
 
-    print(
-        f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")
+    # print(
+    #     f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")
 
     if finalPosition != 0:
-        print(f"GAME OVER! final position: {finalPosition} - final reward: {reward}")
+        # print(f"GAME OVER! final position: {finalPosition} - final reward: {reward}")
         reward = 0
         # need to call a reset of env here
         client.end_episode(episode_id=episode_id, observation=gameObservation)
@@ -149,13 +149,13 @@ while True:
         # replayList.clear()
 
         if forced:
-            print("Updating policy weights")
+            # print("Updating policy weights")
             client.update_policy_weights()
 
         episode_id = client.start_episode(episode_id=None)
 
         if local == 'remote':
             env.underlord.startNewGame()
-        print('got past restarting of the new episode, for loop should begin anew!')
+        # print('got past restarting of the new episode, for loop should begin anew!')
 
-    print('----')
+    # print('----')
