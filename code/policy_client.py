@@ -87,6 +87,7 @@ while True:
     # print('getting observation')
     start_time = time.time()
     gameObservation = env.underlord.getObservation()
+    print(gameObservation)
     print(env.observation_space.contains(gameObservation))
     obs_time = time.time() - start_time
 
