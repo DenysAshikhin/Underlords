@@ -1,2 +1,2 @@
-cd C:\Users\denys\Documents\GitHub\Underlords
-python police_client -ip 192.168.0.18
+cd "C:\Users\Denys\Documents\GitHub\Underlords\code"
+python policy_client.py -ip 192.168.0.18
