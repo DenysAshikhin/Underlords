@@ -52,10 +52,10 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [64, 64],
+        "fcnet_hiddens": [128, 128],
         "use_lstm": False,
-        "max_seq_len": 2,
-        "lstm_cell_size": 128
+        # "max_seq_len": 2,
+        # "lstm_cell_size": 128
     },
     # Coefficient of the entropy regularizer.
     "entropy_coeff": 0.0,
@@ -91,9 +91,9 @@ DEFAULT_CONFIG = with_common_config({
     # Disable OPE, since the rollouts are coming from online clients.
     "input_evaluation": [],
     # "callbacks": MyCallbacks,
-    "env_config": {"sleep": True, "framework": 'tf'},
-    "framework": "tf",
-    # "eager_tracing": True,
+    "env_config": {"sleep": True,},
+    "framework": "tfe",
+    "eager_tracing": True,
     "explore": True,
     "exploration_config": {
         "type": "Curiosity",  # <- Use the Curiosity module for exploring.
@@ -105,9 +105,9 @@ DEFAULT_CONFIG = with_common_config({
             "fcnet_hiddens": [],
             "fcnet_activation": "relu",
         },
-        "inverse_net_hiddens": [64],  # Hidden layers of the "inverse" model.
+        "inverse_net_hiddens": [128],  # Hidden layers of the "inverse" model.
         "inverse_net_activation": "relu",  # Activation of the "inverse" model.
-        "forward_net_hiddens": [64],  # Hidden layers of the "forward" model.
+        "forward_net_hiddens": [128],  # Hidden layers of the "forward" model.
         "forward_net_activation": "relu",  # Activation of the "forward" model.
         "beta": 0.2,  # Weight for the "forward" loss (beta) over the "inverse" loss (1.0 - beta).
         # Specify, which exploration sub-type to use (usually, the algo's "default"
