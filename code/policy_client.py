@@ -160,6 +160,8 @@ while True:
             env.underlord.startNewGame()
 
         env.underlord.openStore()
+        env.underlord.lockIn()
+        env.underlord.lockIn()
         # print('got past restarting of the new episode, for loop should begin anew!')
 
     # print('----')
