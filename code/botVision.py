@@ -682,11 +682,16 @@ class UnderlordInteract():
 
         # self.closeStore()
         print('sleeping for 5s')
-        time.sleep(5)
+        time.sleep(1)
         print('done sleeping')
         self.finalPlacement = 0
         self.round = 0
         self.openStore()
+        time.sleep(1)
+        self.openStore()
+        time.sleep(1)
+        self.openStore()
+        time.sleep(1)
         print('done opening the store')
 
     def pickTime(self):
