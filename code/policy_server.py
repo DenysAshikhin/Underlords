@@ -52,7 +52,7 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [256, 256],
+        "fcnet_hiddens": [128, 128],
         "use_lstm": False,
         "max_seq_len": 2,
         "lstm_cell_size": 128
@@ -105,9 +105,9 @@ DEFAULT_CONFIG = with_common_config({
             "fcnet_hiddens": [],
             "fcnet_activation": "relu",
         },
-        "inverse_net_hiddens": [128],  # Hidden layers of the "inverse" model.
+        "inverse_net_hiddens": [64],  # Hidden layers of the "inverse" model.
         "inverse_net_activation": "relu",  # Activation of the "inverse" model.
-        "forward_net_hiddens": [128],  # Hidden layers of the "forward" model.
+        "forward_net_hiddens": [64],  # Hidden layers of the "forward" model.
         "forward_net_activation": "relu",  # Activation of the "forward" model.
         "beta": 0.2,  # Weight for the "forward" loss (beta) over the "inverse" loss (1.0 - beta).
         # Specify, which exploration sub-type to use (usually, the algo's "default"
