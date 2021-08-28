@@ -151,6 +151,7 @@ while True:
         if forced:
             # print("Updating policy weights")
             client.update_policy_weights()
+            print('Updated policy weights')
 
         episode_id = client.start_episode(episode_id=None)
 
