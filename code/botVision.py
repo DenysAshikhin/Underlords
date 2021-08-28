@@ -681,10 +681,13 @@ class UnderlordInteract():
                 flag = False
 
         # self.closeStore()
-        time.sleep(1)
+        print('sleeping for 5s')
+        time.sleep(5)
+        print('done sleeping')
         self.finalPlacement = 0
         self.round = 0
         self.openStore()
+        print('done opening the store')
 
     def pickTime(self):
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
@@ -1120,10 +1123,10 @@ class UnderlordInteract():
             print('select hero')
         elif action == 7:
             self.moveUnit(x, y)
-            print('move unit')
+            print('move unit7')
         elif action == 8:
             self.moveUnit(x, y)
-            print('move item')
+            print('move item8')
 
         reward = 0
 
