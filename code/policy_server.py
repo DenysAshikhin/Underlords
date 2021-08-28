@@ -54,7 +54,7 @@ DEFAULT_CONFIG = with_common_config({
         "vf_share_layers": False,
         "fcnet_hiddens": [128, 128],
         "use_lstm": False,
-        # "max_seq_len": 2,github
+        # "max_seq_len": 2,
     },
     # Coefficient of the entropy regularizer.
     "entropy_coeff": 0.0,
