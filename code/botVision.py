@@ -559,6 +559,7 @@ class UnderlordInteract():
 
         self.gameCrop = None
 
+
         self.checkState = False  # note make sure to False this for production
 
         # self.boardHeroes = numpy.empty((4, 8))
