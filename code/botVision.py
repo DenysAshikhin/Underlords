@@ -683,6 +683,7 @@ class UnderlordInteract():
         # self.closeStore()
         time.sleep(1)
         self.finalPlacement = 0
+        self.round = 0
         self.openStore()
 
     def pickTime(self):
