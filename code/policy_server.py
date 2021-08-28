@@ -91,8 +91,8 @@ DEFAULT_CONFIG = with_common_config({
     "input_evaluation": [],
     # "callbacks": MyCallbacks,
     "env_config": {"sleep": True,},
-    "framework": "tfe",
-    "eager_tracing": True,
+    "framework": "tf",
+    # "eager_tracing": True,
     "explore": True,
     "exploration_config": {
         "type": "Curiosity",  # <- Use the Curiosity module for exploring.
