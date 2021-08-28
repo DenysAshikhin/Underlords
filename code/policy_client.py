@@ -87,11 +87,12 @@ while True:
     # print('getting observation')
     start_time = time.time()
     gameObservation = env.underlord.getObservation()
-    # print(gameObservation)
-    # print(env.observation_space.contains(gameObservation))
+    print(gameObservation)
+    print(env.observation_space.contains(gameObservation))
+    print('-----------')
     obs_time = time.time() - start_time
 
-# print(gameObservation)
+    # print(gameObservation)
     # print("--- %s seconds to get observation ---" % (time.time() - start_time))
     # start_time = time.time()
     root.update()
