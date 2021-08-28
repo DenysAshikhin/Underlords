@@ -158,6 +158,8 @@ while True:
 
         if local == 'remote':
             env.underlord.startNewGame()
+
+        env.underlord.openStore()
         # print('got past restarting of the new episode, for loop should begin anew!')
 
     # print('----')
