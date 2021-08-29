@@ -80,6 +80,8 @@ if args.speed is not None:
     env.underlord.mouseSleepTime *= args.speed
     env.underlord.shopSleepTime *= args.speed
 
+update = True
+
 while True:
     # print('getting observation')
     start_time = time.time()
@@ -167,9 +169,13 @@ while True:
     # print(f"gamephase: {timeLeft}")
 
     if (timeLeft < 2) and (env.underlord.itemPicks is None) and (env.underlord.underlordPicks is None)\
-            and (env.underlord.round > 5):
+            and (env.underlord.round > 5) and update:
         print('inside of policy client combat')
         client.update_policy_weights()
         print('Combat phase updated policy weights')
+        update = False
+
+    if (timeLeft > 2):
+        update = True
 
     # print('----')
