@@ -78,11 +78,11 @@ class UnderlordEnv(ExternalEnv):
              spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
              spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
              # below are the board heros
-             spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]), spaces.MultiDiscrete([71, 14, 4, 6, 250, 9, 9, 3]),
+             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
              # below are underlords to pick (whenever valid) -> underlord ID - specialty
              spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
              # below are the items
