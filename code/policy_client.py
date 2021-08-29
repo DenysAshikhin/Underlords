@@ -46,7 +46,7 @@ if args.local:
 print(f"Going to update at {update} seconds interval")
 
 print('trying to launch policy client')
-client = PolicyClient(address=f"http://{args.ip}:55556", update_interval=60, inference_mode=local)
+client = PolicyClient(address=f"http://{args.ip}:55556", update_interval=None, inference_mode=local)
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
@@ -165,5 +165,11 @@ while True:
         env.underlord.lockIn()
         env.underlord.lockIn()
         # print('got past restarting of the new episode, for loop should begin anew!')
+
+
+    if env.underlord.getGamePhase() == 'combat':
+        print('inside of policy client combat')
+        client.update_policy_weights()
+        print('Combat phase updated policy weights')
 
     # print('----')

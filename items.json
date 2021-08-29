@@ -1342,7 +1342,7 @@
       ],
       "displayName": "#dac_item_tank_buster",
       "description": "#dac_item_tank_buster_desc",
-      "icon": "tank_buster",
+      "icon": "kaden's_blade",
       "precache": [
         "particles/gameplay/synergy/void/void_pure_damage.vpcf"
       ]
@@ -2940,7 +2940,7 @@
       ],
       "displayName": "#dac_item_tank_buster",
       "description": "#dac_item_tank_buster_desc",
-      "icon": "tank_buster",
+      "icon": "kaden's_blade",
       "precache": [
         "particles/gameplay/synergy/void/void_pure_damage.vpcf"
       ]
