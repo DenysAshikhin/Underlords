@@ -141,7 +141,7 @@ while True:
         # print(f"GAME OVER! final position: {finalPosition} - final reward: {reward}")
         reward = 0
         # need to call a reset of env here
-        client.end_episode(episode_id=episode_id, observation=gameObservation)
+        client.end_episode(episode_id=episode_id, observation=env.underlord.getObservation())
         env.underlord.resetEnv()
         # fileWriter = logger(episode_id)
         # fileWriter.createLog()
