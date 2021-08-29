@@ -109,7 +109,6 @@ class UnderlordEnv(ExternalEnv):
                  [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
              spaces.MultiDiscrete(
                  [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4])
-
              ))
 
         self.action_space = spaces.MultiDiscrete(
