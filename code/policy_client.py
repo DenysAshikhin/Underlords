@@ -150,10 +150,10 @@ while True:
         # fileWriter.writeLog(replayList)
         # replayList.clear()
 
-        if forced:
-            # print("Updating policy weights")
-            client.update_policy_weights()
-            print('Updated policy weights')
+        # if forced:
+        #     # print("Updating policy weights")
+        #     client.update_policy_weights()
+        #     print('Updated policy weights')
 
         episode_id = client.start_episode(episode_id=None)
 
