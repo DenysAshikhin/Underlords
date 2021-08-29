@@ -166,7 +166,8 @@ while True:
     timeLeft = gameObservation[12]
     # print(f"gamephase: {timeLeft}")
 
-    if (timeLeft < 2) and (env.underlord.itemPicks is None) and (env.underlord.underlordPicks is None):
+    if (timeLeft < 2) and (env.underlord.itemPicks is None) and (env.underlord.underlordPicks is None)\
+            and (env.underlord.round > 5):
         print('inside of policy client combat')
         client.update_policy_weights()
         print('Combat phase updated policy weights')
