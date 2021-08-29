@@ -5702,7 +5702,7 @@
       "movespeed": 310,
       "healthBarOffset": 20
     },
-    "wraith_king": {
+    "skeleton_king": {
       "content_enable_group": "rotation",
       "abilities": [
         "wraith_king_wraithfire_blast",
@@ -11738,7 +11738,7 @@
       "movespeed": 310,
       "healthBarOffset": 20
     },
-    "wraith_king": {
+    "skeleton_king": {
       "content_enable_group": "null",
       "abilities": [
         "wraith_king_wraithfire_blast",
