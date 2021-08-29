@@ -2030,6 +2030,9 @@ class UnderlordInteract():
 
         # if self.combatType != 0 or self.round < 2:
         shopOpen = self.shop.shopOpen(imageCrop=None)
+        # print('is shop open?')
+        # print(shopOpen)
+        # print('---')
         self.gameCrop = None  # reset crop afterwards
 
         if not shopOpen:
@@ -2470,4 +2473,4 @@ def openVision():
 
     root.mainloop()
 
-openVision()
+# openVision()

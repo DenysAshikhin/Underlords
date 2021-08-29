@@ -35,13 +35,11 @@ update = 3600.0
 
 local = 'local'
 
-
 if args.update:
     update = args.update
 
 if args.local:
     local = args.local
-
 
 print(f"Going to update at {update} seconds interval")
 
@@ -50,8 +48,8 @@ client = PolicyClient(address=f"http://{args.ip}:55556", update_interval=None, i
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
-#for testing purposes, we will force the env ceated in policy client+server to be a random one and use our game wrapper
-#for getting the observation/action/reward
+# for testing purposes, we will force the env ceated in policy client+server to be a random one and use our game wrapper
+# for getting the observation/action/reward
 
 local = 'remote'
 forced = True
@@ -64,7 +62,6 @@ if local == 'remote':
     env = UnderlordEnv(root, {'sleep': True})
 else:
     env = client.env
-
 
 print('trying to get initial eid')
 episode_id = client.start_episode()
@@ -118,9 +115,9 @@ while True:
 
     action = client.get_action(episode_id=episode_id, observation=gameObservation)
 
-        #     break
-        # except queue.Empty:
-        #     continue
+    #     break
+    # except queue.Empty:
+    #     continue
 
     if action is None:
         raise ValueError("Policy failed to return an action after 10 tries")
@@ -166,8 +163,10 @@ while True:
         env.underlord.lockIn()
         # print('got past restarting of the new episode, for loop should begin anew!')
 
+    timeLeft = gameObservation[12]
+    # print(f"gamephase: {timeLeft}")
 
-    if env.underlord.getGamePhase() == 'combat':
+    if (timeLeft < 2) and (env.underlord.itemPicks is None) and (env.underlord.underlordPicks is None):
         print('inside of policy client combat')
         client.update_policy_weights()
         print('Combat phase updated policy weights')
