@@ -1980,6 +1980,9 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
+        if self.currentTime > 5:
+            self.smallPunish = True
+
         self.openStore(update=False, skipCheck=False)
 
         mouse1.position = (self.lockInX, self.lockInY)
