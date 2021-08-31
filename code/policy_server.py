@@ -116,7 +116,7 @@ DEFAULT_CONFIG = with_common_config({
         }
     },
     "create_env_on_driver": False,
-    "compress_observations": False
+    "compress_observations": True
 
 })
 
