@@ -115,7 +115,8 @@ DEFAULT_CONFIG = with_common_config({
             "type": "StochasticSampling",
         }
     },
-    "create_env_on_driver": False
+    "create_env_on_driver": False,
+    "compress_observations": False
 
 })
 
