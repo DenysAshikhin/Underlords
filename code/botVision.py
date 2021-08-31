@@ -1791,6 +1791,58 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
+        #We are allowing it to move units from the bench to the bench whenever, but it will be punished a bit
+        #since it doesn't accomplish anything
+        if self.heroToMove:
+            if self.heroToMove.coords[1] == -1:
+                if y == -1:
+                    if x > 7:
+                        self.mediumPunish = True
+                        return -1
+                    elif self.benchHeroes[x] is None:  # Making sure bench spot is open
+                        self.benchHeroes[x] = self.heroToMove
+                        self.resetLabel(self.heroToMove)
+                        self.moveGameHero(self.heroToMove, x, -1)
+                        self.heroToMove.coords = (x, -1)
+                        self.updateHeroLabel(self.heroToMove)
+                        self.heroToMove = None
+                        self.tinyPunish = True
+                        return 1
+
+                    else:
+                        # keeping reference of hero in current spot
+                        tempHero = self.benchHeroes[x]
+                        oldCoords = self.heroToMove.coords
+
+                        # moving selected hero to new spot
+                        self.benchHeroes[x] = self.heroToMove
+                        self.resetLabel(self.heroToMove)
+                        self.moveGameHero(self.heroToMove, x, -1)
+                        self.heroToMove.coords = (x, -1)
+                        self.updateHeroLabel(self.heroToMove)
+                        self.heroToMove = None
+
+                        self.benchHeroes[oldCoords[0]] = tempHero
+                        self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
+                        self.updateHeroLabel(tempHero)
+
+                        # tiny punish to prevent AI from just spamming this
+                        self.tinyPunish = True
+                        return 1
+                        # print("Bench Spot Taken!")
+                        # self.mediumPunish = True
+                        # self.heroToMove = None
+                        # return -1
+        else:  # Meaning a hero has not yet been selected for movement, mark this hero as one to move
+            if y == -1:  # Meaning we are moving onto a bench spot
+                if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
+                    self.heroToMove = self.benchHeroes[x]
+                    return 1
+                else:
+                    print("No Hero On This Bench!")
+                    self.mediumPunish = True
+                    self.heroToMove = None
+                    return -1
         if not self.allowMove():
             self.mediumPunish = True
             print('invalid phase move unit')
