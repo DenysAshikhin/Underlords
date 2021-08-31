@@ -86,8 +86,6 @@ class UnderlordInteract():
         except:
             rect = None
 
-
-
         self.finalPlacement = 0
         self.rerollCost = 2
         self.underlordPicks = None
@@ -101,8 +99,6 @@ class UnderlordInteract():
         self.losses = 0
         self.round = 0
         self.newRoundStarted = False
-
-
 
         self.server = True
 
@@ -157,6 +153,7 @@ class UnderlordInteract():
         self.gamePhase = None
 
         # Punishments to be received at reward calculation if previously did illegal actions.
+        self.tinyPunish = False
         self.smallPunish = False
         self.mediumPunish = False
         self.strongPunish = False
@@ -215,7 +212,7 @@ class UnderlordInteract():
         self.freeRerollAvailable = False
         self.lockedIn = False
         self.leveledUp = False
-
+        self.lastLockedInRound = -1
 
         self.currentTime = 0
         self.elapsedTime = 0
@@ -458,8 +455,6 @@ class UnderlordInteract():
 
         self.shopFrame.pack()
 
-
-
     def resetEnv(self, training=False):
 
         if self.server:
@@ -532,6 +527,12 @@ class UnderlordInteract():
         self.newRoundStarted = False
         self.currentTime = 0
         self.elapsedTime = 0
+        self.lastLockedInRound = -1
+        self.tinyPunish = False
+        self.smallPunish = False
+        self.mediumPunish = False
+        self.bigPunish = False
+
         # self.allowMove = False
         # self.pickTime = False
         # self.pickTime = False
@@ -558,7 +559,6 @@ class UnderlordInteract():
         self.underlord = None
 
         self.gameCrop = None
-
 
         self.checkState = False  # note make sure to False this for production
 
@@ -604,6 +604,7 @@ class UnderlordInteract():
         # print(self.HUD.getClockTimeLeft())
         print(self.getObservation())
         print(self.getGamePhase())
+        print(f"Punishment: {self.getPunishment()}")
 
         # self.itemObjects[0][1] = Item('claymore', (0,1), melee=True)
         # self.itemlabels[0][1].config(text='claymore')
@@ -704,11 +705,11 @@ class UnderlordInteract():
     def proper_round(self, num, dec=0):
         if (str(num).find('.') == -1):
             return float(num)
-        num = str(num)[:str(num).index('.')+dec+2]
-        if num[-1]>='5':
-          a = num[:-2-(not dec)]       # integer part
-          b = int(num[-2-(not dec)])+1 # decimal part
-          return float(a)+b**(-dec+1) if a and b == 10 else float(a+str(b))
+        num = str(num)[:str(num).index('.') + dec + 2]
+        if num[-1] >= '5':
+            a = num[:-2 - (not dec)]  # integer part
+            b = int(num[-2 - (not dec)]) + 1  # decimal part
+            return float(a) + b ** (-dec + 1) if a and b == 10 else float(a + str(b))
         return float(num[:-1])
 
     def getObservation(self):
@@ -757,8 +758,6 @@ class UnderlordInteract():
         # print("--- %s seconds to get past gamephase ---" % (time.time() - overallTime))
 
         # if phase not in ['select', 'choose']:
-
-
 
         # making sure it is not time to pick an underlord or
         if self.itemPicks is None and self.underlordPicks is None:
@@ -1005,7 +1004,7 @@ class UnderlordInteract():
             rerolledItem = 1
 
         if (self.currentTime < 8) or self.pickTime():
-            self.gameCrop = main.imageGrab(w=1152,h=864)
+            self.gameCrop = main.imageGrab(w=1152, h=864)
             self.currentTime = self.HUD.getClockTimeLeft(self.gameCrop)
             self.elapsedTime = time.time()
         else:
@@ -1140,13 +1139,16 @@ class UnderlordInteract():
 
         reward = 0
 
+        if self.tinyPunish:
+            self.tinyPunish = False
+            reward -= firstPlace * 0.0001
         if self.smallPunish:
             self.smallPunish = False
-            reward -= firstPlace * 0.01
-        elif self.mediumPunish:
+            reward -= firstPlace * 0.001
+        if self.mediumPunish:
             self.mediumPunish = False
-            reward -= firstPlace * 0.065
-        elif self.strongPunish:
+            reward -= firstPlace * 0.01
+        if self.strongPunish:
             self.strongPunish = False
             reward -= firstPlace * 0.1
 
@@ -1186,7 +1188,8 @@ class UnderlordInteract():
 
         if self.leveledUp:
 
-            if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level): # don't want to reward for rushing early levels as I think that's just dumb
+            if (self.level > 4) and ((
+                                             self.boardUnitCount() + 1) >= self.level):  # don't want to reward for rushing early levels as I think that's just dumb
 
                 """
                 Reward for getting to level: 5: 12.5
@@ -1201,8 +1204,8 @@ class UnderlordInteract():
                 reward += award
                 self.leveledUp = False
 
-        if earnedMoney != -1:
-            reward += firstPlace * (1 - earnedMoney / 9) * 0.001
+        # if earnedMoney != -1:
+        #     reward += firstPlace * (1 - earnedMoney / 9) * 0.001
 
         # finished = self.finished()
 
@@ -1815,10 +1818,30 @@ class UnderlordInteract():
                     self.heroToMove = None
 
                 else:
-                    print("Bench Spot Taken!")
-                    self.mediumPunish = True
+                    # keeping reference of hero in current spot
+                    tempHero = self.benchHeroes[x]
+                    oldCoords = self.heroToMove.coords
+
+
+                    # moving selected hero to new spot
+                    self.benchHeroes[x] = self.heroToMove
+                    self.resetLabel(self.heroToMove)
+                    self.moveGameHero(self.heroToMove, x, -1)
+                    self.heroToMove.coords = (x, -1)
+                    self.updateHeroLabel(self.heroToMove)
                     self.heroToMove = None
-                    return -1
+
+
+                    self.benchHeroes[oldCoords[0]] = tempHero
+                    self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
+                    self.updateHeroLabel(tempHero)
+
+                    #tiny punish to prevent AI from just spamming this
+                    self.tinyPunish = True
+                    # print("Bench Spot Taken!")
+                    # self.mediumPunish = True
+                    # self.heroToMove = None
+                    # return -1
 
             else:  # Meaning we are moving onto a board spot
 
@@ -1937,15 +1960,22 @@ class UnderlordInteract():
 
     def getPunishment(self):
 
-        if self.smalLPunish:
+        sumTotal = 0
+
+        if self.tinyPunish:
+            self.tinyPunish = False
+            sumTotal += 0.1
+        if self.smallPunish:
             self.smallPunish = False
-            return 1
-        elif self.mediumPunish:
+            sumTotal += 1
+        if self.mediumPunish:
             self.mediumPunish = False
-            return 10
-        elif self.strongPunish:
+            sumTotal += 10
+        if self.strongPunish:
             self.strongPunish = False
-            return 100
+            sumTotal += 100
+
+        return sumTotal
 
     def clickUp(self):
 
@@ -1984,8 +2014,11 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        if self.currentTime > 5:
-            self.smallPunish = True
+        # punishing for locking (not unlocking) multiple times in the same round
+        if self.round == self.lastLockedInRound and not self.lockedIn:
+            self.tinyPunish = True
+
+        self.lastLockedInRound = self.round
 
         self.openStore(update=False, skipCheck=False)
 
@@ -2144,7 +2177,7 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     return -1
 
-        self.updateWindowCoords() # Need to leave this to get proper item coords
+        self.updateWindowCoords()  # Need to leave this to get proper item coords
 
         originalHero = self.itemToMove.hero
 
@@ -2464,7 +2497,6 @@ class UnderlordInteract():
                 return -1
 
         return tieredUp
-
 
 
 def openVision():
