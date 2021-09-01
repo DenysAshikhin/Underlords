@@ -64,6 +64,7 @@ class UnderlordEnv(ExternalEnv):
              spaces.Discrete(99),  # remaining EXP to level up
              spaces.Discrete(50),  # round
              spaces.Discrete(2),  # locked in
+             spaces.Discrete(2),  # punish for locking in this round
              spaces.Discrete(6),  # gamePhase *
              spaces.MultiDiscrete([250, 3]),  # heroToMove: heroLocalID, isUnderlord
              spaces.Discrete(250),  # itemToMove: localID*,

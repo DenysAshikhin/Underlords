@@ -1071,9 +1071,13 @@ class UnderlordInteract():
         if finalTime < 0:
             finalTime = 0
 
+        punishLockIn = 0
+        if self.round == self.lastLockedInRound:
+            punishLockIn = 1
+
         obs = (
             self.finalPlacement, self.health, self.gold, self.level, self.remainingEXP, self.round, lockedIn,
-            self.combatType,
+            punishLockIn, self.combatType,
             heroToMove, itemToMove, self.rerollCost, rerolledItem, finalTime,
             # store heros
             shopHeros,
@@ -1188,8 +1192,7 @@ class UnderlordInteract():
 
         if self.leveledUp:
 
-            if (self.level > 4) and ((
-                                             self.boardUnitCount() + 1) >= self.level):  # don't want to reward for rushing early levels as I think that's just dumb
+            if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level):  # don't want to reward for rushing early levels as I think that's just dumb
 
                 """
                 Reward for getting to level: 5: 12.5
@@ -2068,7 +2071,8 @@ class UnderlordInteract():
 
         # punishing for locking (not unlocking) multiple times in the same round
         if self.round == self.lastLockedInRound and not self.lockedIn:
-            self.tinyPunish = True
+            self.smallPunish = True
+            print(f"Punishing repeated lock in")
 
         self.lastLockedInRound = self.round
 
