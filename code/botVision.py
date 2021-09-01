@@ -2071,7 +2071,7 @@ class UnderlordInteract():
 
         # punishing for locking (not unlocking) multiple times in the same round
         if self.round == self.lastLockedInRound and not self.lockedIn:
-            self.smallPunish = True
+            self.mediumPunish = True
             print(f"Punishing repeated lock in")
 
         self.lastLockedInRound = self.round
