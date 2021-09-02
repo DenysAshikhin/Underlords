@@ -52,9 +52,9 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [16, 16],
+        "fcnet_hiddens": [20, 20],
         "use_lstm": True,
-        "max_seq_len": 4,
+        "max_seq_len": 3,
     },
     # Coefficient of the entropy regularizer.
     "entropy_coeff": 0.0,
@@ -64,7 +64,7 @@ DEFAULT_CONFIG = with_common_config({
     "clip_param": 0.3,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
-    "vf_clip_param": 4000000.0,
+    "vf_clip_param": 100000.0,
     # If specified, clip the global norm of gradients by this amount.
     "grad_clip": None,
     # Target value for KL divergence.
@@ -98,7 +98,7 @@ DEFAULT_CONFIG = with_common_config({
         "type": "Curiosity",  # <- Use the Curiosity module for exploring.
         "eta": 1.0,  # Weight for intrinsic rewards before being added to extrinsic ones.
         "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
-        "feature_dim": 128,  # Dimensionality of the generated feature vectors.
+        "feature_dim": 256,  # Dimensionality of the generated feature vectors.
         # Setup of the feature net (used to encode observations into feature (latent) vectors).
         "feature_net_config": {
             "fcnet_hiddens": [],
