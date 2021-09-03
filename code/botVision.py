@@ -1744,6 +1744,11 @@ class UnderlordInteract():
             self.resetLabel(self.benchHeroes[x])
             self.heroToMove = None
         else:
+
+            if self.boardHeroes[x][y] is None:
+                self.mediumPunish = True
+                return -1
+
             mouse1.position = (self.boardX + (self.boardXOffset * y), self.boardY + (self.boardYOffset * x))
             if self.boardHeroes[x][y].item is not None:
                 self.boardHeroes[x][y].item.hero = None
