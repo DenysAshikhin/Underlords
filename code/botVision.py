@@ -1143,18 +1143,18 @@ class UnderlordInteract():
 
         reward = 0
 
-        if self.tinyPunish:
-            self.tinyPunish = False
-            reward -= firstPlace * 0.0001
-        if self.smallPunish:
-            self.smallPunish = False
-            reward -= firstPlace * 0.001
-        if self.mediumPunish:
-            self.mediumPunish = False
-            reward -= firstPlace * 0.01
-        if self.strongPunish:
-            self.strongPunish = False
-            reward -= firstPlace * 0.1
+        # if self.tinyPunish:
+        #     self.tinyPunish = False
+        #     reward -= firstPlace * 0.0001
+        # if self.smallPunish:
+        #     self.smallPunish = False
+        #     reward -= firstPlace * 0.001
+        # if self.mediumPunish:
+        #     self.mediumPunish = False
+        #     reward -= firstPlace * 0.01
+        # if self.strongPunish:
+        #     self.strongPunish = False
+        #     reward -= firstPlace * 0.1
 
         # for i in range(8):
         #     if self.benchHeroes[i] is not None:
@@ -1192,7 +1192,8 @@ class UnderlordInteract():
 
         if self.leveledUp:
 
-            if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level):  # don't want to reward for rushing early levels as I think that's just dumb
+            if (self.level > 4) and ((
+                                             self.boardUnitCount() + 1) >= self.level):  # don't want to reward for rushing early levels as I think that's just dumb
 
                 """
                 Reward for getting to level: 5: 12.5
@@ -1799,8 +1800,8 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        #We are allowing it to move units from the bench to the bench whenever, but it will be punished a bit
-        #since it doesn't accomplish anything
+        # We are allowing it to move units from the bench to the bench whenever, but it will be punished a bit
+        # since it doesn't accomplish anything
         if self.heroToMove:
             if self.heroToMove.coords[1] == -1:
                 if y == -1:
@@ -1820,7 +1821,7 @@ class UnderlordInteract():
                     else:
                         # keeping reference of hero in current spot
                         tempHero = self.benchHeroes[x]
-                        oldCoords = self.heroToMove.coords
+                        oldCoords = self.benchHeroes[x].coords
 
                         # moving selected hero to new spot
                         self.benchHeroes[x] = self.heroToMove
@@ -1843,6 +1844,9 @@ class UnderlordInteract():
                         # return -1
         else:  # Meaning a hero has not yet been selected for movement, mark this hero as one to move
             if y == -1:  # Meaning we are moving onto a bench spot
+                if x > 7:
+                    self.mediumPunish = True
+                    return -1
                 if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
                     self.heroToMove = self.benchHeroes[x]
                     return 1
@@ -1880,8 +1884,7 @@ class UnderlordInteract():
                 else:
                     # keeping reference of hero in current spot
                     tempHero = self.benchHeroes[x]
-                    oldCoords = self.heroToMove.coords
-
+                    oldCoords = self.benchHeroes[x].coords
 
                     # moving selected hero to new spot
                     self.benchHeroes[x] = self.heroToMove
@@ -1891,12 +1894,11 @@ class UnderlordInteract():
                     self.updateHeroLabel(self.heroToMove)
                     self.heroToMove = None
 
-
                     self.benchHeroes[oldCoords[0]] = tempHero
                     self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
                     self.updateHeroLabel(tempHero)
 
-                    #tiny punish to prevent AI from just spamming this
+                    # tiny punish to prevent AI from just spamming this
                     self.tinyPunish = True
                     # print("Bench Spot Taken!")
                     # self.mediumPunish = True
