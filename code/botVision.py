@@ -1996,11 +1996,11 @@ class UnderlordInteract():
             mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
         # print(f"Moving to board {mouse1.position}")
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime * 2.5)
 
         mouse1.press(Button.left)
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime * 2.5)
 
         if newY == -1:  # Moving onto the bench
             mouse1.position = (self.benchX + (self.benchXOffset * newX), self.benchY)
@@ -2009,9 +2009,9 @@ class UnderlordInteract():
         else:
             mouse1.position = (self.boardX + (self.boardXOffset * newY), self.boardY + (self.boardYOffset * newX))
         # print(f"Moving to board {mouse1.position}")
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime * 2.5)
         mouse1.release(Button.left)
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime * 2.5)
 
     def getPunishment(self):
 

@@ -192,6 +192,8 @@ trainer = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
 
 checkpoint_path = "checkpointsA/"
 
+print(args.checkpoint)
+
 if args.checkpoint:
     # Attempt to restore from checkpoint, if possible.
     if os.path.exists(args.checkpoint):
