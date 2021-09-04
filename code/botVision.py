@@ -157,6 +157,7 @@ class UnderlordInteract():
         self.smallPunish = False
         self.mediumPunish = False
         self.strongPunish = False
+        self.lockInPunish = False
         self.lost = False
 
         self.localHeroID = 1
@@ -531,6 +532,8 @@ class UnderlordInteract():
         self.tinyPunish = False
         self.smallPunish = False
         self.mediumPunish = False
+        self.strongPunish = False
+        self.lockInPunish = False
         self.bigPunish = False
 
         # self.allowMove = False
@@ -1143,6 +1146,10 @@ class UnderlordInteract():
 
         reward = 0
 
+        if self.lockInPunish:
+            self.lockInPunish = False
+            reward -= firstPlace * 0.01
+
         # if self.tinyPunish:
         #     self.tinyPunish = False
         #     reward -= firstPlace * 0.0001
@@ -1232,7 +1239,7 @@ class UnderlordInteract():
             elif self.finalPlacement == 8:
                 reward += firstPlace * 0
 
-            if self.round < 11:
+            if self.round < 10:
                 reward += firstPlace * 0.01 * self.round
             elif self.round < 16:
                 reward += firstPlace * 0.02 * self.round
@@ -2080,6 +2087,7 @@ class UnderlordInteract():
         # punishing for locking (not unlocking) multiple times in the same round
         if self.round == self.lastLockedInRound and not self.lockedIn:
             self.strongPunish = True
+            self.lockInPunish = True
             print(f"Punishing repeated lock in")
 
         self.lastLockedInRound = self.round
