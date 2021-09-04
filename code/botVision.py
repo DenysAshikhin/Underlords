@@ -251,7 +251,7 @@ class UnderlordInteract():
         # self.boardHeroes[:] = None
         self.boardHeroes = self.boardHeroes.tolist()
 
-        self.levelThresh = 3  # level threshold for tiering up a unit
+        self.levelThresh = 2  # level threshold for tiering up a unit
 
         self.hudLabel = None
         self.toBuy = None
@@ -569,7 +569,7 @@ class UnderlordInteract():
         # self.boardHeroes[:] = None
         self.boardHeroes = self.boardHeroes.tolist()
 
-        self.levelThresh = 3  # level threshold for tiering up a unit
+        self.levelThresh = 2  # level threshold for tiering up a unit
 
         self.toBuy = None
         # tempImage = ImageTk.PhotoImage(shopImages[0])
@@ -1864,10 +1864,10 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     self.heroToMove = None
                     return -1
-        if not self.allowMove():
-            self.mediumPunish = True
-            print('invalid phase move unit')
-            return -1
+        # if not self.allowMove():
+        #     self.mediumPunish = True
+        #     print('invalid phase move unit')
+        #     return -1
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
