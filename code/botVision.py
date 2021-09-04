@@ -2426,6 +2426,17 @@ class UnderlordInteract():
                     preventMana=preventMana,
                     localID=localID)
 
+    def findOriginalHero(self, heros):
+
+        original = heros[0]
+
+        for hero in heros:
+            if hero.localID < original.localID:
+                original = hero
+
+        return original
+
+
     def boardLevelUp(self, idx):
 
         # Adding +1 to represent the shop unit coming in
@@ -2452,27 +2463,31 @@ class UnderlordInteract():
         if board["tierOne"] == self.levelThresh:  # If there is enough tier ones to make a tier 2,
             # first instance hero levels up, the rest should be removed from reference and update labels?
 
-            board["tierOneHeroes"][0].tier += 1
+            originalHero = self.findOriginalHero(board["tierOneHeroes"])
 
-            board["tierTwoHeroes"].append(board["tierOneHeroes"][0])
-            self.updateHeroLabel(board["tierOneHeroes"][0])  # Updating label to for color to indicate tier
+            originalHero.tier += 1
+
+            board["tierTwoHeroes"].append(originalHero)
+            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
             board["tierTwo"] += 1
             board["tieredUp2"] = True
 
-            for x in range(1, len(board["tierOneHeroes"])):
-                specificHero = board["tierOneHeroes"][x]
-                self.resetLabel(specificHero)
+            for hero in board["tierOneHeroes"]:
+                if hero.localID != originalHero.localID:
+                    self.resetLabel(hero)
 
         if board["tierTwo"] == self.levelThresh:  # If there is enough tier ones to make a tier 2,
             # first instance hero levels up, the rest should be removed from reference and update labels?
 
-            board["tierTwoHeroes"][0].tier += 1
-            self.updateHeroLabel(board["tierTwoHeroes"][0])  # Updating label to for color to indicate tier
+            originalHero = self.findOriginalHero(board["tierTwoHeroes"])
+
+            originalHero.tier += 1
+            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
             board["tieredUp3"] = True
 
-            for x in range(1, len(board["tierTwoHeroes"])):
-                specificHero = board["tierTwoHeroes"][x]
-                self.resetLabel(specificHero)
+            for hero in board["tierOneHeroes"]:
+                if hero.localID != originalHero.localID:
+                    self.resetLabel(hero)
 
         return board
 
@@ -2528,33 +2543,33 @@ class UnderlordInteract():
         if bench["tierOne"] == self.levelThresh:  # If there is enough tier ones to make a tier 2,
             # first instance hero levels up, the rest should be removed from reference and update labels?
 
-            bench["tierOneHeroes"][0].tier += 1
+            originalHero = self.findOriginalHero(bench["tierOneHeroes"])
 
-            # if bench["tierOneHeroes"][0].coords[1] == -1:
-            #     self.benchLabels[bench["tierOneHeroes"][0].coords[0]].config(bg="blue")
-            self.updateHeroLabel(bench["tierOneHeroes"][0])  # Updating label to for color to indicate tier
+            originalHero.tier += 1
 
-            bench["tierTwoHeroes"].append(bench["tierOneHeroes"][0])
+            bench["tierTwoHeroes"].append(originalHero)
+            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
             bench["tierTwo"] += 1
-            tieredUp = 10
+            bench["tieredUp2"] = True
 
-            for x in range(1, len(bench["tierOneHeroes"])):
-                specificHero = bench["tierOneHeroes"][x]
-                self.resetLabel(specificHero)
+            for hero in bench["tierOneHeroes"]:
+                if hero.localID != originalHero.localID:
+                    self.resetLabel(hero)
+
+
+
 
         if bench["tierTwo"] == self.levelThresh:
 
-            bench["tierTwoHeroes"][0].tier += 1
+            originalHero = self.findOriginalHero(bench["tierTwoHeroes"])
 
-            # if bench["tierTwoHeroes"][0].coords[1] == -1:
-            #     self.benchLabels[bench["tierTwoHeroes"][0].coords[0]].config(bg="yellow")
-            self.updateHeroLabel(bench["tierTwoHeroes"][0])  # Updating label to for color to indicate tier
+            originalHero.tier += 1
+            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
+            bench["tieredUp3"] = True
 
-            tieredUp = 11
-
-            for x in range(1, len(bench["tierTwoHeroes"])):
-                specificHero = bench["tierTwoHeroes"][x]
-                self.resetLabel(specificHero)
+            for hero in bench["tierOneHeroes"]:
+                if hero.localID != originalHero.localID:
+                    self.resetLabel(hero)
 
         if tieredUp != 10:
             freeSpace = False
