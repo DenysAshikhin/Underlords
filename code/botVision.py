@@ -251,7 +251,7 @@ class UnderlordInteract():
         # self.boardHeroes[:] = None
         self.boardHeroes = self.boardHeroes.tolist()
 
-        self.levelThresh = 2  # level threshold for tiering up a unit
+        self.levelThresh = 3  # level threshold for tiering up a unit
 
         self.hudLabel = None
         self.toBuy = None
@@ -569,7 +569,7 @@ class UnderlordInteract():
         # self.boardHeroes[:] = None
         self.boardHeroes = self.boardHeroes.tolist()
 
-        self.levelThresh = 2  # level threshold for tiering up a unit
+        self.levelThresh = 3  # level threshold for tiering up a unit
 
         self.toBuy = None
         # tempImage = ImageTk.PhotoImage(shopImages[0])
@@ -2387,11 +2387,11 @@ class UnderlordInteract():
                 self.benchLabels[x].config(text=f"{self.benchHeroes[x].name}",
                                            image=self.benchHeroes[x].image)
 
-                mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
-                time.sleep(self.mouseSleepTime)
-                mouse1.click(Button.left, 1)
-
-                time.sleep(self.mouseSleepTime)
+                # mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
+                # time.sleep(self.mouseSleepTime)
+                # mouse1.click(Button.left, 1)
+                #
+                # time.sleep(self.mouseSleepTime)
 
                 # self.closeStore(skipCheck=True)
                 return
