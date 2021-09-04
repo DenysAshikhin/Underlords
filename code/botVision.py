@@ -1864,10 +1864,10 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     self.heroToMove = None
                     return -1
-        # if not self.allowMove():
-        #     self.mediumPunish = True
-        #     print('invalid phase move unit')
-        #     return -1
+        if not self.allowMove():
+            self.mediumPunish = True
+            print('invalid phase move unit')
+            return -1
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
@@ -2387,13 +2387,13 @@ class UnderlordInteract():
                 self.benchLabels[x].config(text=f"{self.benchHeroes[x].name}",
                                            image=self.benchHeroes[x].image)
 
-                # mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
-                # time.sleep(self.mouseSleepTime)
-                # mouse1.click(Button.left, 1)
-                #
-                # time.sleep(self.mouseSleepTime)
+                mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
+                time.sleep(self.mouseSleepTime)
+                mouse1.click(Button.left, 1)
 
-                # self.closeStore(skipCheck=True)
+                time.sleep(self.mouseSleepTime)
+
+                self.closeStore(skipCheck=True)
                 return
 
         #Punishment for buying when no space on bench + no tier up possible goes here
@@ -2512,7 +2512,7 @@ class UnderlordInteract():
             self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
             units["tieredUp3"] = True
 
-            for hero in units["tierOneHeroes"]:
+            for hero in units["tierTwoHeroes"]:
                 if hero.localID != originalHero.localID:
                     self.resetLabel(hero)
 
@@ -2550,4 +2550,4 @@ def openVision():
 
     root.mainloop()
 
-openVision()
+# openVision()
