@@ -1821,7 +1821,7 @@ class UnderlordInteract():
                     else:
                         # keeping reference of hero in current spot
                         tempHero = self.benchHeroes[x]
-                        oldCoords = self.benchHeroes[x].coords
+                        oldCoords = self.heroToMove.coords
 
                         # moving selected hero to new spot
                         self.benchHeroes[x] = self.heroToMove
@@ -1831,7 +1831,9 @@ class UnderlordInteract():
                         self.updateHeroLabel(self.heroToMove)
                         self.heroToMove = None
 
+                        print(oldCoords[0])
                         self.benchHeroes[oldCoords[0]] = tempHero
+                        print(self.benchHeroes[oldCoords[0]])
                         self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
                         self.updateHeroLabel(tempHero)
 
@@ -1884,7 +1886,7 @@ class UnderlordInteract():
                 else:
                     # keeping reference of hero in current spot
                     tempHero = self.benchHeroes[x]
-                    oldCoords = self.benchHeroes[x].coords
+                    oldCoords = self.heroToMove.coords
 
                     # moving selected hero to new spot
                     self.benchHeroes[x] = self.heroToMove
@@ -1894,12 +1896,11 @@ class UnderlordInteract():
                     self.updateHeroLabel(self.heroToMove)
                     self.heroToMove = None
 
+                    print(oldCoords[0])
                     self.benchHeroes[oldCoords[0]] = tempHero
+                    print(self.benchHeroes[oldCoords[0]])
                     self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
                     self.updateHeroLabel(tempHero)
-
-                    # tiny punish to prevent AI from just spamming this
-                    self.tinyPunish = True
                     # print("Bench Spot Taken!")
                     # self.mediumPunish = True
                     # self.heroToMove = None
