@@ -1864,10 +1864,10 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     self.heroToMove = None
                     return -1
-        if not self.allowMove():
-            self.mediumPunish = True
-            print('invalid phase move unit')
-            return -1
+        # if not self.allowMove():
+        #     self.mediumPunish = True
+        #     print('invalid phase move unit')
+        #     return -1
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
@@ -1923,6 +1923,7 @@ class UnderlordInteract():
                 if self.boardUnitCount() >= self.level:  # Meaning we have no space on the board for more heroes
                     self.mediumPunish = True
                     self.heroToMove = None
+                    print('Not enough space on the board')
                     return -1
 
                 if self.boardHeroes[x][y] is None:  # Making sure board spot is open
@@ -2338,13 +2339,13 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
-        # purchase history is never used, probably for xnull, which is already implemented so should never be raised
-        if idx in self.purchaseHistory:  # Note - note - still need to implement the validation logic at some point
-            print("Invalid attempt to buy a unit!")
-            raise RuntimeError("if idx in ---- find this error and figure out why this got triggered when it shouldn't")
-            return -1
+        # # purchase history is never used, probably for xnull, which is already implemented so should never be raised
+        # if idx in self.purchaseHistory:  # Note - note - still need to implement the validation logic at some point
+        #     print("Invalid attempt to buy a unit!")
+        #     raise RuntimeError("if idx in ---- find this error and figure out why this got triggered when it shouldn't")
+        #     return -1
 
-        result = self.benchLevelUp(idx)
+        result = self.handleLevelUp(idx)
 
         if result == -1:  # not hopefully this doesn't break things
             # self.closeStore()
@@ -2395,6 +2396,8 @@ class UnderlordInteract():
                 # self.closeStore(skipCheck=True)
                 return
 
+        #Punishment for buying when no space on bench + no tier up possible goes here
+
     def createHero(self, heroName, uniqueID, x, y, localID):
 
         fullHero = self.underlords.underlordData[heroName]
@@ -2436,15 +2439,28 @@ class UnderlordInteract():
 
         return original
 
+    def handleLevelUp(self, idx):
 
-    def boardLevelUp(self, idx):
-
-        # Adding +1 to represent the shop unit coming in
-        board = {"tierTwo": 0, "tierOne": 0 + 1, "tierTwoHeroes": [], "tierOneHeroes": [], "tieredUp2": False,
-                 "tieredUp3": False}
-
+        tieredUp = False
         heroData = self.underlords.underlordDataID[self.shopUnits[idx]]
         name = heroData['texturename']
+
+        if name == 'xnull':
+            self.mediumPunish = True
+            print("Can't buy a null!")
+            return -1
+
+        if self.underlords.underlordData[name]['goldCost'] > self.gold:
+            self.mediumPunish = True
+            print('Not enough money to buy!')
+            return -1
+
+        print(f"bought: {name}")
+
+        # Adding +1 to represent the shop unit coming in
+        units = {"tierTwo": 0, "tierOne": 0 + 1, "tierTwoHeroes": [], "tierOneHeroes": [], "tieredUp2": False,
+                 "tieredUp3": False}
+
 
         for i in range(4):
             for j in range(8):
@@ -2453,127 +2469,62 @@ class UnderlordInteract():
                     if self.boardHeroes[i][j].name == name:
 
                         if self.boardHeroes[i][j].tier == 1:
-                            board["tierOne"] += 1
-                            board["tierOneHeroes"].append(self.boardHeroes[i][j])
+                            units["tierOne"] += 1
+                            units["tierOneHeroes"].append(self.boardHeroes[i][j])
 
                         elif self.boardHeroes[i][j].tier == 2:
-                            board["tierTwo"] += 1
-                            board["tierTwoHeroes"].append(self.boardHeroes[i][j])
-
-        if board["tierOne"] == self.levelThresh:  # If there is enough tier ones to make a tier 2,
-            # first instance hero levels up, the rest should be removed from reference and update labels?
-
-            originalHero = self.findOriginalHero(board["tierOneHeroes"])
-
-            originalHero.tier += 1
-
-            board["tierTwoHeroes"].append(originalHero)
-            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
-            board["tierTwo"] += 1
-            board["tieredUp2"] = True
-
-            for hero in board["tierOneHeroes"]:
-                if hero.localID != originalHero.localID:
-                    self.resetLabel(hero)
-
-        if board["tierTwo"] == self.levelThresh:  # If there is enough tier ones to make a tier 2,
-            # first instance hero levels up, the rest should be removed from reference and update labels?
-
-            originalHero = self.findOriginalHero(board["tierTwoHeroes"])
-
-            originalHero.tier += 1
-            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
-            board["tieredUp3"] = True
-
-            for hero in board["tierOneHeroes"]:
-                if hero.localID != originalHero.localID:
-                    self.resetLabel(hero)
-
-        return board
-
-    def benchLevelUp(self, idx):
-
-        tieredUp = False
-        heroData = self.underlords.underlordDataID[self.shopUnits[idx]]
-        name = heroData['texturename']
-
-        if name == 'xnull':
-            self.mediumPunish = True
-            print('fuck 1')
-            return -1
-        else:
-            print(f"bought: {name}")
-
-        if self.underlords.underlordData[name]['goldCost'] > self.gold:
-            self.mediumPunish = True
-            print('fuck 2')
-            return -1
-
-        boardScan = self.boardLevelUp(idx)
-
-        # if statesList[idx] == len(classes) - 1:
-        #     raise RuntimeError("Wtf is this even. Note to come back to later?")
-        #     return -1
-
-        if boardScan["tieredUp2"] == True:
-            print('fuck 3')
-            return 10  # The shop unit will be consumed to tier up the units strictly on the board, bench is
-            # untouched - NOTE - note - make sure bench labels are not updated as a result of this in future
-            # make seperate function to update board labels!
-        if boardScan["tieredUp3"] == True:
-            return 11
-
-        bench = {"tierTwo": boardScan["tierTwo"], "tierOne": boardScan["tierOne"],
-                 "tierTwoHeroes": boardScan["tierTwoHeroes"],
-                 "tierOneHeroes": boardScan["tierOneHeroes"]}
+                            units["tierTwo"] += 1
+                            units["tierTwoHeroes"].append(self.boardHeroes[i][j])
 
         for i in range(8):
-
             if self.benchHeroes[i]:
                 if self.benchHeroes[i].name == name:
 
                     if self.benchHeroes[i].tier == 1:
-                        bench["tierOne"] += 1
-                        bench["tierOneHeroes"].append(self.benchHeroes[i])
+                        units["tierOne"] += 1
+                        units["tierOneHeroes"].append(self.benchHeroes[i])
 
                     elif self.benchHeroes[i].tier == 2:
-                        bench["tierTwo"] += 1
-                        bench["tierTwoHeroes"].append(self.benchHeroes[i])
+                        units["tierTwo"] += 1
+                        units["tierTwoHeroes"].append(self.benchHeroes[i])
 
-        if bench["tierOne"] == self.levelThresh:  # If there is enough tier ones to make a tier 2,
+        if units["tierOne"] == self.levelThresh:  # If there is enough tier ones to make a tier 2,
             # first instance hero levels up, the rest should be removed from reference and update labels?
 
-            originalHero = self.findOriginalHero(bench["tierOneHeroes"])
+            originalHero = self.findOriginalHero(units["tierOneHeroes"])
 
             originalHero.tier += 1
 
-            bench["tierTwoHeroes"].append(originalHero)
+            units["tierTwoHeroes"].append(originalHero)
             self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
-            bench["tierTwo"] += 1
-            bench["tieredUp2"] = True
+            units["tierTwo"] += 1
+            units["tieredUp2"] = True
 
-            for hero in bench["tierOneHeroes"]:
+            for hero in units["tierOneHeroes"]:
+                if hero.localID != originalHero.localID:
+                    self.resetLabel(hero)
+
+        if units["tierTwo"] == self.levelThresh:
+
+            originalHero = self.findOriginalHero(units["tierTwoHeroes"])
+
+            originalHero.tier += 1
+            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
+            units["tieredUp3"] = True
+
+            for hero in units["tierOneHeroes"]:
                 if hero.localID != originalHero.localID:
                     self.resetLabel(hero)
 
 
+        #if we tiered up, return that
+        if units["tieredUp3"] == True: #A tier 3 implies a tier 2 was upgraded, so this is returned first
+            return 11
+        elif units["tieredUp2"] == True:
+            return 10
+        else:#If we did not tier up, check that there is space on the bench for the unit
 
-
-        if bench["tierTwo"] == self.levelThresh:
-
-            originalHero = self.findOriginalHero(bench["tierTwoHeroes"])
-
-            originalHero.tier += 1
-            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
-            bench["tieredUp3"] = True
-
-            for hero in bench["tierOneHeroes"]:
-                if hero.localID != originalHero.localID:
-                    self.resetLabel(hero)
-
-        if tieredUp != 10:
             freeSpace = False
-
             for i in self.benchHeroes:
                 if i is None:
                     freeSpace = True
