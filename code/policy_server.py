@@ -32,7 +32,7 @@ DEFAULT_CONFIG = with_common_config({
     "rollout_fragment_length": 20,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 4500,
+    "train_batch_size": 5000,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
     "sgd_minibatch_size": 100,
@@ -52,7 +52,7 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [20, 20],
+        "fcnet_hiddens": [16, 16],
         "use_lstm": False
         # "max_seq_len": 3,
     },
