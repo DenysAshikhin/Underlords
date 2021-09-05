@@ -32,7 +32,7 @@ DEFAULT_CONFIG = with_common_config({
     "rollout_fragment_length": 20,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 4000,
+    "train_batch_size": 6000,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
     "sgd_minibatch_size": 100,
@@ -53,8 +53,8 @@ DEFAULT_CONFIG = with_common_config({
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
         "fcnet_hiddens": [20, 20],
-        "use_lstm": True,
-        "max_seq_len": 3,
+        "use_lstm": False
+        # "max_seq_len": 3,
     },
     # Coefficient of the entropy regularizer.
     "entropy_coeff": 0.0,
@@ -70,7 +70,7 @@ DEFAULT_CONFIG = with_common_config({
     # Target value for KL divergence.
     "kl_target": 0.01,
     # Whether to rollout "complete_episodes" or "truncate_episodes".
-    "batch_mode": "truncate_episodes",
+    "batch_mode": "complete_episodes",
     # Which observation filter to apply to the observation.
     "observation_filter": "NoFilter",
     # Uses the sync samples optimizer instead of the multi-gpu one. This is
@@ -115,7 +115,9 @@ DEFAULT_CONFIG = with_common_config({
             "type": "StochasticSampling",
         }
     },
-    "create_env_on_driver": False
+    "create_env_on_driver": False,
+    "log_sys_usage": False,
+    "normalize_actions": False
     # "compress_observations": True
 
 })
