@@ -184,7 +184,7 @@ while True:
         client.update_policy_weights()
         print('Combat phase updated policy weights')
         update = False
-        raise Exception("Policy updated!")
+        # raise Exception("Policy updated!")
 
     if timeLeft > 2:
         update = True
