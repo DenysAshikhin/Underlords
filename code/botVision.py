@@ -1790,6 +1790,23 @@ class UnderlordInteract():
         numHeroes = 0
         labelHeroes = 0
 
+        if not check:
+            for i in range(4):
+                for j in range(8):
+                    texty = self.boardLabels[i][j]['text']
+                    if texty != "":
+                        index = texty.find('-')
+                        name = texty
+
+                        if index != -1:
+                            name = texty[:index]
+
+                        if self.boardheroes[i][j].name != name:
+                            print(self.boardHeroes[i][j])
+                            print(texty)
+                            print(f"{i}-{j}")
+                            raise Exception('boardunit count error 33')
+
         for i in range(4):
             for j in range(8):
                 if self.boardHeroes[i][j] is not None:
