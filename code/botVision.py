@@ -1795,6 +1795,12 @@ class UnderlordInteract():
                         numHeroes += 1
                 texty = self.boardLabels[i][j]['text']
                 if texty != "":
+                    if self.boardHeroes[i][j] is None:
+                        print(self.boardLabels[i][j]['text'])
+                        print('---')
+                        print(texty)
+                        print(f"{i}-{j}")
+                        raise Exception('boardunit count error 1')
                     if not self.boardHeroes[i][j].underlord:
                         labelHeroes += 1
 
