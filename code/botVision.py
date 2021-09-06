@@ -608,6 +608,7 @@ class UnderlordInteract():
         print(self.getObservation())
         print(self.getGamePhase())
         print(f"Punishment: {self.getPunishment()}")
+        self.boardUnitCount()
 
         # self.itemObjects[0][1] = Item('claymore', (0,1), melee=True)
         # self.itemlabels[0][1].config(text='claymore')
@@ -1785,12 +1786,21 @@ class UnderlordInteract():
     def boardUnitCount(self):
 
         numHeroes = 0
+        labelHeroes = 0
 
         for i in range(4):
             for j in range(8):
                 if self.boardHeroes[i][j] is not None:
                     if not self.boardHeroes[i][j].underlord:
                         numHeroes += 1
+                texty = self.boardLabels[i][j]['text']
+                if texty != "":
+                    if not self.boardHeroes[i][j].underlord:
+                        labelHeroes += 1
+
+        if labelHeroes != numHeroes:
+            print("boardUnitCount does not line up!")
+            raise Exception('boardUnitCount does not line up!')
 
         return numHeroes
 
@@ -2434,7 +2444,12 @@ class UnderlordInteract():
         original = heros[0]
 
         for hero in heros:
-            if hero.localID < original.localID:
+            #If we are debating between a unit on the bench (y=-1) or board, board takes precedence
+            if hero.coords[1] != -1 and original.coords[1] == -1:
+                original = hero
+            elif hero.coords[1] == -1 and original.coords[1] != -1:
+                continue
+            elif hero.localID < original.localID:
                 original = hero
 
         return original
