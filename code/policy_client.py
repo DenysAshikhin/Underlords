@@ -44,7 +44,7 @@ if args.local:
 print(f"Going to update at {update} seconds interval")
 
 print('trying to launch policy client')
-client = PolicyClient(address=f"http://{args.ip}:55556", update_interval=None, inference_mode=local)
+client = PolicyClient(address=f"http://{args.ip}:55556", update_interval=60, inference_mode=local)
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
