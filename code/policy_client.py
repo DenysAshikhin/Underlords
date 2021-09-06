@@ -178,7 +178,7 @@ while True:
     # print(env.underlord.round > 2)
     # print(update)
 
-    if (timeLeft < 13) and (env.underlord.itemPicks is None) and (env.underlord.underlordPicks is None)\
+    if (timeLeft < 5) and (env.underlord.itemPicks is None) and (env.underlord.underlordPicks is None)\
             and (env.underlord.round > 2) and update:
         print('inside of policy client combat')
         client.update_policy_weights()
@@ -186,7 +186,7 @@ while True:
         update = False
         # raise Exception("Policy updated!")
 
-    if timeLeft > 2:
+    if timeLeft > 5:
         print('reseting the update')
         update = True
 
