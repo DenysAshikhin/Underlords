@@ -171,14 +171,14 @@ while True:
         env.underlord.lockIn()
         # print('got past restarting of the new episode, for loop should begin anew!')
 
-    timeLeft = gameObservation[12]
-    # print(f"gamephase: {timeLeft}")
+    timeLeft = gameObservation[13]
+    print(f"timeLeft: {timeLeft}")
     # print(env.underlord.itemPicks is None)
     # print(env.underlord.underlordPicks is None)
-    # print(env.underlord.round > 0)
+    # print(env.underlord.round > 2)
     # print(update)
 
-    if (timeLeft < 2) and (env.underlord.itemPicks is None) and (env.underlord.underlordPicks is None)\
+    if (timeLeft < 13) and (env.underlord.itemPicks is None) and (env.underlord.underlordPicks is None)\
             and (env.underlord.round > 2) and update:
         print('inside of policy client combat')
         client.update_policy_weights()
@@ -187,6 +187,8 @@ while True:
         # raise Exception("Policy updated!")
 
     if timeLeft > 2:
+        print('reseting the update')
         update = True
 
+    # time.sleep(0.5)
     # print('----')
