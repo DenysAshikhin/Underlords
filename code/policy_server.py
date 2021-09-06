@@ -32,17 +32,17 @@ DEFAULT_CONFIG = with_common_config({
     "rollout_fragment_length": 20,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 3000,
+    "train_batch_size": 4000,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 500,
+    "sgd_minibatch_size": 200,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
     "num_sgd_iter": 25,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": True,
     # Stepsize of SGD.
-    "lr": 5e-5,
+    "lr": 3e-5,
     # Learning rate schedule.
     "lr_schedule": None,
     # Coefficient of the value function loss. IMPORTANT: you must tune this if
@@ -52,7 +52,7 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [20, 20],
+        "fcnet_hiddens": [22, 22],
         "use_lstm": False
         # "max_seq_len": 3,
     },
@@ -98,15 +98,11 @@ DEFAULT_CONFIG = with_common_config({
         "type": "Curiosity",  # <- Use the Curiosity module for exploring.
         "eta": 1.0,  # Weight for intrinsic rewards before being added to extrinsic ones.
         "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
-        "feature_dim": 256,  # Dimensionality of the generated feature vectors.
+        "feature_dim": 288,  # Dimensionality of the generated feature vectors.
         # Setup of the feature net (used to encode observations into feature (latent) vectors).
-        "feature_net_config": {
-            "fcnet_hiddens": [],
-            "fcnet_activation": "relu",
-        },
-        "inverse_net_hiddens": [20],  # Hidden layers of the "inverse" model.
+        "inverse_net_hiddens": [32],  # Hidden layers of the "inverse" model.
         "inverse_net_activation": "relu",  # Activation of the "inverse" model.
-        "forward_net_hiddens": [20],  # Hidden layers of the "forward" model.
+        "forward_net_hiddens": [32],  # Hidden layers of the "forward" model.
         "forward_net_activation": "relu",  # Activation of the "forward" model.
         "beta": 0.2,  # Weight for the "forward" loss (beta) over the "inverse" loss (1.0 - beta).
         # Specify, which exploration sub-type to use (usually, the algo's "default"
@@ -181,7 +177,7 @@ DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([9, 9, 9, 4]
 
 ray.init()
 
-print(f"running on: {args.ip}:44444")
+#print(f"running on: {args.ip}:44444")
 
 # trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
 trainer = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
