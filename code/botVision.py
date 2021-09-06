@@ -1790,7 +1790,7 @@ class UnderlordInteract():
         numHeroes = 0
         labelHeroes = 0
 
-        if not check:
+        if check:
             for i in range(4):
                 for j in range(8):
                     texty = self.boardLabels[i][j]['text']
@@ -1813,7 +1813,7 @@ class UnderlordInteract():
                     if not self.boardHeroes[i][j].underlord:
                         numHeroes += 1
 
-                if not check:
+                if check:
                     texty = self.boardLabels[i][j]['text']
                     if texty != "":
                         if self.boardHeroes[i][j] is None:
@@ -1824,7 +1824,7 @@ class UnderlordInteract():
                             raise Exception('boardunit count error 1')
                         if not self.boardHeroes[i][j].underlord:
                             labelHeroes += 1
-        if not check:
+        if check:
             if labelHeroes != numHeroes:
                 print("boardUnitCount does not line up!")
                 raise Exception('boardUnitCount does not line up!')
