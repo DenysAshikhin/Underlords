@@ -718,6 +718,8 @@ class UnderlordInteract():
 
     def getObservation(self):
 
+        self.boardUnitCount(True)
+
         overallTime = time.time()
         # print("--- %s seconds to get observation ---" % (time.time() - overallTime))
 
@@ -1783,7 +1785,7 @@ class UnderlordInteract():
         time.sleep(self.mouseSleepTime)
         return earnedMoney
 
-    def boardUnitCount(self):
+    def boardUnitCount(self, check = False):
 
         numHeroes = 0
         labelHeroes = 0
@@ -1793,26 +1795,28 @@ class UnderlordInteract():
                 if self.boardHeroes[i][j] is not None:
                     if not self.boardHeroes[i][j].underlord:
                         numHeroes += 1
-                texty = self.boardLabels[i][j]['text']
-                if texty != "":
-                    if self.boardHeroes[i][j] is None:
-                        print(self.boardLabels[i][j]['text'])
-                        print('---')
-                        print(texty)
-                        print(f"{i}-{j}")
-                        raise Exception('boardunit count error 1')
-                    if not self.boardHeroes[i][j].underlord:
-                        labelHeroes += 1
 
-        if labelHeroes != numHeroes:
-            print("boardUnitCount does not line up!")
-            raise Exception('boardUnitCount does not line up!')
+                if not check:
+                    texty = self.boardLabels[i][j]['text']
+                    if texty != "":
+                        if self.boardHeroes[i][j] is None:
+                            print(self.boardLabels[i][j]['text'])
+                            print('---')
+                            print(texty)
+                            print(f"{i}-{j}")
+                            raise Exception('boardunit count error 1')
+                        if not self.boardHeroes[i][j].underlord:
+                            labelHeroes += 1
+        if not check:
+            if labelHeroes != numHeroes:
+                print("boardUnitCount does not line up!")
+                raise Exception('boardUnitCount does not line up!')
 
         return numHeroes
 
     def moveUnit(self, x=-1, y=-1):
 
-        # print(f"base cords: {x} - {y}")
+        print(f"base cords: {x} - {y}")
 
         if x < 0:
             # print('moveUnit wrong x')
