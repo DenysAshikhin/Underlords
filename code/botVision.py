@@ -1801,7 +1801,7 @@ class UnderlordInteract():
                         if index != -1:
                             name = texty[:index]
 
-                        if self.boardheroes[i][j].name != name:
+                        if self.boardHeroes[i][j].name != name:
                             print(self.boardHeroes[i][j])
                             print(texty)
                             print(f"{i}-{j}")
