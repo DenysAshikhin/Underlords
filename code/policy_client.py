@@ -145,7 +145,8 @@ while True:
     #     f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")
 
     if finalPosition != 0:
-        # print(f"GAME OVER! final position: {finalPosition} - final reward: {reward}")
+        print(f"GAME OVER! final position: {finalPosition} - final reward: {runningReward}")
+        runningReward = 0
         reward = 0
         # need to call a reset of env here
         finalObs = env.underlord.getObservation()
