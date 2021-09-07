@@ -605,10 +605,10 @@ class UnderlordInteract():
 
     def testFunction(self, param1, param2):
         # print(self.HUD.getClockTimeLeft())
-        print(self.getObservation())
-        print(self.getGamePhase())
-        print(f"Punishment: {self.getPunishment()}")
-        self.boardUnitCount()
+        # print(self.getObservation())
+        # print(self.getGamePhase())
+        # print(f"Punishment: {self.getPunishment()}")
+        self.boardUnitCount(True)
 
         # self.itemObjects[0][1] = Item('claymore', (0,1), melee=True)
         # self.itemlabels[0][1].config(text='claymore')
@@ -1791,19 +1791,44 @@ class UnderlordInteract():
         labelHeroes = 0
 
         if check:
+            for i in range(8):
+
+                texty = self.benchLabels[i][j]['text']
+                if texty != "":
+                    index = texty.find('-')
+                    name = texty
+
+                    if index != -1:
+                        name = texty[:index - 1]
+                    else:
+                        name = texty
+                    if not self.benchHeroes[i][j].underlord:
+                        if self.benchHeroes[i][j].name != name:
+                            print(self.benchHeroes[i][j].name)
+                            print(len(self.benchHeroes[i][j].name))
+                            print(texty)
+                            print(len(texty))
+                            print(f"{i}-{j}")
+                            raise Exception('benchUnit count error 44')
+
+
             for i in range(4):
                 for j in range(8):
                     texty = self.boardLabels[i][j]['text']
                     if texty != "":
-                        index = texty.find('-') - 1
+                        index = texty.find('-')
                         name = texty
 
                         if index != -1:
-                            name = texty[:index]
+                            name = texty[:index-1]
+                        else:
+                            name = texty
                         if not self.boardHeroes[i][j].underlord:
                             if self.boardHeroes[i][j].name != name:
                                 print(self.boardHeroes[i][j].name)
+                                print(len(self.boardHeroes[i][j].name))
                                 print(texty)
+                                print(len(texty))
                                 print(f"{i}-{j}")
                                 raise Exception('boardunit count error 33')
 
@@ -1818,6 +1843,7 @@ class UnderlordInteract():
                     if texty != "":
                         if self.boardHeroes[i][j] is None:
                             print(self.boardLabels[i][j]['text'])
+                            print(len(texty))
                             print('---')
                             print(texty)
                             print(f"{i}-{j}")
@@ -1901,10 +1927,10 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     self.heroToMove = None
                     return -1
-        if not self.allowMove():
-            self.mediumPunish = True
-            # print('invalid phase move unit')
-            return -1
+        # if not self.allowMove():
+        #     self.mediumPunish = True
+        #     # print('invalid phase move unit')
+        #     return -1
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
@@ -2592,4 +2618,4 @@ def openVision():
 
     root.mainloop()
 
-# openVision()
+openVision()
