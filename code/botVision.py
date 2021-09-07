@@ -1795,7 +1795,7 @@ class UnderlordInteract():
                 for j in range(8):
                     texty = self.boardLabels[i][j]['text']
                     if texty != "":
-                        index = texty.find('-')
+                        index = texty.find('-') - 1
                         name = texty
 
                         if index != -1:
