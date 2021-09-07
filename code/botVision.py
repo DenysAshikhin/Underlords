@@ -1802,7 +1802,7 @@ class UnderlordInteract():
                             name = texty[:index]
 
                         if self.boardHeroes[i][j].name != name:
-                            print(self.boardHeroes[i][j])
+                            print(self.boardHeroes[i][j].name)
                             print(texty)
                             print(f"{i}-{j}")
                             raise Exception('boardunit count error 33')
