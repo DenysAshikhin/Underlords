@@ -1793,7 +1793,7 @@ class UnderlordInteract():
         if check:
             for i in range(8):
 
-                texty = self.benchLabels[i][j]['text']
+                texty = self.benchLabels[i]['text']
                 if texty != "":
                     index = texty.find('-')
                     name = texty
@@ -1802,13 +1802,13 @@ class UnderlordInteract():
                         name = texty[:index - 1]
                     else:
                         name = texty
-                    if not self.benchHeroes[i][j].underlord:
-                        if self.benchHeroes[i][j].name != name:
-                            print(self.benchHeroes[i][j].name)
-                            print(len(self.benchHeroes[i][j].name))
+                    if not self.benchHeroes[i].underlord:
+                        if self.benchHeroes[i].name != name:
+                            print(self.benchHeroes[i].name)
+                            print(len(self.benchHeroes[i].name))
                             print(texty)
                             print(len(texty))
-                            print(f"{i}-{j}")
+                            print(f"index: {i}")
                             raise Exception('benchUnit count error 44')
 
 
