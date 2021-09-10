@@ -101,7 +101,7 @@ while True:
     # print(gameObservation)
     # print("--- %s seconds to get observation ---" % (time.time() - start_time))
     # start_time = time.time()
-    root.update()
+
     # print("--- %s seconds to update GUI ---" % (time.time() - start_time))
     # start_time = time.time()
 
@@ -130,6 +130,7 @@ while True:
     #     raise ValueError("Policy failed to return an action after 10 tries")
 
     reward = env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
+    root.update()
     runningReward += reward
     act_time = time.time() - act_time
     # print("--- %s seconds to get do action ---" % (time.time() - start_time))
