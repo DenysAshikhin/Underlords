@@ -1794,7 +1794,7 @@ class UnderlordInteract():
             for i in range(8):
 
                 texty = self.benchLabels[i]['text']
-                if texty != "":
+                if texty != "" or self.benchHeroes[i]:
                     index = texty.find('-')
                     name = texty
 
@@ -1815,7 +1815,7 @@ class UnderlordInteract():
             for i in range(4):
                 for j in range(8):
                     texty = self.boardLabels[i][j]['text']
-                    if texty != "":
+                    if texty != "" or self.boardHeroes[i][j]:
                         index = texty.find('-')
                         name = texty
 
@@ -1927,10 +1927,10 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     self.heroToMove = None
                     return -1
-        # if not self.allowMove():
-        #     self.mediumPunish = True
-        #     # print('invalid phase move unit')
-        #     return -1
+        if not self.allowMove():
+            self.mediumPunish = True
+            # print('invalid phase move unit')
+            return -1
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot

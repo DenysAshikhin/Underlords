@@ -92,7 +92,7 @@ while True:
     if not env.observation_space.contains(gameObservation):
         print(gameObservation)
         print("Not lined up 1")
-    if not client.env.observation_space.contains(gameObservation):
+    if not env.observation_space.contains(gameObservation):
         print(gameObservation)
         print("Not lined up 2")
 
@@ -154,7 +154,7 @@ while True:
         if not env.observation_space.contains(finalObs):
             print(gameObservation)
             print("Not lined up 3")
-        if not client.env.observation_space.contains(finalObs):
+        if not env.observation_space.contains(finalObs):
             print(gameObservation)
             print("Not lined up 4")
 
