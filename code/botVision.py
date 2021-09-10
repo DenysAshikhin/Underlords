@@ -1859,6 +1859,11 @@ class UnderlordInteract():
 
     def moveUnit(self, x=-1, y=-1):
 
+
+        if self.heroToMove:
+            print(f"selected hero: {self.heroToMove.name} --- cords: ${self.heroToMove.coords}")
+        else:
+            print("No hero selected")
         print(f"base cords: {x} - {y}")
 
         if x < 0:
