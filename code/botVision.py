@@ -1837,19 +1837,6 @@ class UnderlordInteract():
                 if self.boardHeroes[i][j] is not None:
                     if not self.boardHeroes[i][j].underlord:
                         numHeroes += 1
-
-                if check:
-                    texty = self.boardLabels[i][j]['text']
-                    if texty != "":
-                        if self.boardHeroes[i][j] is None:
-                            print(self.boardLabels[i][j]['text'])
-                            print(len(texty))
-                            print('---')
-                            print(texty)
-                            print(f"{i}-{j}")
-                            raise Exception('boardunit count error 1')
-                        if not self.boardHeroes[i][j].underlord:
-                            labelHeroes += 1
         if check:
             if labelHeroes != numHeroes:
                 print("boardUnitCount does not line up!")
@@ -1895,6 +1882,7 @@ class UnderlordInteract():
 
                     else:
                         # keeping reference of hero in current spot
+                        print("bench swap 1")
                         tempHero = self.benchHeroes[x]
                         oldCoords = self.heroToMove.coords
 
@@ -1910,7 +1898,7 @@ class UnderlordInteract():
                         self.benchHeroes[oldCoords[0]] = tempHero
                         # print(self.benchHeroes[oldCoords[0]])
                         self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
-                        self.updateHeroLabel(tempHero)
+                        self.updateHeroLabel(self.benchHeroes[oldCoords[0]])
 
                         # tiny punish to prevent AI from just spamming this
                         self.tinyPunish = True
@@ -1960,6 +1948,7 @@ class UnderlordInteract():
 
                 else:
                     # keeping reference of hero in current spot
+                    print("bench swap 2")
                     tempHero = self.benchHeroes[x]
                     oldCoords = self.heroToMove.coords
 
