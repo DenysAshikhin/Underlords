@@ -1771,11 +1771,11 @@ class UnderlordInteract():
 
         # self.updateWindowCoords()
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime * 2.5)
 
         mouse1.press(Button.left)
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime * 2.5)
 
         mouse1.position = (self.x + 30, self.y + 820)
 
