@@ -1779,10 +1779,10 @@ class UnderlordInteract():
 
         mouse1.position = (self.x + 30, self.y + 820)
 
-        time.sleep(self.mouseSleepTime * 1.5)
+        time.sleep(self.mouseSleepTime * 2.5)
 
         mouse1.release(Button.left)
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime * 2.5)
         return earnedMoney
 
     def boardUnitCount(self, check = False):
