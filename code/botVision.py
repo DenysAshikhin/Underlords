@@ -1837,10 +1837,10 @@ class UnderlordInteract():
                 if self.boardHeroes[i][j] is not None:
                     if not self.boardHeroes[i][j].underlord:
                         numHeroes += 1
-        if check:
-            if labelHeroes != numHeroes:
-                print("boardUnitCount does not line up!")
-                raise Exception('boardUnitCount does not line up!')
+        # if check:
+        #     if labelHeroes != numHeroes:
+        #         print("boardUnitCount does not line up!")
+        #         raise Exception('boardUnitCount does not line up!')
 
         return numHeroes
 
