@@ -1975,7 +1975,7 @@ class UnderlordInteract():
                     self.benchHeroes[oldCoords[0]] = tempHero
                     # print(self.benchHeroes[oldCoords[0]])
                     self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
-                    self.updateHeroLabel(tempHero)
+                    self.updateHeroLabel(self.benchHeroes[oldCoords[0]])
                     # print("Bench Spot Taken!")
                     # self.mediumPunish = True
                     # self.heroToMove = None
