@@ -1792,7 +1792,6 @@ class UnderlordInteract():
 
         if check:
             for i in range(8):
-
                 texty = self.benchLabels[i]['text']
                 if texty != "" or self.benchHeroes[i]:
                     index = texty.find('-')
@@ -1878,11 +1877,13 @@ class UnderlordInteract():
                         self.updateHeroLabel(self.heroToMove)
                         self.heroToMove = None
                         self.tinyPunish = True
+                        print("bench swap 2")
+                        self.boardUnitCount(True)
                         return 1
 
                     else:
                         # keeping reference of hero in current spot
-                        print("bench swap 1")
+
                         tempHero = self.benchHeroes[x]
                         oldCoords = self.heroToMove.coords
 
@@ -1899,6 +1900,9 @@ class UnderlordInteract():
                         # print(self.benchHeroes[oldCoords[0]])
                         self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
                         self.updateHeroLabel(self.benchHeroes[oldCoords[0]])
+
+                        print("bench swap 1")
+                        self.boardUnitCount(True)
 
                         # tiny punish to prevent AI from just spamming this
                         self.tinyPunish = True
@@ -1946,9 +1950,12 @@ class UnderlordInteract():
                     self.updateHeroLabel(self.heroToMove)
                     self.heroToMove = None
 
+                    print("bench swap 3")
+                    self.boardUnitCount(True)
+
                 else:
                     # keeping reference of hero in current spot
-                    print("bench swap 2")
+
                     tempHero = self.benchHeroes[x]
                     oldCoords = self.heroToMove.coords
 
@@ -1965,6 +1972,10 @@ class UnderlordInteract():
                     # print(self.benchHeroes[oldCoords[0]])
                     self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
                     self.updateHeroLabel(self.benchHeroes[oldCoords[0]])
+
+                    print("bench swap 4")
+                    self.boardUnitCount(True)
+
                     # print("Bench Spot Taken!")
                     # self.mediumPunish = True
                     # self.heroToMove = None
@@ -1992,6 +2003,9 @@ class UnderlordInteract():
                     self.heroToMove.coords = (x, y)
                     self.updateHeroLabel(self.heroToMove)
                     self.heroToMove = None
+
+                    print("bench swap 6")
+                    self.boardUnitCount(True)
 
                 else:
                     # print("Board Spot Taken!")
