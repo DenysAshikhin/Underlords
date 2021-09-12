@@ -1251,7 +1251,7 @@ class UnderlordInteract():
             if acted < 1:
                 print(f"it dun goofed: {acted}")
                 res = self.timeRunningOut()
-                reward -= res
+                reward += res
                 print(f"extra punish from item: {res}")
 
         # self.closeStore(skipCheck=True)
