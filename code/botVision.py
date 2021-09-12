@@ -1138,14 +1138,9 @@ class UnderlordInteract():
             acted = self.selectItem(x, y, selection)
             print('select item')
         elif action == 6:
-            acted = self.selectItem(x, y, selection)
-            print('select hero')
-        elif action == 7:
             self.moveUnit(x, y)
             print('move unit7')
-        elif action == 8:
-            self.moveUnit(x, y)
-            print('move item8')
+
 
         reward = 0
 
