@@ -129,7 +129,9 @@ while True:
     # if action is None:
     #     raise ValueError("Policy failed to return an action after 10 tries")
 
-    reward = env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
+    # reward = env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
+
+    reward = env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1)
     root.update()
     runningReward += reward
     act_time = time.time() - act_time

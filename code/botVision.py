@@ -1135,7 +1135,7 @@ class UnderlordInteract():
             earnedMoney = self.sellHero(x, y)
             print('sell hero')
         elif action == 5:
-            acted = self.selectItem(x, y, selection)
+            acted = self.selectItem(x, y)
             print('select item')
         elif action == 6:
             self.moveUnit(x, y)
