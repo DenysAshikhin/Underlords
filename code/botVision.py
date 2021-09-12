@@ -2196,17 +2196,17 @@ class UnderlordInteract():
 
         # print(self.shop.shopOpen())
 
-        # if self.combatType != 0 or self.round < 2:
-        shopOpen = self.shop.shopOpen(imageCrop=None)
-        # print('is shop open?')
-        # print(shopOpen)
-        # print('---')
-        self.gameCrop = None  # reset crop afterwards
+        if self.combatType != 0 or self.round < 2:
+            shopOpen = self.shop.shopOpen(imageCrop=None)
+            # print('is shop open?')
+            # print(shopOpen)
+            # print('---')
+            self.gameCrop = None  # reset crop afterwards
 
-        if not shopOpen:
-            mouse1.position = (self.shopX, self.shopY)
-            mouse1.click(Button.left, 1)
-            time.sleep(self.shopSleepTime)
+            if not shopOpen:
+                mouse1.position = (self.shopX, self.shopY)
+                mouse1.click(Button.left, 1)
+                time.sleep(self.shopSleepTime)
         # uncomment below to force the store check. Only closes it by accident if it's internal representation of units
         # is wrong, and it misclicks empty spot on board
         # elif not skipCheck:
