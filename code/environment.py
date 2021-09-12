@@ -54,6 +54,9 @@ class UnderlordEnv(ExternalEnv):
             self.sleep = False
 
         self.daemon = True
+
+        heroId = 72
+
         # self.action_space = action_space
         # note to make sure 0's are reserved for n/a -> adding +1 to some values ( marked with a *)
         self.observation_space = spaces.Tuple(
@@ -72,18 +75,18 @@ class UnderlordEnv(ExternalEnv):
              spaces.Discrete(2),  # rerolled (item)
              spaces.Discrete(35),  # current round timer
              # below are the store heros
-             spaces.MultiDiscrete([71, 71, 71, 71, 71]),
+             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId]),
              # below are the bench heroes
-             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
              # below are the board heros
-             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
-             spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([71, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
              # below are underlords to pick (whenever valid) -> underlord ID - specialty
              spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
              # below are the items
@@ -97,19 +100,19 @@ class UnderlordEnv(ExternalEnv):
              spaces.MultiDiscrete([70, 70, 70]),
              # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
              spaces.MultiDiscrete(
-                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4]),
              spaces.MultiDiscrete(
-                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4]),
              spaces.MultiDiscrete(
-                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4]),
              spaces.MultiDiscrete(
-                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4]),
              spaces.MultiDiscrete(
-                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4]),
              spaces.MultiDiscrete(
-                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4]),
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4]),
              spaces.MultiDiscrete(
-                 [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4])
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4])
              ))
 
         self.action_space = spaces.MultiDiscrete(
