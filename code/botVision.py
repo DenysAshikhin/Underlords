@@ -1111,7 +1111,7 @@ class UnderlordInteract():
 
         return obs
 
-    def act(self, action, x, y, selection):
+    def act(self, action, x, y, selection= None):
 
         tieredUp = None
         firstPlace = 1000
