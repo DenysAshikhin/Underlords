@@ -1766,18 +1766,18 @@ class UnderlordInteract():
 
         # self.updateWindowCoords()
 
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
 
         mouse1.press(Button.left)
 
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
 
         mouse1.position = (self.x + 30, self.y + 820)
 
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
 
         mouse1.release(Button.left)
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
         return earnedMoney
 
     def boardUnitCount(self, check = False):
@@ -1966,6 +1966,7 @@ class UnderlordInteract():
                     self.benchHeroes[oldCoords[0]] = tempHero
                     # print(self.benchHeroes[oldCoords[0]])
                     self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
+                    print(f"New coords: {self.benchHeroes[oldCoords[0]].coords}")
                     self.updateHeroLabel(self.benchHeroes[oldCoords[0]])
 
                     print("bench swap 4")
@@ -2459,7 +2460,7 @@ class UnderlordInteract():
 
                 time.sleep(self.mouseSleepTime)
 
-                self.closeStore(skipCheck=True)
+                # self.closeStore(skipCheck=True)
                 return
 
         #Punishment for buying when no space on bench + no tier up possible goes here
