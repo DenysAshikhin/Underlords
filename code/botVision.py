@@ -842,7 +842,7 @@ class UnderlordInteract():
                             self.benchHeroes[i].coords[0] + 1,
                             self.benchHeroes[i].coords[1] + 1, isUnderlord]
 
-                if (self.benchHeroes[i].id + 1) > 70:
+                if (self.benchHeroes[i].id + 1) > 71:
                     raise RuntimeError('error 2')
                 if self.benchHeroes[i].localID > 249:
                     raise RuntimeError('error 3')
@@ -892,7 +892,7 @@ class UnderlordInteract():
                                 itemID, self.boardHeroes[i][j].coords[0] + 1,
                                 self.boardHeroes[i][j].coords[1] + 1, isUnderlord]
 
-                    if (self.boardHeroes[i][j].id + 1) > 70:
+                    if (self.boardHeroes[i][j].id + 1) > 71:
                         raise RuntimeError('error 11')
                     if self.boardHeroes[i][j].localID > 249:
                         raise RuntimeError('error 12')
