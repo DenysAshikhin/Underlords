@@ -44,7 +44,7 @@ if args.local:
 print(f"Going to update at {update} seconds interval")
 
 print('trying to launch policy client')
-client = PolicyClient(address=f"http://{args.ip}:55556", update_interval=None, inference_mode=local)
+client = PolicyClient(address=f"http://{args.ip}:55556", update_interval=60, inference_mode=local)
 # env = UnderlordEnv({'sleep': True})
 # env.root.update()
 
@@ -82,21 +82,26 @@ if args.speed is not None:
 
 update = True
 
+runningReward = 0
+
 while True:
     # print('getting observation')
     start_time = time.time()
     gameObservation = env.underlord.getObservation()
 
-    print(gameObservation)
-    print(env.observation_space.contains(gameObservation))
-    print(client.env.observation_space.contains(gameObservation))
-    print('-----------')
+    if not env.observation_space.contains(gameObservation):
+        print(gameObservation)
+        print("Not lined up 1")
+    if not env.observation_space.contains(gameObservation):
+        print(gameObservation)
+        print("Not lined up 2")
+
     obs_time = time.time() - start_time
 
     # print(gameObservation)
     # print("--- %s seconds to get observation ---" % (time.time() - start_time))
     # start_time = time.time()
-    root.update()
+
     # print("--- %s seconds to update GUI ---" % (time.time() - start_time))
     # start_time = time.time()
 
@@ -121,11 +126,12 @@ while True:
     # except queue.Empty:
     #     continue
 
-    if action is None:
-        raise ValueError("Policy failed to return an action after 10 tries")
+    # if action is None:
+    #     raise ValueError("Policy failed to return an action after 10 tries")
 
     reward = env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
-
+    root.update()
+    runningReward += reward
     act_time = time.time() - act_time
     # print("--- %s seconds to get do action ---" % (time.time() - start_time))
     # print(f"running reward: {reward}")
@@ -140,15 +146,19 @@ while True:
     #     f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")
 
     if finalPosition != 0:
-        # print(f"GAME OVER! final position: {finalPosition} - final reward: {reward}")
+        print(f"GAME OVER! final position: {finalPosition} - final reward: {runningReward}")
+        runningReward = 0
         reward = 0
         # need to call a reset of env here
         finalObs = env.underlord.getObservation()
-        print(f"final observation")
-        print(finalObs)
-        print(env.observation_space.contains(finalObs))
-        print(client.env.observation_space.contains(finalObs))
-        print('-----------')
+
+        if not env.observation_space.contains(finalObs):
+            print(gameObservation)
+            print("Not lined up 3")
+        if not env.observation_space.contains(finalObs):
+            print(gameObservation)
+            print("Not lined up 4")
+
         client.end_episode(episode_id=episode_id, observation=finalObs)
         env.underlord.resetEnv()
         # fileWriter = logger(episode_id)
@@ -171,17 +181,24 @@ while True:
         env.underlord.lockIn()
         # print('got past restarting of the new episode, for loop should begin anew!')
 
-    timeLeft = gameObservation[12]
-    # print(f"gamephase: {timeLeft}")
+    # timeLeft = gameObservation[13]
+    # print(f"timeLeft: {timeLeft}")
+    # # print(env.underlord.itemPicks is None)
+    # # print(env.underlord.underlordPicks is None)
+    # # print(env.underlord.round > 2)
+    # # print(update)
+    #
+    # if (timeLeft < 5) and (env.underlord.itemPicks is None) and (env.underlord.underlordPicks is None)\
+    #         and (env.underlord.round > 2) and update:
+    #     print('inside of policy client combat')
+    #     client.update_policy_weights()
+    #     print('Combat phase updated policy weights')
+    #     update = False
+    #     # raise Exception("Policy updated!")
+    #
+    # if timeLeft > 5:
+    #     print('reseting the update')
+    #     update = True
 
-    if (timeLeft < 2) and (env.underlord.itemPicks is None) and (env.underlord.underlordPicks is None)\
-            and (env.underlord.round > 5) and update:
-        print('inside of policy client combat')
-        client.update_policy_weights()
-        print('Combat phase updated policy weights')
-        update = False
-
-    if timeLeft > 2:
-        update = True
-
+    # time.sleep(0.5)
     # print('----')
