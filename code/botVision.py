@@ -1907,10 +1907,10 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     self.heroToMove = None
                     return -1
-        # if not self.allowMove():
-        #     self.mediumPunish = True
-        #     # print('invalid phase move unit')
-        #     return -1
+        if not self.allowMove():
+            self.mediumPunish = True
+            # print('invalid phase move unit')
+            return -1
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
