@@ -1951,11 +1951,11 @@ class UnderlordInteract():
                     self.heroToMove = None
 
                     # print(oldCoords[0])
-                    self.benchHeroes[oldCoords[0]] = tempHero
+                    self.boardHeroes[oldCoords[0]][oldCoords[1]] = tempHero
                     # print(self.benchHeroes[oldCoords[0]])
-                    self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
-                    print(f"New coords: {self.benchHeroes[oldCoords[0]].coords}")
-                    self.updateHeroLabel(self.benchHeroes[oldCoords[0]])
+                    self.boardHeroes[oldCoords[0]][oldCoords[1]].coords = (oldCoords[0], oldCoords[1])
+                    print(f"Bench unit {self.boardHeroes[oldCoords[0]][oldCoords[1]].name} move to New coords: {self.boardHeroes[oldCoords[0]][oldCoords[1]].coords}")
+                    self.updateHeroLabel(self.boardHeroes[oldCoords[0]][oldCoords[1]])
 
                     print("bench swap 4")
                     self.boardUnitCount(True)
