@@ -1306,34 +1306,22 @@ class UnderlordInteract():
 
             if self.itemPicks is not None:
 
-                if selection < 0 or selection > 3:
+                if y < 0 or y > 3:
                     # print('break 1')
                     self.mediumPunish = True
                     return -1
 
-                # items = self.items.checkItems()
-                #
-                # if items[0] is None:
-                #     raise RuntimeError("item select Uh Oh")
-                #     return -1
-
-                return self.buyItem(selection, self.itemPicks)
+                return self.buyItem(y, self.itemPicks)
 
             elif self.underlordPicks is not None:
 
-                # underlords = self.underlords.checkUnderlords()
-                #
-                # if underlords[0] is None:
-                #     print("No Underlord or item available for selection!")
-                #     raise RuntimeError("Underlord Uh Oh")
-                #     return -1
 
-                if selection < 0 or selection > 3:
+                if y < 0 or y > 3:
                     self.mediumPunish = True
                     # print('break 2')
                     return -1
 
-                return self.buyUnderlord(self.underlordPicks, selection)
+                return self.buyUnderlord(self.underlordPicks, y)
 
         else:
 

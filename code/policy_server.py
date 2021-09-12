@@ -173,7 +173,7 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
              spaces.MultiDiscrete(
                  [9, 101, 100, 11, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4, 71, 4])
              ))
-DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([7, 9, 9, 4])
+DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([7, 9, 9])
 
 ray.init()
 
