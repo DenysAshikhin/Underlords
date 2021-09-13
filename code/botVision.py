@@ -842,7 +842,7 @@ class UnderlordInteract():
                             self.benchHeroes[i].coords[0] + 1,
                             self.benchHeroes[i].coords[1] + 1, isUnderlord]
 
-                if (self.benchHeroes[i].id + 1) > 70:
+                if (self.benchHeroes[i].id + 1) > 71:
                     raise RuntimeError('error 2')
                 if self.benchHeroes[i].localID > 249:
                     raise RuntimeError('error 3')
@@ -892,7 +892,7 @@ class UnderlordInteract():
                                 itemID, self.boardHeroes[i][j].coords[0] + 1,
                                 self.boardHeroes[i][j].coords[1] + 1, isUnderlord]
 
-                    if (self.boardHeroes[i][j].id + 1) > 70:
+                    if (self.boardHeroes[i][j].id + 1) > 71:
                         raise RuntimeError('error 11')
                     if self.boardHeroes[i][j].localID > 249:
                         raise RuntimeError('error 12')
@@ -1251,7 +1251,7 @@ class UnderlordInteract():
             if acted < 1:
                 print(f"it dun goofed: {acted}")
                 res = self.timeRunningOut()
-                reward -= res
+                reward += res
                 print(f"extra punish from item: {res}")
 
         # self.closeStore(skipCheck=True)
@@ -1264,22 +1264,22 @@ class UnderlordInteract():
 
     def timeRunningOut(self):
 
-        if self.currentTime <= 10:
+        # if self.currentTime <= 10:
 
-            if self.itemPicks is not None:
+        if self.itemPicks is not None:
 
-                for i in range(3):
-                    boughtItemId = self.itemPicks[i]
-                    item = self.items.itemDataID[boughtItemId]
-                    name = item['icon']
-                    if name not in self.items.banned:
-                        self.selectItem(selection=i)
-                        return -100
-            elif self.underlordPicks is not None:
-                self.selectItem(selection=0)
-                return -100
-        else:
-            return 0
+            for i in range(3):
+                boughtItemId = self.itemPicks[i]
+                item = self.items.itemDataID[boughtItemId]
+                name = item['icon']
+                if name not in self.items.banned:
+                    self.selectItem(-1, i)
+                    return -100
+        elif self.underlordPicks is not None:
+            self.selectItem(-1, 0)
+            return -100
+        # else:
+        #     return 0
 
     def getGamePhase(self, skipCheck=False):
 
@@ -1754,18 +1754,18 @@ class UnderlordInteract():
 
         # self.updateWindowCoords()
 
-        time.sleep(self.mouseSleepTime * 2)
+        time.sleep(self.mouseSleepTime * 2.5)
 
         mouse1.press(Button.left)
 
-        time.sleep(self.mouseSleepTime * 2)
+        time.sleep(self.mouseSleepTime * 2.5)
 
         mouse1.position = (self.x + 30, self.y + 820)
 
-        time.sleep(self.mouseSleepTime * 2)
+        time.sleep(self.mouseSleepTime * 2.5)
 
         mouse1.release(Button.left)
-        time.sleep(self.mouseSleepTime * 2)
+        time.sleep(self.mouseSleepTime * 2.5)
         return earnedMoney
 
     def boardUnitCount(self, check = False):
@@ -1907,10 +1907,10 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     self.heroToMove = None
                     return -1
-        # if not self.allowMove():
-        #     self.mediumPunish = True
-        #     # print('invalid phase move unit')
-        #     return -1
+        if not self.allowMove():
+            self.mediumPunish = True
+            # print('invalid phase move unit')
+            return -1
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
@@ -1951,11 +1951,11 @@ class UnderlordInteract():
                     self.heroToMove = None
 
                     # print(oldCoords[0])
-                    self.benchHeroes[oldCoords[0]] = tempHero
+                    self.boardHeroes[oldCoords[0]][oldCoords[1]] = tempHero
                     # print(self.benchHeroes[oldCoords[0]])
-                    self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
-                    print(f"New coords: {self.benchHeroes[oldCoords[0]].coords}")
-                    self.updateHeroLabel(self.benchHeroes[oldCoords[0]])
+                    self.boardHeroes[oldCoords[0]][oldCoords[1]].coords = (oldCoords[0], oldCoords[1])
+                    print(f"Bench unit {self.boardHeroes[oldCoords[0]][oldCoords[1]].name} move to New coords: {self.boardHeroes[oldCoords[0]][oldCoords[1]].coords}")
+                    self.updateHeroLabel(self.boardHeroes[oldCoords[0]][oldCoords[1]])
 
                     print("bench swap 4")
                     self.boardUnitCount(True)
@@ -2196,17 +2196,17 @@ class UnderlordInteract():
 
         # print(self.shop.shopOpen())
 
-        if self.combatType != 0 or self.round < 2:
-            shopOpen = self.shop.shopOpen(imageCrop=None)
-            # print('is shop open?')
-            # print(shopOpen)
-            # print('---')
-            self.gameCrop = None  # reset crop afterwards
+        # if self.combatType != 0 or self.round < 2:
+        shopOpen = self.shop.shopOpen(imageCrop=None)
+        # print('is shop open?')
+        # print(shopOpen)
+        # print('---')
+        self.gameCrop = None  # reset crop afterwards
 
-            if not shopOpen:
-                mouse1.position = (self.shopX, self.shopY)
-                mouse1.click(Button.left, 1)
-                time.sleep(self.shopSleepTime)
+        if not shopOpen:
+            mouse1.position = (self.shopX, self.shopY)
+            mouse1.click(Button.left, 1)
+            time.sleep(self.shopSleepTime)
         # uncomment below to force the store check. Only closes it by accident if it's internal representation of units
         # is wrong, and it misclicks empty spot on board
         # elif not skipCheck:
