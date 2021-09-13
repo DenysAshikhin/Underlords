@@ -3,19 +3,9 @@ import ray
 from ray.rllib.agents import with_common_config
 from ray.rllib.agents.ppo import PPOTrainer
 from ray.rllib.env import PolicyServerInput
-from ray.tune.logger import pretty_print
 
 from ray.rllib.examples.env.random_env import RandomEnv
 from gym import spaces
-
-import argparse
-
-parser = argparse.ArgumentParser(description='Optional app description')
-parser.add_argument('-ip', type=str, help='IP of this device')
-
-parser.add_argument('-checkpoint', type=str, help='location of checkpoint to restore from')
-
-args = parser.parse_args()
 
 DEFAULT_CONFIG = with_common_config({
     # Should use a critic as a baseline (otherwise don't use value baseline;
@@ -29,20 +19,20 @@ DEFAULT_CONFIG = with_common_config({
     # Initial coefficient for KL divergence.
     "kl_coeff": 0.2,
     # Size of batches collected from each worker.
-    "rollout_fragment_length": 1000,
+    "rollout_fragment_length": 20,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 4000,
+    "train_batch_size": 5000,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 500,
+    "sgd_minibatch_size": 200,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 75,
+    "num_sgd_iter": 25,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": True,
     # Stepsize of SGD.
-    "lr": 5e-5,
+    "lr": 3e-5,
     # Learning rate schedule.
     "lr_schedule": None,
     # Coefficient of the value function loss. IMPORTANT: you must tune this if
@@ -52,10 +42,9 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [64, 64],
-        "use_lstm": True,
-        "max_seq_len": 2,
-        "lstm_cell_size": 128
+        "fcnet_hiddens": [56, 56],
+        "use_lstm": False
+        # "max_seq_len": 3,
     },
     # Coefficient of the entropy regularizer.
     "entropy_coeff": 0.0,
@@ -65,13 +54,13 @@ DEFAULT_CONFIG = with_common_config({
     "clip_param": 0.3,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
-    "vf_clip_param": 4000000.0,
+    "vf_clip_param": 50000.0,
     # If specified, clip the global norm of gradients by this amount.
     "grad_clip": None,
     # Target value for KL divergence.
     "kl_target": 0.01,
     # Whether to rollout "complete_episodes" or "truncate_episodes".
-    "batch_mode": "truncate_episodes",
+    "batch_mode": "complete_episodes",
     # Which observation filter to apply to the observation.
     "observation_filter": "NoFilter",
     # Uses the sync samples optimizer instead of the multi-gpu one. This is
@@ -84,27 +73,23 @@ DEFAULT_CONFIG = with_common_config({
     "num_gpus": 1,
     # Use the connector server to generate experiences.
     "input": (
-        lambda ioctx: PolicyServerInput(ioctx, args.ip, 55555)
+        lambda ioctx: PolicyServerInput(ioctx, '127.0.0.1', 55558)
     ),
     # Use a single worker process to run the server.
     "num_workers": 0,
     # Disable OPE, since the rollouts are coming from online clients.
     "input_evaluation": [],
     # "callbacks": MyCallbacks,
-    "env_config": {"sleep": True, "framework": 'tf'},
+    "env_config": {"sleep": True,},
     "framework": "tf",
-    #"eager_tracing": True,
+    # "eager_tracing": True,
     "explore": True,
     "exploration_config": {
         "type": "Curiosity",  # <- Use the Curiosity module for exploring.
         "eta": 1.0,  # Weight for intrinsic rewards before being added to extrinsic ones.
         "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
-        "feature_dim": 256,  # Dimensionality of the generated feature vectors.
+        "feature_dim": 512,  # Dimensionality of the generated feature vectors.
         # Setup of the feature net (used to encode observations into feature (latent) vectors).
-        "feature_net_config": {
-            "fcnet_hiddens": [],
-            "fcnet_activation": "relu",
-        },
         "inverse_net_hiddens": [64],  # Hidden layers of the "inverse" model.
         "inverse_net_activation": "relu",  # Activation of the "inverse" model.
         "forward_net_hiddens": [64],  # Hidden layers of the "forward" model.
@@ -116,7 +101,10 @@ DEFAULT_CONFIG = with_common_config({
             "type": "StochasticSampling",
         }
     },
-    "create_env_on_driver": False
+    "create_env_on_driver": False,
+    "log_sys_usage": False,
+    "normalize_actions": False
+    # "compress_observations": True
 
 })
 
@@ -181,17 +169,31 @@ DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([7, 9, 9])
 ray.init()
 trainer = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
 
-checkpoint_path = "checkpointsA/"
-checkpoint1 = "checkpoint"
+checkpoint_path = "checkpoints/"
+checkpoint1 = "checkpoint_000001/checkpoint-1"
+fullpath1 = checkpoint_path + checkpoint1
 
-print(args.checkpoint)
+checkpoint2 = "checkpoint_000002/checkpoint-2"
+fullpath2 = checkpoint_path + checkpoint2
 
-if args.checkpoint:
-    # Attempt to restore from checkpoint, if possible.
-    if os.path.exists(args.checkpoint):
-        print('path FOUND!')
-        print("Restoring from checkpoint path", args.checkpoint)
-        trainer.restore(args.checkpoint)
-    else:
-        print("That path does not exist!")
+sum1 = 0
+sum2 = 0
 
+
+if os.path.exists(fullpath1):
+    print('path FOUND!')
+    print("Restoring from checkpoint path", fullpath1)
+    trainer.restore(fullpath1)
+    temp = trainer.get_policy().model._curiosity_feature_net
+    sum1 = sum(v.sum() for v in trainer.get_policy().model._curiosity_feature_net.variables().values())
+else:
+    print("That path does not exist!")
+
+
+if os.path.exists(fullpath2):
+    print('path FOUND!')
+    print("Restoring from checkpoint path", fullpath2)
+    trainer.restore(fullpath2)
+    sum2 = sum(v.sum() for v in trainer.get_policy().model._curiosity_feature_net.variables().values())
+else:
+    print("That path does not exist!")
