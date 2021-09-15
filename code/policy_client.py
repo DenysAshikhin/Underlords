@@ -33,15 +33,17 @@ args = parser.parse_args()
 
 update = 3600.0
 
-local = 'local'
+
 
 if args.update:
     update = args.update
 
 if args.local:
     local = args.local
+    
+local = 'local'
 
-print(f"Going to update at {update} seconds interval")
+print(f"Going to update {local}-y  at {update} seconds interval")
 
 print('trying to launch policy client')
 client = PolicyClient(address=f"http://{args.ip}:55556", update_interval=60, inference_mode=local)
