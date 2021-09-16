@@ -33,15 +33,22 @@ args = parser.parse_args()
 
 update = 3600.0
 
+
+
 local = 'local'
+
+remoteee = False
 
 if args.update:
     update = args.update
+    remoteee = True
 
 if args.local:
     local = args.local
+    
 
-print(f"Going to update at {update} seconds interval")
+
+print(f"Going to update {local}-y  at {update} seconds interval")
 
 print('trying to launch policy client')
 client = PolicyClient(address=f"http://{args.ip}:55556", update_interval=60, inference_mode=local)
@@ -172,6 +179,9 @@ while True:
         #     # print("Updating policy weights")
         #     client.update_policy_weights()
         #     print('Updated policy weights')
+
+        if remoteee:
+            time.sleep(60)
 
         episode_id = client.start_episode(episode_id=None)
 

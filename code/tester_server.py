@@ -168,16 +168,19 @@ DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([7, 9, 9])
 
 ray.init()
 trainer = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
+trainer2 = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
 
 checkpoint_path = "checkpoints/"
 checkpoint1 = "checkpoint_000001/checkpoint-1"
 fullpath1 = checkpoint_path + checkpoint1
 
-checkpoint2 = "checkpoint_000002/checkpoint-2"
+checkpoint2 = "checkpoint_000005/checkpoint-5"
 fullpath2 = checkpoint_path + checkpoint2
 
-sum1 = 0
-sum2 = 0
+sum1a = 0
+sum1b = 0
+sum2a = 0
+sum2b = 0
 
 
 if os.path.exists(fullpath1):
@@ -185,7 +188,9 @@ if os.path.exists(fullpath1):
     print("Restoring from checkpoint path", fullpath1)
     trainer.restore(fullpath1)
     temp = trainer.get_policy().model._curiosity_feature_net
-    sum1 = sum(v.sum() for v in trainer.get_policy().model._curiosity_feature_net.variables().values())
+    sum1a = sum(v.sum() for k, v in trainer.get_policy().get_weights().items())
+    sum1b = sum(
+        v.eval(trainer.get_policy()._sess).sum() for v in trainer.get_policy().model._curiosity_feature_net.variables())
 else:
     print("That path does not exist!")
 
@@ -193,7 +198,17 @@ else:
 if os.path.exists(fullpath2):
     print('path FOUND!')
     print("Restoring from checkpoint path", fullpath2)
-    trainer.restore(fullpath2)
-    sum2 = sum(v.sum() for v in trainer.get_policy().model._curiosity_feature_net.variables().values())
+    trainer2.restore(fullpath2)
+    sum2a = sum(v.sum() for k, v in trainer2.get_policy().get_weights().items())
+    sum2b = sum(
+        v.eval(trainer2.get_policy()._sess).sum() for v in trainer2.get_policy().model._curiosity_feature_net.variables())
 else:
     print("That path does not exist!")
+
+print("TF")
+print(sum1a, " , ", sum2a)
+print(sum1b, " , ", sum2b)
+import numpy as np
+
+print("All weights isclose?: ", np.isclose(sum1a, sum2a))
+print("Curiosity_feature_net weights isclose?: ", np.isclose(sum1b, sum2b))
