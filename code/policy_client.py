@@ -35,13 +35,18 @@ update = 3600.0
 
 
 
+local = 'local'
+
+remoteee = False
+
 if args.update:
     update = args.update
+    remoteee = True
 
 if args.local:
     local = args.local
     
-local = 'local'
+
 
 print(f"Going to update {local}-y  at {update} seconds interval")
 
@@ -174,6 +179,9 @@ while True:
         #     # print("Updating policy weights")
         #     client.update_policy_weights()
         #     print('Updated policy weights')
+
+        if remoteee:
+            time.sleep(60)
 
         episode_id = client.start_episode(episode_id=None)
 
