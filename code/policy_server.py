@@ -35,10 +35,10 @@ DEFAULT_CONFIG = with_common_config({
     "train_batch_size": 5000,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 200,
+    "sgd_minibatch_size": 500,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 25,
+    "num_sgd_iter": 15,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": True,
     # Stepsize of SGD.
@@ -52,7 +52,7 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [56, 56],
+        "fcnet_hiddens": [50, 50],
         "use_lstm": False
         # "max_seq_len": 3,
     },
