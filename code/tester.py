@@ -1,23 +1,76 @@
-from tkinter import Tk
+import os
+import ray
+from ray.rllib.agents import with_common_config
+from ray.rllib.agents.ppo import PPOTrainer
+from ray.rllib.env import PolicyServerInput
+from ray.tune.logger import pretty_print
 
-from environment import UnderlordEnv
-
-root = Tk()
-root.resizable(0, 0)
-root.geometry('+0+0')
-env = UnderlordEnv(root, {'sleep': True})
-
-
-print('----------')
-
-
-gameObservation = (0, 81, 0, 5, 4, 10, 0, 2, [0, 0], 3, 2, 0, 0, [16, 34, 34, 8, 32], [58, 6, 1, 1, 0, 1, 0, 1], [5, 11, 1, 1, 0, 2, 0, 1], [29, 12, 1, 3, 0, 3, 0, 1], [8, 13, 1, 2, 0, 4, 0, 1], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [11, 8, 1, 1, 0, 7, 0, 1], [0, 0, 0, 0, 0, 0, 0, 0], [8, 2, 1, 2, 0, 1, 1, 1], [11, 9, 1, 1, 0, 3, 6, 1], [46, 4, 1, 3, 0, 4, 8, 1], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [22, 1, 0, 1, 1], [8, 2, 0, 1, 2], [20, 3, 0, 1, 3], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0], [2, 82, 28, 6, 28, 1, 57, 1, 37, 1, 9, 1, 16, 1, 16, 1, 0, 0, 0, 0, 0, 0, 0, 0], [3, 87, 31, 5, 24, 1, 18, 1, 58, 1, 29, 1, 23, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [4, 81, 22, 5, 23, 1, 45, 1, 5, 1, 22, 1, 39, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [5, 89, 29, 6, 9, 1, 62, 1, 45, 1, 48, 1, 48, 1, 46, 1, 0, 0, 0, 0, 0, 0, 0, 0], [6, 87, 31, 5, 16, 1, 10, 1, 3, 1, 22, 1, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [7, 94, 27, 6, 40, 1, 8, 1, 15, 1, 39, 1, 6, 1, 38, 1, 0, 0, 0, 0, 0, 0, 0, 0], [8, 88, 16, 6, 40, 1, 50, 1, 3, 1, 23, 1, 20, 1, 28, 1, 0, 0, 0, 0, 0, 0, 0, 0])
-print(gameObservation)
-print(env.observation_space.contains(gameObservation))
-
-print('-------------------')
+from ray.rllib.examples.env.random_env import RandomEnv
+from gym import spaces
+import numpy as np
 
 
-testObs = (0, 81, 0, 5, 4, 10, 0, 2, [0, 0], 3, 2, 0, 10, [16, 34, 34, 8, 32], [58, 6, 1, 1, 0, 1, 0, 1], [5, 11, 1, 1, 0, 2, 0, 1], [29, 12, 1, 3, 0, 3, 0, 1], [8, 13, 1, 2, 0, 4, 0, 1], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [11, 8, 1, 1, 0, 7, 0, 1], [0, 0, 0, 0, 0, 0, 0, 0], [8, 2, 1, 2, 0, 1, 1, 1], [65, 14, 1, 0, 0, 3, 4, 2], [11, 9, 1, 1, 0, 3, 6, 1], [46, 4, 1, 3, 0, 4, 8, 1], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [22, 1, 0, 1, 1], [8, 2, 0, 1, 2], [20, 3, 0, 1, 3], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0], [2, 82, 28, 6, 28, 1, 57, 1, 37, 1, 9, 1, 16, 1, 16, 1, 0, 0, 0, 0, 0, 0, 0, 0], [3, 87, 31, 5, 24, 1, 18, 1, 58, 1, 29, 1, 23, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [4, 81, 22, 5, 23, 1, 45, 1, 5, 1, 22, 1, 39, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [5, 89, 29, 6, 9, 1, 62, 1, 45, 1, 48, 1, 48, 1, 46, 1, 0, 0, 0, 0, 0, 0, 0, 0], [6, 87, 31, 5, 16, 1, 10, 1, 3, 1, 22, 1, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [7, 94, 27, 6, 40, 1, 8, 1, 15, 1, 39, 1, 6, 1, 38, 1, 0, 0, 0, 0, 0, 0, 0, 0], [8, 88, 16, 6, 40, 1, 50, 1, 3, 1, 23, 1, 20, 1, 28, 1, 0, 0, 0, 0, 0, 0, 0, 0])
-print(testObs)
-print(env.observation_space.contains(testObs))
+import argparse
+
+heroId = 72
+space = spaces.Tuple(
+            (spaces.Discrete(9),  # final position * (if not 0 means game is over!)
+             spaces.Discrete(101),  # health *
+             spaces.Discrete(100),  # gold
+             spaces.Discrete(11),  # level *
+             spaces.Discrete(99),  # remaining EXP to level up
+             spaces.Discrete(50),  # round
+             spaces.Discrete(2),  # locked in
+             spaces.Discrete(2),  # punish for locking in this round
+             spaces.Discrete(6),  # gamePhase *
+             spaces.MultiDiscrete([250, 3]),  # heroToMove: heroLocalID, isUnderlord
+             spaces.Discrete(250),  # itemToMove: localID*,
+             spaces.Discrete(3),  # reRoll cost
+             spaces.Discrete(2),  # rerolled (item)
+             spaces.Discrete(35),  # current round timer
+             # below are the store heros
+             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId]),
+             # below are the bench heroes
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             # below are the board heros
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]), spaces.MultiDiscrete([heroId, 250, 4, 6, 14, 9, 9, 3]),
+             # below are underlords to pick (whenever valid) -> underlord ID - specialty
+             spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
+             # below are the items
+             spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+             spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+             spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+             spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+             spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+             spaces.MultiDiscrete([70, 14, 250, 4, 5]), spaces.MultiDiscrete([70, 14, 250, 4, 5]),
+             # below are the items to pick from
+             spaces.MultiDiscrete([70, 70, 70]),
+             # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4]),
+             spaces.MultiDiscrete(
+                 [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4])
+             ))
+print(space)
+print('-----')
+
+# result = (int(np.product(space.shape)), )
+result = spaces.flatten_space(space)
+print(result)

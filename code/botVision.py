@@ -1196,9 +1196,8 @@ class UnderlordInteract():
             reward += firstPlace * 0.08
 
         if self.leveledUp:
-
-            if (self.level > 4) and ((
-                                             self.boardUnitCount() + 1) >= self.level):  # don't want to reward for rushing early levels as I think that's just dumb
+            # don't want to reward for rushing early levels as I think that's just dumb
+            if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level):
 
                 """
                 Reward for getting to level: 5: 12.5
@@ -2067,11 +2066,11 @@ class UnderlordInteract():
             mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
         # print(f"Moving to board {mouse1.position}")
 
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
 
         mouse1.press(Button.left)
 
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
 
         if newY == -1:  # Moving onto the bench
             mouse1.position = (self.benchX + (self.benchXOffset * newX), self.benchY)
@@ -2080,9 +2079,9 @@ class UnderlordInteract():
         else:
             mouse1.position = (self.boardX + (self.boardXOffset * newY), self.boardY + (self.boardYOffset * newX))
         # print(f"Moving to board {mouse1.position}")
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
         mouse1.release(Button.left)
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
 
     def getPunishment(self):
 
@@ -2128,6 +2127,8 @@ class UnderlordInteract():
         mouse1.position = (self.clickUpX, self.clickUpY)
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
+
+        time.sleep(self.mouseSleepTime)
         # self.closeStore(skipCheck=True)
 
     def lockIn(self):
@@ -2154,6 +2155,8 @@ class UnderlordInteract():
         time.sleep(self.mouseSleepTime)
 
         mouse1.click(Button.left, 1)
+
+        time.sleep(self.mouseSleepTime)
         # self.closeStore(skipCheck=True)
 
     def rerollStore(self):
@@ -2174,6 +2177,7 @@ class UnderlordInteract():
         mouse1.position = (self.rerollX, self.rerollY)
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
+        time.sleep(self.mouseSleepTime)
         # self.closeStore(skipCheck=True)
 
     def closeStore(self, skipCheck=False):
@@ -2191,22 +2195,22 @@ class UnderlordInteract():
             time.sleep(self.mouseSleepTime)
 
     def openStore(self, update=True, skipCheck=False):
-
+        #
         # self.updateWindowCoords()
 
         # print(self.shop.shopOpen())
 
-        # if self.combatType != 0 or self.round < 2:
-        shopOpen = self.shop.shopOpen(imageCrop=None)
-        # print('is shop open?')
-        # print(shopOpen)
-        # print('---')
-        self.gameCrop = None  # reset crop afterwards
+        if self.combatType != 0 or self.round < 2:
+            shopOpen = self.shop.shopOpen(imageCrop=self.gameCrop)
+            # print('is shop open?')
+            # print(shopOpen)
+            # print('---')
+            self.gameCrop = None  # reset crop afterwards
 
-        if not shopOpen:
-            mouse1.position = (self.shopX, self.shopY)
-            mouse1.click(Button.left, 1)
-            time.sleep(self.shopSleepTime)
+            if not shopOpen:
+                mouse1.position = (self.shopX, self.shopY)
+                mouse1.click(Button.left, 1)
+                time.sleep(self.shopSleepTime)
         # uncomment below to force the store check. Only closes it by accident if it's internal representation of units
         # is wrong, and it misclicks empty spot on board
         # elif not skipCheck:
