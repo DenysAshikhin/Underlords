@@ -52,7 +52,7 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": True,
-        "fcnet_hiddens": [512, 256, 128, 64],
+        "fcnet_hiddens": [256, 256, 128, 64],
         "fcnet_activation": "relu",
         "use_lstm": False
         # "max_seq_len": 3,
