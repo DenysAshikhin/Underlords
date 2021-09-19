@@ -224,5 +224,6 @@ while True:
             checkpoint = trainer.save(checkpoint_path)
             print("Last checkpoint", checkpoint)
     except:
-        print(print(sys.exc_info()[2]))
-        print("Caught exception!")
+        print('error lol')
+        # print(print(sys.exc_info()[2]))
+        # print("Caught exception!")

@@ -1124,8 +1124,9 @@ class UnderlordInteract():
         acted = -1
 
         if action == 0:
-            self.rerollStore()
-            print('rerolling')
+            # self.rerollStore()
+            # print('rerolling')
+            print("wanted to reroll")
         elif action == 1:
             self.lockIn()
             print('lock in')
