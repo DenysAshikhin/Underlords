@@ -32,10 +32,10 @@ DEFAULT_CONFIG = with_common_config({
     "rollout_fragment_length": 20,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 5000,
+    "train_batch_size": 4000,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 500,
+    "sgd_minibatch_size": 400,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
     "num_sgd_iter": 15,
@@ -51,8 +51,9 @@ DEFAULT_CONFIG = with_common_config({
     "model": {
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
-        "vf_share_layers": False,
-        "fcnet_hiddens": [50, 50],
+        "vf_share_layers": True,
+        "fcnet_hiddens": [256, 256, 256, 256],
+        "fcnet_activation": "relu",
         "use_lstm": False
         # "max_seq_len": 3,
     },
@@ -64,7 +65,7 @@ DEFAULT_CONFIG = with_common_config({
     "clip_param": 0.3,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
-    "vf_clip_param": 50000.0,
+    "vf_clip_param": 10000.0,
     # If specified, clip the global norm of gradients by this amount.
     "grad_clip": None,
     # Target value for KL divergence.
@@ -90,13 +91,13 @@ DEFAULT_CONFIG = with_common_config({
     # Disable OPE, since the rollouts are coming from online clients.
     "input_evaluation": [],
     # "callbacks": MyCallbacks,
-    "env_config": {"sleep": True,},
+    "env_config": {"sleep": True},
     "framework": "tf",
     # "eager_tracing": True,
     "explore": True,
     "exploration_config": {
         "type": "Curiosity",  # <- Use the Curiosity module for exploring.
-        "eta": 1.0,  # Weight for intrinsic rewards before being added to extrinsic ones.
+        "eta": 0.75,  # Weight for intrinsic rewards before being added to extrinsic ones.
         "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
         "feature_dim": 512,  # Dimensionality of the generated feature vectors.
         # Setup of the feature net (used to encode observations into feature (latent) vectors).
@@ -114,7 +115,7 @@ DEFAULT_CONFIG = with_common_config({
     "create_env_on_driver": False,
     "log_sys_usage": False,
     "normalize_actions": False
-    # "compress_observations": True
+    #"compress_observations": True
 
 })
 
@@ -186,7 +187,7 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
      ))
 DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([7, 9, 9])
 
-ray.init()
+ray.init(log_to_driver=False)
 
 #print(f"running on: {args.ip}:44444")
 
@@ -215,8 +216,13 @@ if args.checkpoint:
 # Serving and training loop.
 i = 0
 while True:
-    print(pretty_print(trainer.train()))
-    print(f"Finished train run #{i + 1}")
-    i += 1
-    checkpoint = trainer.save(checkpoint_path)
-    print("Last checkpoint", checkpoint)
+    try:
+        print(pretty_print(trainer.train()))
+        print(f"Finished train run #{i + 1}")
+        i += 1
+        if i % 5 == 0:
+            checkpoint = trainer.save(checkpoint_path)
+            print("Last checkpoint", checkpoint)
+    except:
+        print(print(sys.exc_info()[2]))
+        print("Caught exception!")
