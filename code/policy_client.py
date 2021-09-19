@@ -97,11 +97,11 @@ update = True
 runningReward = 0
 
 while True:
-    print('getting observation')
+    # print('getting observation')
     start_time = time.time()
-    print(f"time: {time}")
+    # print(f"time: {time}")
     gameObservation = env.underlord.getObservation()
-    print(gameObservation)
+    # print(gameObservation)
 
     if not env.observation_space.contains(gameObservation):
         print(gameObservation)
