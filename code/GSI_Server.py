@@ -74,6 +74,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         else:
 
                             if 'combat_type' in publicData:
+                                # print(f"Combat type: {publicData['combat_type']}")
                                 self.server.env.combatType = publicData['combat_type']
                             if 'combat_result' in publicData:
                                 combatResult = publicData['combat_result']

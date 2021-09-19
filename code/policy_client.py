@@ -201,7 +201,7 @@ while True:
     # # print(update)
     #
     # if (timeLeft < 5) and (env.underlord.itemPicks is None) and (env.underlord.underlordPicks is None)\
-    #         and (env.underlord.round > 2) and update:
+    #         and (env.underlord.round > 2) and (env.underlord.combatType == 3) and update:
     #     print('inside of policy client combat')
     #     client.update_policy_weights()
     #     print('Combat phase updated policy weights')

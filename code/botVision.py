@@ -1111,7 +1111,7 @@ class UnderlordInteract():
 
         return obs
 
-    def act(self, action, x, y, selection= None):
+    def act(self, action, x, y, selection=None):
 
         tieredUp = None
         firstPlace = 1000
@@ -1140,7 +1140,6 @@ class UnderlordInteract():
         elif action == 6:
             self.moveUnit(x, y)
             print('move unit7')
-
 
         reward = 0
 
@@ -1196,10 +1195,8 @@ class UnderlordInteract():
             reward += firstPlace * 0.08
 
         if self.leveledUp:
-
-            if (self.level > 4) and ((
-                                             self.boardUnitCount() + 1) >= self.level):  # don't want to reward for rushing early levels as I think that's just dumb
-
+            # don't want to reward for rushing early levels as I think that's just dumb
+            if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level):
                 """
                 Reward for getting to level: 5: 12.5
                 Reward for getting to level: 6: 21.6
@@ -1314,7 +1311,6 @@ class UnderlordInteract():
                 return self.buyItem(y, self.itemPicks)
 
             elif self.underlordPicks is not None:
-
 
                 if y < 0 or y > 3:
                     self.mediumPunish = True
@@ -1768,7 +1764,7 @@ class UnderlordInteract():
         time.sleep(self.mouseSleepTime * 2.5)
         return earnedMoney
 
-    def boardUnitCount(self, check = False):
+    def boardUnitCount(self, check=False):
 
         numHeroes = 0
         labelHeroes = 0
@@ -1793,7 +1789,6 @@ class UnderlordInteract():
                             print(f"index: {i}")
                             raise Exception('benchUnit count error 44')
 
-
             for i in range(4):
                 for j in range(8):
                     texty = self.boardLabels[i][j]['text']
@@ -1802,7 +1797,7 @@ class UnderlordInteract():
                         name = texty
 
                         if index != -1:
-                            name = texty[:index-1]
+                            name = texty[:index - 1]
                         else:
                             name = texty
                         if not self.boardHeroes[i][j].underlord:
@@ -1827,7 +1822,6 @@ class UnderlordInteract():
         return numHeroes
 
     def moveUnit(self, x=-1, y=-1):
-
 
         if self.heroToMove:
             print(f"selected hero: {self.heroToMove.name} --- cords: ${self.heroToMove.coords}")
@@ -1954,7 +1948,8 @@ class UnderlordInteract():
                     self.boardHeroes[oldCoords[0]][oldCoords[1]] = tempHero
                     # print(self.benchHeroes[oldCoords[0]])
                     self.boardHeroes[oldCoords[0]][oldCoords[1]].coords = (oldCoords[0], oldCoords[1])
-                    print(f"Bench unit {self.boardHeroes[oldCoords[0]][oldCoords[1]].name} move to New coords: {self.boardHeroes[oldCoords[0]][oldCoords[1]].coords}")
+                    print(
+                        f"Bench unit {self.boardHeroes[oldCoords[0]][oldCoords[1]].name} move to New coords: {self.boardHeroes[oldCoords[0]][oldCoords[1]].coords}")
                     self.updateHeroLabel(self.boardHeroes[oldCoords[0]][oldCoords[1]])
 
                     print("bench swap 4")
@@ -2067,11 +2062,11 @@ class UnderlordInteract():
             mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
         # print(f"Moving to board {mouse1.position}")
 
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
 
         mouse1.press(Button.left)
 
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
 
         if newY == -1:  # Moving onto the bench
             mouse1.position = (self.benchX + (self.benchXOffset * newX), self.benchY)
@@ -2080,9 +2075,9 @@ class UnderlordInteract():
         else:
             mouse1.position = (self.boardX + (self.boardXOffset * newY), self.boardY + (self.boardYOffset * newX))
         # print(f"Moving to board {mouse1.position}")
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
         mouse1.release(Button.left)
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
 
     def getPunishment(self):
 
@@ -2128,6 +2123,8 @@ class UnderlordInteract():
         mouse1.position = (self.clickUpX, self.clickUpY)
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
+
+        time.sleep(self.mouseSleepTime)
         # self.closeStore(skipCheck=True)
 
     def lockIn(self):
@@ -2154,6 +2151,8 @@ class UnderlordInteract():
         time.sleep(self.mouseSleepTime)
 
         mouse1.click(Button.left, 1)
+
+        time.sleep(self.mouseSleepTime)
         # self.closeStore(skipCheck=True)
 
     def rerollStore(self):
@@ -2174,6 +2173,7 @@ class UnderlordInteract():
         mouse1.position = (self.rerollX, self.rerollY)
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
+        time.sleep(self.mouseSleepTime)
         # self.closeStore(skipCheck=True)
 
     def closeStore(self, skipCheck=False):
@@ -2191,22 +2191,22 @@ class UnderlordInteract():
             time.sleep(self.mouseSleepTime)
 
     def openStore(self, update=True, skipCheck=False):
-
+        #
         # self.updateWindowCoords()
 
         # print(self.shop.shopOpen())
 
-        # if self.combatType != 0 or self.round < 2:
-        shopOpen = self.shop.shopOpen(imageCrop=None)
-        # print('is shop open?')
-        # print(shopOpen)
-        # print('---')
-        self.gameCrop = None  # reset crop afterwards
+        if self.combatType != 0 or self.round < 2:
+            shopOpen = self.shop.shopOpen(imageCrop=self.gameCrop)
+            # print('is shop open?')
+            # print(shopOpen)
+            # print('---')
+            self.gameCrop = None  # reset crop afterwards
 
-        if not shopOpen:
-            mouse1.position = (self.shopX, self.shopY)
-            mouse1.click(Button.left, 1)
-            time.sleep(self.shopSleepTime)
+            if not shopOpen:
+                mouse1.position = (self.shopX, self.shopY)
+                mouse1.click(Button.left, 1)
+                time.sleep(self.shopSleepTime)
         # uncomment below to force the store check. Only closes it by accident if it's internal representation of units
         # is wrong, and it misclicks empty spot on board
         # elif not skipCheck:
@@ -2451,7 +2451,7 @@ class UnderlordInteract():
                 # self.closeStore(skipCheck=True)
                 return
 
-        #Punishment for buying when no space on bench + no tier up possible goes here
+        # Punishment for buying when no space on bench + no tier up possible goes here
 
     def createHero(self, heroName, uniqueID, x, y, localID):
 
@@ -2489,7 +2489,7 @@ class UnderlordInteract():
         original = heros[0]
 
         for hero in heros:
-            #If we are debating between a unit on the bench (y=-1) or board, board takes precedence
+            # If we are debating between a unit on the bench (y=-1) or board, board takes precedence
             if hero.coords[1] != -1 and original.coords[1] == -1:
                 original = hero
             elif hero.coords[1] == -1 and original.coords[1] != -1:
@@ -2520,7 +2520,6 @@ class UnderlordInteract():
         # Adding +1 to represent the shop unit coming in
         units = {"tierTwo": 0, "tierOne": 0 + 1, "tierTwoHeroes": [], "tierOneHeroes": [], "tieredUp2": False,
                  "tieredUp3": False}
-
 
         for i in range(4):
             for j in range(8):
@@ -2576,13 +2575,12 @@ class UnderlordInteract():
                 if hero.localID != originalHero.localID:
                     self.resetLabel(hero)
 
-
-        #if we tiered up, return that
-        if units["tieredUp3"] == True: #A tier 3 implies a tier 2 was upgraded, so this is returned first
+        # if we tiered up, return that
+        if units["tieredUp3"] == True:  # A tier 3 implies a tier 2 was upgraded, so this is returned first
             return 11
         elif units["tieredUp2"] == True:
             return 10
-        else:#If we did not tier up, check that there is space on the bench for the unit
+        else:  # If we did not tier up, check that there is space on the bench for the unit
 
             freeSpace = False
             for i in self.benchHeroes:
