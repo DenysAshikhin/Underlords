@@ -980,7 +980,10 @@ class UnderlordInteract():
         localItems = []
 
         for i in range(3):
-            for j in range(4):
+            limit = 4
+            if i == 2:#Only getting the first 10 items, might be an issue once the bot has more than 10 items but eh
+                limit -= 2
+            for j in range(limit):
                 if self.itemObjects[i][j] is not None:
                     item = self.itemObjects[i][j]
                     heroID = 0
