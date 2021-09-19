@@ -62,13 +62,18 @@ local = 'remote'
 forced = True
 root = None
 
-if local == 'remote':
-    root = Tk()
-    root.resizable(0, 0)
-    root.geometry('+0+0')
-    env = UnderlordEnv(root, {'sleep': True})
-else:
-    env = client.env
+# if local == 'remote':
+#     root = Tk()
+#     root.resizable(0, 0)
+#     root.geometry('+0+0')
+#     env = UnderlordEnv(root, {'sleep': True})
+# else:
+#     env = client.env
+
+root = Tk()
+root.resizable(0, 0)
+root.geometry('+0+0')
+env = UnderlordEnv(root, {'sleep': True})
 
 print('trying to get initial eid')
 episode_id = client.start_episode()
@@ -94,7 +99,9 @@ runningReward = 0
 while True:
     # print('getting observation')
     start_time = time.time()
+    # print(f"time: {time}")
     gameObservation = env.underlord.getObservation()
+    # print(gameObservation)
 
     if not env.observation_space.contains(gameObservation):
         print(gameObservation)

@@ -1100,7 +1100,8 @@ class UnderlordInteract():
             underlordsPick,
             # local Items,
             localItems[0], localItems[1], localItems[2], localItems[3], localItems[4], localItems[5],
-            localItems[6], localItems[7], localItems[8], localItems[9], localItems[10], localItems[11],
+            localItems[6], localItems[7], localItems[8], localItems[9],
+            # localItems[10], localItems[11],
             # items to pick
             itemPick,
             # other players
@@ -1123,8 +1124,9 @@ class UnderlordInteract():
         acted = -1
 
         if action == 0:
-            self.rerollStore()
-            print('rerolling')
+            # self.rerollStore()
+            # print('rerolling')
+            print("wanted to reroll")
         elif action == 1:
             self.lockIn()
             print('lock in')
