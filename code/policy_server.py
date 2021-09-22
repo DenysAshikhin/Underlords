@@ -32,10 +32,10 @@ DEFAULT_CONFIG = with_common_config({
     "rollout_fragment_length": 20,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 4000,
+    "train_batch_size": 3000,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 400,
+    "sgd_minibatch_size": 300,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
     "num_sgd_iter": 15,
@@ -52,7 +52,7 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": True,
-        "fcnet_hiddens": [512, 256, 128, 64],
+        "fcnet_hiddens": [256, 256, 128, 64],
         "fcnet_activation": "relu",
         "use_lstm": False
         # "max_seq_len": 3,
@@ -216,14 +216,11 @@ if args.checkpoint:
 # Serving and training loop.
 i = 0
 while True:
-    try:
-        print(pretty_print(trainer.train()))
-        print(f"Finished train run #{i + 1}")
-        i += 1
-        if i % 5 == 0:
-            checkpoint = trainer.save(checkpoint_path)
-            print("Last checkpoint", checkpoint)
-    except:
-        print('error lol')
-        # print(print(sys.exc_info()[2]))
-        # print("Caught exception!")
+
+    print(pretty_print(trainer.train()))
+    print(f"Finished train run #{i + 1}")
+    i += 1
+    if i % 5 == 0:
+        checkpoint = trainer.save(checkpoint_path)
+        print("Last checkpoint", checkpoint)
+
