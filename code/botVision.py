@@ -185,8 +185,8 @@ class UnderlordInteract():
 
         self.speedUpFactor = 1
 
-        self.shopSleepTime = 0.3 / self.speedUpFactor
-        self.mouseSleepTime = 0.25 / self.speedUpFactor
+        self.shopSleepTime = 0.4 / self.speedUpFactor
+        self.mouseSleepTime = 0.3 / self.speedUpFactor
 
         self.shop = Shop()
         self.screenOffsetX, self.screenOffsetY = loadScreenOffset()
