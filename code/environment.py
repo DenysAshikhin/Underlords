@@ -180,6 +180,8 @@ class UnderlordEnv(ExternalEnv):
             5. Wait if nothing to do.
         Multiple episodes may be started at the same time.
         """
+        while True:
+            time.sleep(1)
         #
         # if self.sleep:
         #     time.sleep(999999)

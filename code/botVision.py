@@ -122,8 +122,8 @@ class UnderlordInteract():
             self.y = rect[1]
             self.w = rect[2] - self.x
             self.h = rect[3] - self.y
-        self.shopX = self.x + 905
-        self.shopY = self.y + 65
+        self.shopX = self.x + 915
+        self.shopY = self.y + 75
         self.rerollX = self.shopX
         self.rerollY = self.shopY + 82
         self.clickUpX = self.rerollX
@@ -658,19 +658,20 @@ class UnderlordInteract():
         time.sleep(self.shopSleepTime * 3)
 
         mouse1.position = (self.x + 700, self.shopY + 200)
-        time.sleep(self.shopSleepTime * 3)
+        time.sleep(self.shopSleepTime)
         mouse1.click(Button.left, 1)
-
-        time.sleep(self.shopSleepTime * 3)
+        time.sleep(self.shopSleepTime)
+        mouse1.click(Button.left, 1)
+        time.sleep(self.shopSleepTime)
+        mouse1.click(Button.left, 1)
 
         mouse1.position = (self.shopX, self.shopY + 720)
-        time.sleep(self.shopSleepTime * 3)
+        time.sleep(self.shopSleepTime)
         mouse1.click(Button.left, 1)
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.shopSleepTime)
         mouse1.click(Button.left, 1)
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.shopSleepTime)
         mouse1.click(Button.left, 1)
-
         try:
             self.resetEnv()
         except:
@@ -2187,7 +2188,7 @@ class UnderlordInteract():
 
         if skipCheck:
             time.sleep(self.mouseSleepTime)
-            mouse1.position = (self.shopX, self.shopY)
+            mouse1.position = (self.shopX+20, self.shopY+20)
             time.sleep(self.mouseSleepTime)
             mouse1.click(Button.left, 1)
         elif self.shop.shopOpen():
@@ -2240,8 +2241,8 @@ class UnderlordInteract():
         self.y = rect[1]
         self.w = rect[2] - self.x
         self.h = rect[3] - self.y
-        self.shopX = self.x + 905
-        self.shopY = self.y + 65
+        self.shopX = self.x + 915
+        self.shopY = self.y + 75
         self.rerollX = self.shopX
         self.rerollY = self.shopY + 82
         self.clickUpX = self.rerollX
