@@ -2206,7 +2206,7 @@ class UnderlordInteract():
         # print(self.shop.shopOpen())
 
         if self.combatType != 0 or self.round < 2 or finalForce:
-            shopOpen = self.shop.shopOpen(imageCrop=self.gameCrop)
+            shopOpen = self.shop.shopOpen()
             # print('is shop open?')
             # print(shopOpen)
             # print('---')
