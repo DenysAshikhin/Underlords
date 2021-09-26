@@ -122,8 +122,8 @@ class UnderlordInteract():
             self.y = rect[1]
             self.w = rect[2] - self.x
             self.h = rect[3] - self.y
-        self.shopX = self.x + 915
-        self.shopY = self.y + 75
+        self.shopX = self.x + 910
+        self.shopY = self.y + 70
         self.rerollX = self.shopX
         self.rerollY = self.shopY + 82
         self.clickUpX = self.rerollX
@@ -705,7 +705,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 5)
+        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 3)
 
     def proper_round(self, num, dec=0):
         if (str(num).find('.') == -1):
@@ -1013,7 +1013,7 @@ class UnderlordInteract():
         if self.rerolledItem:
             rerolledItem = 1
 
-        if (self.currentTime < 8) or self.pickTime():
+        if (self.currentTime < 5) or self.pickTime():
             self.gameCrop = main.imageGrab(w=1152, h=864)
             self.currentTime = self.HUD.getClockTimeLeft(self.gameCrop)
             self.elapsedTime = time.time()
@@ -2244,8 +2244,8 @@ class UnderlordInteract():
         self.y = rect[1]
         self.w = rect[2] - self.x
         self.h = rect[3] - self.y
-        self.shopX = self.x + 915
-        self.shopY = self.y + 75
+        self.shopX = self.x + 910
+        self.shopY = self.y + 70
         self.rerollX = self.shopX
         self.rerollY = self.shopY + 82
         self.clickUpX = self.rerollX
