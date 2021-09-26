@@ -41,12 +41,13 @@ remoteee = False
 
 if args.update:
     update = args.update
-    remoteee = True
+    # remoteee = True
 
 if args.local:
     local = args.local
     
-
+if local == 'remote':
+    remoteee=True
 
 print(f"Going to update {local}-y  at {update} seconds interval")
 
@@ -96,7 +97,24 @@ update = True
 
 runningReward = 0
 
+closeStore = False
+
 while True:
+
+    if not env.underlord.pickTime():
+        if env.underlord.combatType != 0 and env.underlord.finalPlacement == 0:
+            if not closeStore:
+                env.underlord.closeStore(True)
+                closeStore = True
+            time.sleep(0.1)
+            continue
+
+        elif closeStore:
+            time.sleep(0.5)
+            env.underlord.openStore(None, None, True)
+            closeStore = False
+
+
     # print('getting observation')
     start_time = time.time()
     # print(f"time: {time}")
@@ -162,7 +180,7 @@ while True:
     #     f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")
 
     if finalPosition != 0:
-        print(f"GAME OVER! final position: {finalPosition} - final reward: {runningReward}")
+        print(f"GAME OVER! final position: {finalPosition} - final reward: {runningReward} - bought: {env.underlord.localHeroID} heroes!")
         runningReward = 0
         reward = 0
         # need to call a reset of env here
@@ -188,7 +206,9 @@ while True:
         #     print('Updated policy weights')
 
         if remoteee:
-            time.sleep(60)
+            print("remote sleep")
+            time.sleep(45)
+            print('remote sleep done')
 
         episode_id = client.start_episode(episode_id=None)
 

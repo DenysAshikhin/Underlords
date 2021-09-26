@@ -122,8 +122,8 @@ class UnderlordInteract():
             self.y = rect[1]
             self.w = rect[2] - self.x
             self.h = rect[3] - self.y
-        self.shopX = self.x + 905
-        self.shopY = self.y + 65
+        self.shopX = self.x + 910
+        self.shopY = self.y + 70
         self.rerollX = self.shopX
         self.rerollY = self.shopY + 82
         self.clickUpX = self.rerollX
@@ -185,8 +185,8 @@ class UnderlordInteract():
 
         self.speedUpFactor = 1
 
-        self.shopSleepTime = 0.3 / self.speedUpFactor
-        self.mouseSleepTime = 0.25 / self.speedUpFactor
+        self.shopSleepTime = 0.4 / self.speedUpFactor
+        self.mouseSleepTime = 0.3 / self.speedUpFactor
 
         self.shop = Shop()
         self.screenOffsetX, self.screenOffsetY = loadScreenOffset()
@@ -658,19 +658,20 @@ class UnderlordInteract():
         time.sleep(self.shopSleepTime * 3)
 
         mouse1.position = (self.x + 700, self.shopY + 200)
-        time.sleep(self.shopSleepTime * 3)
+        time.sleep(self.shopSleepTime)
         mouse1.click(Button.left, 1)
-
-        time.sleep(self.shopSleepTime * 3)
+        time.sleep(self.shopSleepTime)
+        mouse1.click(Button.left, 1)
+        time.sleep(self.shopSleepTime)
+        mouse1.click(Button.left, 1)
 
         mouse1.position = (self.shopX, self.shopY + 720)
-        time.sleep(self.shopSleepTime * 3)
+        time.sleep(self.shopSleepTime)
         mouse1.click(Button.left, 1)
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.shopSleepTime)
         mouse1.click(Button.left, 1)
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.shopSleepTime)
         mouse1.click(Button.left, 1)
-
         try:
             self.resetEnv()
         except:
@@ -704,7 +705,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 5)
+        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 4) and (self.currentTime < 20)
 
     def proper_round(self, num, dec=0):
         if (str(num).find('.') == -1):
@@ -863,10 +864,12 @@ class UnderlordInteract():
                 tempHero = [0, 0, 0, 0, 0, 0, 0, 0]
             benchHeros.append(tempHero)
 
+
+        # 11 because I have to take into account the Underlord!!!
         boardHeroes = [[0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0, 0, 0, 0]]
+                       [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]]
         idx = 0
 
         for i in range(4):
@@ -1012,7 +1015,7 @@ class UnderlordInteract():
         if self.rerolledItem:
             rerolledItem = 1
 
-        if (self.currentTime < 8) or self.pickTime():
+        if (self.currentTime < 6) or self.pickTime():
             self.gameCrop = main.imageGrab(w=1152, h=864)
             self.currentTime = self.HUD.getClockTimeLeft(self.gameCrop)
             self.elapsedTime = time.time()
@@ -1095,7 +1098,7 @@ class UnderlordInteract():
             benchHeros[7],
             # board heroes
             boardHeroes[0], boardHeroes[1], boardHeroes[2], boardHeroes[3], boardHeroes[4], boardHeroes[5],
-            boardHeroes[6], boardHeroes[7], boardHeroes[8], boardHeroes[9],
+            boardHeroes[6], boardHeroes[7], boardHeroes[8], boardHeroes[9], boardHeroes[10],
             # underlords to pick
             underlordsPick,
             # local Items,
@@ -1843,6 +1846,12 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
+        if not self.allowMove():
+            self.mediumPunish = True
+            # print('invalid phase move unit')
+            return -1
+
+
         # We are allowing it to move units from the bench to the bench whenever, but it will be punished a bit
         # since it doesn't accomplish anything
         if self.heroToMove:
@@ -1906,10 +1915,7 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     self.heroToMove = None
                     return -1
-        if not self.allowMove():
-            self.mediumPunish = True
-            # print('invalid phase move unit')
-            return -1
+
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
@@ -2129,7 +2135,7 @@ class UnderlordInteract():
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime * 2)
         # self.closeStore(skipCheck=True)
 
     def lockIn(self):
@@ -2157,7 +2163,7 @@ class UnderlordInteract():
 
         mouse1.click(Button.left, 1)
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime * 2)
         # self.closeStore(skipCheck=True)
 
     def rerollStore(self):
@@ -2187,7 +2193,7 @@ class UnderlordInteract():
 
         if skipCheck:
             time.sleep(self.mouseSleepTime)
-            mouse1.position = (self.shopX, self.shopY)
+            mouse1.position = (self.shopX+20, self.shopY+20)
             time.sleep(self.mouseSleepTime)
             mouse1.click(Button.left, 1)
         elif self.shop.shopOpen():
@@ -2195,14 +2201,14 @@ class UnderlordInteract():
             mouse1.click(Button.left, 1)
             time.sleep(self.mouseSleepTime)
 
-    def openStore(self, update=True, skipCheck=False):
+    def openStore(self, update=True, skipCheck=False, finalForce=False):
         #
         # self.updateWindowCoords()
 
         # print(self.shop.shopOpen())
 
-        if self.combatType != 0 or self.round < 2:
-            shopOpen = self.shop.shopOpen(imageCrop=self.gameCrop)
+        if self.combatType != 0 or self.round < 2 or finalForce:
+            shopOpen = self.shop.shopOpen()
             # print('is shop open?')
             # print(shopOpen)
             # print('---')
@@ -2240,8 +2246,8 @@ class UnderlordInteract():
         self.y = rect[1]
         self.w = rect[2] - self.x
         self.h = rect[3] - self.y
-        self.shopX = self.x + 905
-        self.shopY = self.y + 65
+        self.shopX = self.x + 910
+        self.shopY = self.y + 70
         self.rerollX = self.shopX
         self.rerollY = self.shopY + 82
         self.clickUpX = self.rerollX
@@ -2451,7 +2457,7 @@ class UnderlordInteract():
                 time.sleep(self.mouseSleepTime)
                 mouse1.click(Button.left, 1)
 
-                time.sleep(self.mouseSleepTime)
+                time.sleep(self.mouseSleepTime * 2)
 
                 # self.closeStore(skipCheck=True)
                 return

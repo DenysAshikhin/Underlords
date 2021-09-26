@@ -88,7 +88,8 @@ class UnderlordEnv(ExternalEnv):
              spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
              spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
              spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
-             # below are the board heros
+             # below are the board heros (11 because 1 is underlord)
+             spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
              spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
              spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
              spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
@@ -180,6 +181,8 @@ class UnderlordEnv(ExternalEnv):
             5. Wait if nothing to do.
         Multiple episodes may be started at the same time.
         """
+        while True:
+            time.sleep(1)
         #
         # if self.sleep:
         #     time.sleep(999999)

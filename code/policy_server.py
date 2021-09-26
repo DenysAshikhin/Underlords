@@ -145,12 +145,13 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
      spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
      spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
      spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
-     # below are the board heros
+     # below are the board heros (11 because 1 is underlord)
      spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
      spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
      spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
      spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
      spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
+     spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
      # below are underlords to pick (whenever valid) -> underlord ID - specialty
      spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
      # below are the items
