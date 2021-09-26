@@ -109,6 +109,7 @@ while True:
         continue
 
     if closeStore:
+        time.sleep(0.5)
         env.underlord.openStore(None, None, True)
         closeStore = False
 
