@@ -864,10 +864,12 @@ class UnderlordInteract():
                 tempHero = [0, 0, 0, 0, 0, 0, 0, 0]
             benchHeros.append(tempHero)
 
+
+        # 11 because I have to take into account the Underlord!!!
         boardHeroes = [[0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0, 0, 0, 0]]
+                       [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]]
         idx = 0
 
         for i in range(4):
@@ -1096,7 +1098,7 @@ class UnderlordInteract():
             benchHeros[7],
             # board heroes
             boardHeroes[0], boardHeroes[1], boardHeroes[2], boardHeroes[3], boardHeroes[4], boardHeroes[5],
-            boardHeroes[6], boardHeroes[7], boardHeroes[8], boardHeroes[9],
+            boardHeroes[6], boardHeroes[7], boardHeroes[8], boardHeroes[9], boardHeroes[10],
             # underlords to pick
             underlordsPick,
             # local Items,
