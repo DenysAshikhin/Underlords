@@ -1844,6 +1844,12 @@ class UnderlordInteract():
             self.mediumPunish = True
             return -1
 
+        if not self.allowMove():
+            self.mediumPunish = True
+            # print('invalid phase move unit')
+            return -1
+
+
         # We are allowing it to move units from the bench to the bench whenever, but it will be punished a bit
         # since it doesn't accomplish anything
         if self.heroToMove:
@@ -1907,10 +1913,7 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     self.heroToMove = None
                     return -1
-        if not self.allowMove():
-            self.mediumPunish = True
-            # print('invalid phase move unit')
-            return -1
+
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
@@ -2196,13 +2199,13 @@ class UnderlordInteract():
             mouse1.click(Button.left, 1)
             time.sleep(self.mouseSleepTime)
 
-    def openStore(self, update=True, skipCheck=False):
+    def openStore(self, update=True, skipCheck=False, finalForce=False):
         #
         # self.updateWindowCoords()
 
         # print(self.shop.shopOpen())
 
-        if self.combatType != 0 or self.round < 2:
+        if self.combatType != 0 or self.round < 2 or finalForce:
             shopOpen = self.shop.shopOpen(imageCrop=self.gameCrop)
             # print('is shop open?')
             # print(shopOpen)

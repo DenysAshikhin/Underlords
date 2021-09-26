@@ -97,7 +97,22 @@ update = True
 
 runningReward = 0
 
+closeStore = False
+
 while True:
+
+    if env.underlord.combatType != 0 and not env.underlord.pickTime():
+        if not closeStore:
+            env.underlord.closeStore(True)
+            closeStore = True
+        time.sleep(0.1)
+        continue
+
+    if closeStore:
+        env.underlord.openStore(None, None, True)
+        closeStore = False
+
+
     # print('getting observation')
     start_time = time.time()
     # print(f"time: {time}")
