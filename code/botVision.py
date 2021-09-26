@@ -705,7 +705,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 3)
+        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 4) and (self.currentTime < 20)
 
     def proper_round(self, num, dec=0):
         if (str(num).find('.') == -1):
@@ -1013,7 +1013,7 @@ class UnderlordInteract():
         if self.rerolledItem:
             rerolledItem = 1
 
-        if (self.currentTime < 5) or self.pickTime():
+        if (self.currentTime < 6) or self.pickTime():
             self.gameCrop = main.imageGrab(w=1152, h=864)
             self.currentTime = self.HUD.getClockTimeLeft(self.gameCrop)
             self.elapsedTime = time.time()
@@ -2133,7 +2133,7 @@ class UnderlordInteract():
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime * 2)
         # self.closeStore(skipCheck=True)
 
     def lockIn(self):
@@ -2161,7 +2161,7 @@ class UnderlordInteract():
 
         mouse1.click(Button.left, 1)
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime * 2)
         # self.closeStore(skipCheck=True)
 
     def rerollStore(self):
@@ -2455,7 +2455,7 @@ class UnderlordInteract():
                 time.sleep(self.mouseSleepTime)
                 mouse1.click(Button.left, 1)
 
-                time.sleep(self.mouseSleepTime)
+                time.sleep(self.mouseSleepTime * 2)
 
                 # self.closeStore(skipCheck=True)
                 return

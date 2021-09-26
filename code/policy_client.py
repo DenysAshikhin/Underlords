@@ -101,7 +101,7 @@ closeStore = False
 
 while True:
 
-    if env.underlord.combatType != 0 and not env.underlord.pickTime():
+    if env.underlord.combatType != 0 and not env.underlord.pickTime() and env.underlord.finalPlacement == 0:
         if not closeStore:
             env.underlord.closeStore(True)
             closeStore = True
