@@ -185,8 +185,8 @@ class UnderlordInteract():
 
         self.speedUpFactor = 1
 
-        self.shopSleepTime = 0.4 / self.speedUpFactor
-        self.mouseSleepTime = 0.3 / self.speedUpFactor
+        self.shopSleepTime = 0.3 / self.speedUpFactor
+        self.mouseSleepTime = 0.2 / self.speedUpFactor
 
         self.shop = Shop()
         self.screenOffsetX, self.screenOffsetY = loadScreenOffset()
@@ -1419,7 +1419,7 @@ class UnderlordInteract():
 
             while self.pickTime():
                 mouse1.click(Button.left, 1)
-                time.sleep(self.mouseSleepTime * 10)
+                time.sleep(self.mouseSleepTime)
 
             gsiItems = []
 
@@ -1636,7 +1636,7 @@ class UnderlordInteract():
 
                 while self.pickTime():
                     mouse1.click(Button.left, 1)
-                    time.sleep(self.mouseSleepTime * 10)
+                    time.sleep(self.mouseSleepTime)
 
                 self.underlordPicks = None
 
@@ -1758,18 +1758,18 @@ class UnderlordInteract():
 
         # self.updateWindowCoords()
 
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
 
         mouse1.press(Button.left)
 
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
 
         mouse1.position = (self.x + 30, self.y + 820)
 
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
 
         mouse1.release(Button.left)
-        time.sleep(self.mouseSleepTime * 2.5)
+        time.sleep(self.mouseSleepTime * 2)
         return earnedMoney
 
     def boardUnitCount(self, check=False):
