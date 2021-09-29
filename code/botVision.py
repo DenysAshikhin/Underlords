@@ -2197,11 +2197,11 @@ class UnderlordInteract():
             mouse1.position = (self.shopX+20, self.shopY+20)
             time.sleep(self.mouseSleepTime)
             mouse1.click(Button.left, 1)
-        elif self.combatType != 0:
-            if self.shop.shopOpen():
-                mouse1.position = (self.shopX, self.shopY)
-                mouse1.click(Button.left, 1)
-                time.sleep(self.mouseSleepTime)
+        # elif self.combatType != 0:
+        #     if self.shop.shopOpen():
+        #         mouse1.position = (self.shopX, self.shopY)
+        #         mouse1.click(Button.left, 1)
+        #         time.sleep(self.mouseSleepTime)
 
     def openStore(self, update=True, skipCheck=False, finalForce=False):
         #
