@@ -92,7 +92,7 @@ class UnderlordInteract():
         self.itemPicks = None
         self.shopUnits = None
         self.gsiItems = None
-        self.combatType = 0
+        self.combatType = -1
         # self.allowMove = False
         self.combatResult = -1
         self.wins = 0
@@ -520,7 +520,7 @@ class UnderlordInteract():
         self.itemPicks = None
         self.shopUnits = None
         self.gsiItems = None
-        self.combatType = 0
+        self.combatType = -1
         self.combatResult = -1
         self.wins = 0
         self.losses = 0
@@ -682,8 +682,8 @@ class UnderlordInteract():
         while flag:
             time.sleep(0.1)
             phase = self.getGamePhase()
-            # print('gamephase: ')
-            # print(phase)
+            print('gamephase: ')
+            print(phase)
             if phase is not None:
                 flag = False
 
@@ -1289,7 +1289,8 @@ class UnderlordInteract():
     def getGamePhase(self, skipCheck=False):
 
         if not skipCheck:
-            self.closeStore()
+            self.closeStore(skipCheck=True)
+            time.sleep(0.1)
 
         # start_time = time.time()
         # print("--- %s seconds to get actual get round ---" % (time.time() - start_time))
@@ -2136,7 +2137,7 @@ class UnderlordInteract():
         mouse1.click(Button.left, 1)
 
         time.sleep(self.mouseSleepTime * 2)
-        # self.closeStore(skipCheck=True)
+        self.closeStore()
 
     def lockIn(self):
 
@@ -2164,7 +2165,7 @@ class UnderlordInteract():
         mouse1.click(Button.left, 1)
 
         time.sleep(self.mouseSleepTime * 2)
-        # self.closeStore(skipCheck=True)
+        self.closeStore()
 
     def rerollStore(self):
 
@@ -2185,7 +2186,7 @@ class UnderlordInteract():
         time.sleep(self.mouseSleepTime)
         mouse1.click(Button.left, 1)
         time.sleep(self.mouseSleepTime)
-        # self.closeStore(skipCheck=True)
+        self.closeStore()
 
     def closeStore(self, skipCheck=False):
 
@@ -2196,10 +2197,11 @@ class UnderlordInteract():
             mouse1.position = (self.shopX+20, self.shopY+20)
             time.sleep(self.mouseSleepTime)
             mouse1.click(Button.left, 1)
-        elif self.shop.shopOpen():
-            mouse1.position = (self.shopX, self.shopY)
-            mouse1.click(Button.left, 1)
-            time.sleep(self.mouseSleepTime)
+        elif self.combatType != 0:
+            if self.shop.shopOpen():
+                mouse1.position = (self.shopX, self.shopY)
+                mouse1.click(Button.left, 1)
+                time.sleep(self.mouseSleepTime)
 
     def openStore(self, update=True, skipCheck=False, finalForce=False):
         #
@@ -2207,6 +2209,7 @@ class UnderlordInteract():
 
         # print(self.shop.shopOpen())
 
+        # if self.combatType != 0 or self.round < 2 or finalForce:
         if self.combatType != 0 or self.round < 2 or finalForce:
             shopOpen = self.shop.shopOpen()
             # print('is shop open?')
@@ -2417,6 +2420,8 @@ class UnderlordInteract():
             # self.closeStore()
             return -1
 
+        self.openStore()
+
         if result == 10:  # meaning it tiered up, no need to create a new underlord on bench
 
             mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
@@ -2425,7 +2430,7 @@ class UnderlordInteract():
 
             time.sleep(self.mouseSleepTime)
 
-            # self.closeStore(skipCheck=True)
+            self.closeStore()
 
             return 10
         elif result == 11:
@@ -2436,7 +2441,7 @@ class UnderlordInteract():
 
             time.sleep(self.mouseSleepTime)
 
-            # self.closeStore(skipCheck=True)
+            self.closeStore()
             return 11
 
         for x in range(8):
@@ -2459,7 +2464,7 @@ class UnderlordInteract():
 
                 time.sleep(self.mouseSleepTime * 2)
 
-                # self.closeStore(skipCheck=True)
+                self.closeStore()
                 return
 
         # Punishment for buying when no space on bench + no tier up possible goes here

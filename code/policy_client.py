@@ -101,18 +101,18 @@ closeStore = False
 
 while True:
 
-    if not env.underlord.pickTime():
-        if env.underlord.combatType != 0 and env.underlord.finalPlacement == 0:
-            if not closeStore:
-                env.underlord.closeStore(True)
-                closeStore = True
-            time.sleep(0.1)
-            continue
-
-        elif closeStore:
-            time.sleep(0.5)
-            env.underlord.openStore(None, None, True)
-            closeStore = False
+    # if not env.underlord.pickTime():
+    #     if env.underlord.combatType != 0 and env.underlord.finalPlacement == 0:
+    #         if not closeStore:
+    #             env.underlord.closeStore(True)
+    #             closeStore = True
+    #         time.sleep(0.1)
+    #         continue
+    #
+    #     elif closeStore:
+    #         time.sleep(0.5)
+    #         env.underlord.openStore(None, None, True)
+    #         closeStore = False
 
 
     # print('getting observation')
