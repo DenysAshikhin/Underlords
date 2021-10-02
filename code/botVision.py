@@ -1422,7 +1422,7 @@ class UnderlordInteract():
 
             while self.pickTime():
                 mouse1.click(Button.left, 1)
-                time.sleep(self.mouseSleepTime)
+                time.sleep(self.mouseSleepTime*3)
 
             gsiItems = []
 
@@ -1639,7 +1639,7 @@ class UnderlordInteract():
 
                 while self.pickTime():
                     mouse1.click(Button.left, 1)
-                    time.sleep(self.mouseSleepTime)
+                    time.sleep(self.mouseSleepTime*3)
 
                 self.underlordPicks = None
 
