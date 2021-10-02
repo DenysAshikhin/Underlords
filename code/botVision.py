@@ -1151,9 +1151,9 @@ class UnderlordInteract():
 
         reward = 0
 
-        if self.lockInPunish:
-            self.lockInPunish = False
-            reward -= firstPlace * 0.01
+        # if self.lockInPunish:
+        #     self.lockInPunish = False
+        #     reward -= firstPlace * 0.01
 
         # if self.tinyPunish:
         #     self.tinyPunish = False
@@ -1258,6 +1258,8 @@ class UnderlordInteract():
                 res = self.timeRunningOut()
                 reward += res
                 print(f"extra punish from item: {res}")
+            else:
+                print("It chose something...at least")
 
         # self.closeStore(skipCheck=True)
 
