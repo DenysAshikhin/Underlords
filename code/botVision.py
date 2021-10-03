@@ -1012,7 +1012,8 @@ class UnderlordInteract():
                         raise RuntimeError('26')
 
                 else:
-                    localItems.append([0, 0, 0, 0, 0])
+                    localItems.append([0, 0, 0, 0])
+                    #localItems.append([0, 0, 0, 0, 0])
 
         rerolledItem = 0
 
