@@ -705,7 +705,10 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 2) and (self.currentTime < 20)
+        thresh = 20
+        if self.round < 3: #arbitrary large number cause you have a ton more time in the beginning
+            thresh = 35
+        return self.combatType == 0 and not self.pickTime() and (self.currentTime > 2) and (self.currentTime < thresh)
 
     def proper_round(self, num, dec=0):
         if (str(num).find('.') == -1):
