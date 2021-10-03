@@ -1156,9 +1156,9 @@ class UnderlordInteract():
 
         reward = 0
 
-        # if self.lockInPunish:
-        #     self.lockInPunish = False
-        #     reward -= firstPlace * 0.01
+        if self.lockInPunish:
+            self.lockInPunish = False
+            reward -= firstPlace * 0.0005
 
         # if self.tinyPunish:
         #     self.tinyPunish = False
@@ -1209,7 +1209,7 @@ class UnderlordInteract():
 
         if self.leveledUp:
             # don't want to reward for rushing early levels as I think that's just dumb
-            if self.level > 4:
+            if (self.level > 4) and self.boardUnitCount() > 1:
             #if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level):
                 """
                 Reward for getting to level: 5: 12.5
