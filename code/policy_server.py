@@ -223,7 +223,7 @@ while True:
     print(pretty_print(trainer.train()))
     print(f"Finished train run #{i + 1}")
     i += 1
-    if i % 5 == 0:
+    if i % 2 == 0:
         checkpoint = trainer.save(checkpoint_path)
         print("Last checkpoint", checkpoint)
 
