@@ -994,7 +994,8 @@ class UnderlordInteract():
                     if item.hero is not None:
                         heroID = item.hero.localID
 
-                    localItems.append([item.ID + 1, item.localID, heroID, item.coords[0] + 1, item.coords[1] + 1])
+                    #localItems.append([item.ID + 1, item.localID, heroID, item.coords[0] + 1, item.coords[1] + 1])
+                    localItems.append([item.ID + 1, item.localID, item.coords[0] + 1, item.coords[1] + 1])
 
                     if item.ID > 69:
                         raise RuntimeError('error 22')
@@ -1204,7 +1205,8 @@ class UnderlordInteract():
 
         if self.leveledUp:
             # don't want to reward for rushing early levels as I think that's just dumb
-            if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level):
+            if self.level > 4:
+            #if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level):
                 """
                 Reward for getting to level: 5: 12.5
                 Reward for getting to level: 6: 21.6
@@ -1213,7 +1215,7 @@ class UnderlordInteract():
                 Reward for getting to level: 9: 72.9
                 Reward for getting to level: 10: 100.0
                 """
-                award = firstPlace * 0.0001 * (self.level ** 3)
+                award = firstPlace * 0.00015 * (self.level ** 3) * ((self.boardUnitCount()+1) / self.level)
                 # print(f"Awarded: {award} for leveling up with: {self.boardUnitCount()} heroes!")
                 reward += award
                 self.leveledUp = False

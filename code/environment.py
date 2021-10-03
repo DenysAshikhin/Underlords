@@ -67,7 +67,7 @@ class UnderlordEnv(ExternalEnv):
              spaces.Discrete(101),  # health *
              spaces.Discrete(100),  # gold
              spaces.Discrete(11),  # level *
-             spaces.Discrete(99),  # remaining EXP to level up
+             spaces.Discrete(50),  # remaining EXP to level up
              spaces.Discrete(50),  # round
              spaces.Discrete(2),  # locked in
              spaces.Discrete(2),  # punish for locking in this round
@@ -102,17 +102,11 @@ class UnderlordEnv(ExternalEnv):
              spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
              # below are underlords to pick (whenever valid) -> underlord ID - specialty
              spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
-             # below are the items
-             spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]),
-             spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]),
-             spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]),
-             spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]),
-             spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]),
-             spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]),
-             spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]),
-             spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]),
-             spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]),
-             spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
              # spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]),
              # below are the items to pick from
              spaces.MultiDiscrete([itemId, itemId, itemId]),

@@ -32,10 +32,10 @@ DEFAULT_CONFIG = with_common_config({
     "rollout_fragment_length": 20,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 3000,
+    "train_batch_size": 3500,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 300,
+    "sgd_minibatch_size": 350,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
     "num_sgd_iter": 10,
@@ -52,10 +52,12 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [50, 64, 64, 64],
+        "fcnet_hiddens": [52,128],
         "fcnet_activation": "relu",
-        "use_lstm": False
-        # "max_seq_len": 3,
+        #"use_lstm": True
+        #"max_seq_len": 20,
+        #"lstm_cell_size": 1024,
+        #"lstm_use_prev_action": True
     },
     # Coefficient of the entropy regularizer.
     "entropy_coeff": 0.0,
@@ -97,11 +99,11 @@ DEFAULT_CONFIG = with_common_config({
     "explore": True,
     "exploration_config": {
         "type": "Curiosity",  # <- Use the Curiosity module for exploring.
-        "eta": 0.75,  # Weight for intrinsic rewards before being added to extrinsic ones.
+        "eta": 0.6,  # Weight for intrinsic rewards before being added to extrinsic ones.
         "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
-        "feature_dim": 2048,  # Dimensionality of the generated feature vectors.
+        "feature_dim": 1024, # Dimensionality of the generated feature vectors.
         # Setup of the feature net (used to encode observations into feature (latent) vectors).
-        "inverse_net_hiddens": [64, 128],  # Hidden layers of the "inverse" model.
+        "inverse_net_hiddens": [64, 128], # Hidden layers of the "inverse" model.
         "inverse_net_activation": "relu",  # Activation of the "inverse" model.
         "forward_net_hiddens": [64, 128],  # Hidden layers of the "forward" model.
         "forward_net_activation": "relu",  # Activation of the "forward" model.
