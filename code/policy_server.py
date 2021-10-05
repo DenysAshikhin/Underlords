@@ -52,7 +52,7 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [52,128],
+        "fcnet_hiddens": [56,128],
         "fcnet_activation": "relu",
         #"use_lstm": True
         #"max_seq_len": 20,
@@ -101,7 +101,7 @@ DEFAULT_CONFIG = with_common_config({
         "type": "Curiosity",  # <- Use the Curiosity module for exploring.
         "eta": 0.6,  # Weight for intrinsic rewards before being added to extrinsic ones.
         "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
-        "feature_dim": 1024, # Dimensionality of the generated feature vectors.
+        "feature_dim": 1152, # Dimensionality of the generated feature vectors.
         # Setup of the feature net (used to encode observations into feature (latent) vectors).
         "inverse_net_hiddens": [64, 128], # Hidden layers of the "inverse" model.
         "inverse_net_activation": "relu",  # Activation of the "inverse" model.
