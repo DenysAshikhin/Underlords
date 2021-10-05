@@ -1681,7 +1681,7 @@ class UnderlordInteract():
                 return 1
 
         tempString = "\nUnit Count %d" % self.boardUnitCount() + "/%d" % self.level + "\nGold Count: %d" % self.gold \
-                     + "\nHealth Count: %d" % self.health + "\nRemaining EXP: %d" % self.remainingEXP + "\Rounds Won 0/%d" % self.round
+                     + "\nHealth Count: %d" % self.health + "\nRemaining EXP: %d\n" % self.remainingEXP + "Rounds Won 0/%d" % self.round
         self.hudLabel.config(text=tempString)
 
         rerollText = "Reroll 2"
