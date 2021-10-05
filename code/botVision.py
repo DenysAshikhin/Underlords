@@ -1130,6 +1130,8 @@ class UnderlordInteract():
         earnedMoney = -1
 
         acted = -1
+        
+        hadToPick = self.pickTime()
 
         if action == 0:
             # self.rerollStore()
@@ -1155,6 +1157,17 @@ class UnderlordInteract():
             print('move unit7')
 
         reward = 0
+        
+         if hadToPick:
+
+            if acted < 1:
+                print(f"it dun goofed: {acted}")
+                res = self.timeRunningOut()
+                reward += res
+                print(f"extra punish from item: {res}")
+            else:
+                print("It chose something...at least")
+        
 
         if self.lockInPunish:
             self.lockInPunish = False
@@ -1209,17 +1222,18 @@ class UnderlordInteract():
 
         if self.leveledUp:
             # don't want to reward for rushing early levels as I think that's just dumb
-            if (self.level > 4) and self.boardUnitCount() > 1:
+            if (self.level > 3) and ((self.boardUnitCount() + 1) >= (self.level/2)):
             #if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level):
                 """
-                Reward for getting to level: 5: 12.5
-                Reward for getting to level: 6: 21.6
-                Reward for getting to level: 7: 34.3
-                Reward for getting to level: 8: 51.2
-                Reward for getting to level: 9: 72.9
-                Reward for getting to level: 10: 100.0
+                Reward for getting to level: 4: 10.88
+                Reward for getting to level: 5: 21.25
+                Reward for getting to level: 6: 36.72
+                Reward for getting to level: 7: 58.31
+                Reward for getting to level: 8: 87.04
+                Reward for getting to level: 9: 123.93
+                Reward for getting to level: 10: 170
                 """
-                award = firstPlace * 0.00015 * (self.level ** 3) * ((self.boardUnitCount()+1) / self.level)
+                award = firstPlace * 0.00017 * (self.level ** 3) * ((self.boardUnitCount()+1) / self.level)
                 # print(f"Awarded: {award} for leveling up with: {self.boardUnitCount()} heroes!")
                 reward += award
                 self.leveledUp = False
@@ -1256,16 +1270,6 @@ class UnderlordInteract():
                 reward += firstPlace * 0.03 * self.round
             else:
                 reward += firstPlace * 0.03 * 25
-
-        if self.pickTime():
-
-            if acted < 1:
-                print(f"it dun goofed: {acted}")
-                res = self.timeRunningOut()
-                reward += res
-                print(f"extra punish from item: {res}")
-            else:
-                print("It chose something...at least")
 
         # self.closeStore(skipCheck=True)
 
