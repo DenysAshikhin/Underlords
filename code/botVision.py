@@ -1305,10 +1305,10 @@ class UnderlordInteract():
                 name = item['icon']
                 if name not in self.items.banned:
                     self.selectItem(-1, i)
-                    return -100
+                    return -10
         elif self.underlordPicks is not None:
             self.selectItem(-1, 0)
-            return -100
+            return -10
         # else:
         #     return 0
 
