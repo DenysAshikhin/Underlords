@@ -2202,9 +2202,10 @@ class UnderlordInteract():
 
         if skipCheck:
             time.sleep(self.mouseSleepTime)
-            mouse1.position = (self.shopX+20, self.shopY+20)
+            mouse1.position = (self.shopX+15, self.shopY+15)
             time.sleep(self.mouseSleepTime)
             mouse1.click(Button.left, 1)
+            time.sleep(self.mouseSleepTime)
         # elif self.combatType != 0:
         #     if self.shop.shopOpen():
         #         mouse1.position = (self.shopX, self.shopY)
