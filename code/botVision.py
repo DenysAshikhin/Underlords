@@ -1236,7 +1236,7 @@ class UnderlordInteract():
 
         if self.leveledUp:
             # don't want to reward for rushing early levels as I think that's just dumb
-            if (self.level > 3) and ((self.boardUnitCount() + 1) >= (self.level/2)):
+            if (self.level > 3) and ((self.boardUnitCount() + 1) >= int(self.level/2)):
             #if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level):
                 """
                 Reward for getting to level: 4: 10.88
