@@ -680,7 +680,7 @@ class UnderlordInteract():
         flag = True
 
         while flag:
-            time.sleep(0.2)
+            # time.sleep(0.2) #There is sleep inside the closing store inside getGamePhase
             phase = self.getGamePhase()
             print('gamephase: ')
             print(phase)
@@ -1298,7 +1298,7 @@ class UnderlordInteract():
 
         if not skipCheck:
             self.closeStore(skipCheck=True)
-            time.sleep(0.25)
+            time.sleep(0.4)
 
         # start_time = time.time()
         # print("--- %s seconds to get actual get round ---" % (time.time() - start_time))
