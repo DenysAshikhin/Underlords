@@ -98,6 +98,7 @@ class UnderlordInteract():
         self.wins = 0
         self.losses = 0
         self.round = 0
+        self.prevHP = 100
         self.newRoundStarted = False
 
         self.server = True
@@ -210,6 +211,7 @@ class UnderlordInteract():
         self.remainingEXP = 1
         self.level = 0
         self.round = 0
+        self.prevHP = 100
         self.freeRerollAvailable = False
         self.lockedIn = False
         self.leveledUp = False
@@ -510,6 +512,7 @@ class UnderlordInteract():
         self.remainingEXP = 1
         self.level = 0
         self.round = 0
+        self.prevHP = 100
         self.freeRerollAvailable = False
         self.lockedIn = False
         self.leveledUp = False
@@ -525,6 +528,7 @@ class UnderlordInteract():
         self.wins = 0
         self.losses = 0
         self.round = 0
+        self.prevHP = 100
         self.newRoundStarted = False
         self.currentTime = 0
         self.elapsedTime = 0
@@ -1169,6 +1173,16 @@ class UnderlordInteract():
                 print("It chose something...at least")
         
 
+        if self.newRoundStarted:
+            if self.prevHP == self.health:
+                reward += firstPlace * 0.05
+                print("It didn't loose!")
+            else:
+                print(f"Lost {self.prevHP - self.health} health")
+            
+            self.prevHP = self.health
+            self.newRoundStarted = False
+
         if self.lockInPunish:
             self.lockInPunish = False
             reward -= firstPlace * 0.0005
@@ -1685,7 +1699,7 @@ class UnderlordInteract():
                 return 1
 
         tempString = "\nUnit Count %d" % self.boardUnitCount() + "/%d" % self.level + "\nGold Count: %d" % self.gold \
-                     + "\nHealth Count: %d" % self.health + "\nRemaining EXP: %d\n" % self.remainingEXP + "Rounds Won 0/%d" % self.round
+                     + "\nHealth Count: %d" % self.health + "\nRemaining EXP: %d\n" % self.remainingEXP + "Rounds Won %d" % self.wins + "/%d" % self.round
         self.hudLabel.config(text=tempString)
 
         rerollText = "Reroll 2"
