@@ -1158,7 +1158,7 @@ class UnderlordInteract():
 
         reward = 0
         
-         if hadToPick:
+        if hadToPick:
 
             if acted < 1:
                 print(f"it dun goofed: {acted}")
