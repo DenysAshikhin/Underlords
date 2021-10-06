@@ -801,7 +801,7 @@ class UnderlordInteract():
             else:
                 isUnderlord = 1
 
-            heroToMove = [self.heroToMove.coords[0], self.heroToMove.coords[1]]
+            heroToMove = [self.heroToMove.coords[0]+1, self.heroToMove.coords[1]+1]
         else:
             heroToMove = [0, 0]
 
