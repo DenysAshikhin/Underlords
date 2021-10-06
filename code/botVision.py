@@ -801,7 +801,7 @@ class UnderlordInteract():
             else:
                 isUnderlord = 1
 
-            heroToMove = [self.heroToMove.id + 1, isUnderlord]
+            heroToMove = [self.heroToMove.coords[0], self.heroToMove.coords[1]]
         else:
             heroToMove = [0, 0]
 
@@ -845,7 +845,9 @@ class UnderlordInteract():
                 if self.benchHeroes[i].item is not None:
                     itemID = self.benchHeroes[i].item.localID
 
-                tempHero = [self.benchHeroes[i].id + 1, self.benchHeroes[i].localID, self.benchHeroes[i].tier,
+                tempHero = [self.benchHeroes[i].id + 1,
+                            # self.benchHeroes[i].localID, 
+                            self.benchHeroes[i].tier,
                             self.benchHeroes[i].gold, itemID,
                             self.benchHeroes[i].coords[0] + 1,
                             self.benchHeroes[i].coords[1] + 1, isUnderlord]

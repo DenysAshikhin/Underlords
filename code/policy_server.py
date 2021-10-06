@@ -52,7 +52,7 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [64, 64, 64, 128],
+        "fcnet_hiddens": [128, 128],
         "fcnet_activation": "relu",
         #"use_lstm": True
         #"max_seq_len": 20,
@@ -135,7 +135,7 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
      spaces.Discrete(2),  # locked in
      spaces.Discrete(2),  # punish for locking in this round
      spaces.Discrete(6),  # gamePhase *
-     spaces.MultiDiscrete([localHeroId, 3]),  # heroToMove: heroLocalID, isUnderlord
+     spaces.MultiDiscrete([9, 9]),  # heroToMove: heroLocalID, isUnderlord
      spaces.Discrete(localItemId),  # itemToMove: localID*,
      spaces.Discrete(3),  # reRoll cost
      spaces.Discrete(2),  # rerolled (item)
@@ -143,17 +143,17 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
      # below are the store heros
      spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId]),
      # below are the bench heroes
-     spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
+     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
+     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
+     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
+     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
      # below are the board heros (11 because 1 is underlord)
-     spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, localHeroId, 4, 6, localItemId, 9, 9, 3]),
+     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
+     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
+     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
+     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
+     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
+     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
      # below are underlords to pick (whenever valid) -> underlord ID - specialty
      spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
      # below are the items
@@ -162,7 +162,7 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
      spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
      spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
      spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     # spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, localHeroId, 4, 5]),
+     # spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
      # below are the items to pick from
      spaces.MultiDiscrete([itemId, itemId, itemId]),
      # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
