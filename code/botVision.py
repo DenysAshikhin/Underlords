@@ -848,9 +848,11 @@ class UnderlordInteract():
                 tempHero = [self.benchHeroes[i].id + 1,
                             # self.benchHeroes[i].localID, 
                             self.benchHeroes[i].tier,
-                            self.benchHeroes[i].gold, itemID,
+                            self.benchHeroes[i].gold, 
+                            itemID,
                             self.benchHeroes[i].coords[0] + 1,
-                            self.benchHeroes[i].coords[1] + 1, isUnderlord]
+                            self.benchHeroes[i].coords[1] + 1, 
+                            isUnderlord]
 
                 if (self.benchHeroes[i].id + 1) > 71:
                     raise RuntimeError('error 2')
@@ -870,15 +872,15 @@ class UnderlordInteract():
                     raise RuntimeError('error 8')
 
             else:
-                tempHero = [0, 0, 0, 0, 0, 0, 0, 0]
+                tempHero = [0, 0, 0, 0, 0, 0, 0]
             benchHeros.append(tempHero)
 
 
         # 11 because I have to take into account the Underlord!!!
-        boardHeroes = [[0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]]
+        boardHeroes = [[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
         idx = 0
 
         for i in range(4):
@@ -899,10 +901,14 @@ class UnderlordInteract():
                     if self.boardHeroes[i][j].item is not None:
                         itemID = self.boardHeroes[i][j].item.localID
 
-                    tempHero = [self.boardHeroes[i][j].id + 1, self.boardHeroes[i][j].localID,
-                                self.boardHeroes[i][j].tier, self.boardHeroes[i][j].gold,
-                                itemID, self.boardHeroes[i][j].coords[0] + 1,
-                                self.boardHeroes[i][j].coords[1] + 1, isUnderlord]
+                    tempHero = [self.boardHeroes[i][j].id + 1,
+                    #self.boardHeroes[i][j].localID,
+                                self.boardHeroes[i][j].tier, 
+                                self.boardHeroes[i][j].gold,
+                                itemID,
+                                self.boardHeroes[i][j].coords[0] + 1,
+                                self.boardHeroes[i][j].coords[1] + 1, 
+                                isUnderlord]
 
                     if (self.boardHeroes[i][j].id + 1) > 71:
                         raise RuntimeError('error 11')
