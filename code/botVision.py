@@ -1230,13 +1230,13 @@ class UnderlordInteract():
         # note - to do : take into account tier of unit tiered up
 
         if tieredUp == 10:
-            reward += firstPlace * 0.02
-        elif tieredUp == 11:
             reward += firstPlace * 0.08
+        elif tieredUp == 11:
+            reward += firstPlace * 0.3
 
         if self.leveledUp:
             # don't want to reward for rushing early levels as I think that's just dumb
-            if (self.level > 3) and self.boardUnitCount() >= 1:
+            if (self.level > 3):
             #if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level):
                 """
                 Reward for getting to level: 4: 10.88
@@ -1247,7 +1247,8 @@ class UnderlordInteract():
                 Reward for getting to level: 9: 123.93
                 Reward for getting to level: 10: 170
                 """
-                award = 10 + firstPlace * 0.00017 * (self.level ** 3) * ((self.boardUnitCount()+1) / self.level)
+                award = pow((self.boardUnitCount()) * self.level, 1.4)
+                # award = 10 + firstPlace * 0.00017 * (self.level ** 3) * ((self.boardUnitCount()+1) / self.level)
                 # print(f"Awarded: {award} for leveling up with: {self.boardUnitCount()} heroes!")
                 reward += award
                 self.leveledUp = False
