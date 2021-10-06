@@ -62,7 +62,7 @@ class UnderlordEnv(ExternalEnv):
 
         # self.action_space = action_space
         # note to make sure 0's are reserved for n/a -> adding +1 to some values ( marked with a *)
-        self.observation_space = spaces.Tuple spaces.Tuple(
+        self.observation_space = spaces.Tuple(
     (spaces.Discrete(9),  # final position * (if not 0 means game is over!)
      spaces.Discrete(101),  # health *
      spaces.Discrete(100),  # gold
