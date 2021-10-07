@@ -5742,7 +5742,7 @@
       "model": "models/heroes/wraith_king/wraith_king.vmdl",
       "model_scale": 0.65,
       "soundSet": "Hero_WraithKing",
-      "texturename": "skeleton_king",
+      "texturename": "wraith_king",
       "movespeed": 310,
       "healthBarOffset": 20
     },
@@ -11778,7 +11778,7 @@
       "model": "models/heroes/wraith_king/wraith_king.vmdl",
       "model_scale": 0.65,
       "soundSet": "Hero_WraithKing",
-      "texturename": "skeleton_king",
+      "texturename": "wraith_king",
       "movespeed": 310,
       "healthBarOffset": 20
     },
