@@ -1,6 +1,6 @@
 import os
 from tkinter import Tk
-
+import numpy as np
 from gym import spaces
 from PIL import ImageTk, Image
 import gym
@@ -67,16 +67,17 @@ class UnderlordEnv(ExternalEnv):
 
              # spaces.Discrete(101),  # health *
              # spaces.Discrete(100),  # gold
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
+             # spaces.Discrete(11),  # level *
 
-             spaces.Discrete(11),  # level *
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
 
              # spaces.Discrete(99),  # remaining EXP to level up
-             spaces.Box(low=0, high=1, shape=(1,)),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
 
              # spaces.Discrete(50),  # round
-             spaces.Box(low=0, high=1, shape=(1,)),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
 
              spaces.Discrete(2),  # locked in
              spaces.Discrete(2),  # punish for locking in this round
@@ -87,31 +88,40 @@ class UnderlordEnv(ExternalEnv):
              spaces.Discrete(2),  # rerolled (item)
 
              # spaces.Discrete(35),  # current round timer
-             spaces.Box(low=0, high=1, shape=(1,)),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
 
              # below are the store heros
              spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId]),
              # below are the bench heroes
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
+             # first the levels of all the heroes
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+                        high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]),
+                        dtype=np.float32),
+             # now the cost of all the heroes
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+                        high=np.array([5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]),
+                        dtype=np.float32),
+
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
              # below are the board heros (11 because 1 is underlord)
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
              # below are underlords to pick (whenever valid) -> underlord ID - specialty
              spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
              # below are the items
@@ -126,67 +136,53 @@ class UnderlordEnv(ExternalEnv):
              # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
 
              spaces.Discrete(9),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.MultiDiscrete(
-                 [heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId,
-                  4,
-                  heroId, 4, heroId, 4]),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId]),
 
              spaces.Discrete(9),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.MultiDiscrete(
-                 [heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId,
-                  4,
-                  heroId, 4, heroId, 4]),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId]),
 
              spaces.Discrete(9),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.MultiDiscrete(
-                 [heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId,
-                  4,
-                  heroId, 4, heroId, 4]),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId]),
 
              spaces.Discrete(9),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.MultiDiscrete(
-                 [heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId,
-                  4,
-                  heroId, 4, heroId, 4]),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId]),
 
              spaces.Discrete(9),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.MultiDiscrete(
-                 [heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId,
-                  4,
-                  heroId, 4, heroId, 4]),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId]),
 
              spaces.Discrete(9),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.MultiDiscrete(
-                 [heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId,
-                  4,
-                  heroId, 4, heroId, 4]),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId]),
 
              spaces.Discrete(9),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.Box(low=0, high=1, shape=(1,)),
-             spaces.MultiDiscrete(
-                 [heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId,
-                  4,
-                  heroId, 4, heroId, 4])
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId])
              ))
 
         self.action_space = spaces.MultiDiscrete(
