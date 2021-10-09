@@ -1105,9 +1105,9 @@ class UnderlordInteract():
             punishLockIn = 1
 
         obs = (
-            self.finalPlacement, self.health, self.gold, self.level, self.remainingEXP, self.round, lockedIn,
+            self.finalPlacement, self.health/100, self.gold/100, self.level, self.remainingEXP/50, self.round/50, lockedIn,
             punishLockIn, self.combatType,
-            heroToMove, itemToMove, self.rerollCost, rerolledItem, finalTime,
+            heroToMove, itemToMove, self.rerollCost, rerolledItem, finalTime/20,
             # store heros
             shopHeros,
             # bench heroes
@@ -1125,8 +1125,17 @@ class UnderlordInteract():
             # items to pick
             itemPick,
             # other players
-            otherPlayers[0], otherPlayers[1], otherPlayers[2], otherPlayers[3], otherPlayers[4], otherPlayers[5],
-            otherPlayers[6],
+            otherPlayers[0][0], otherPlayers[0][1], otherPlayers[0][2], otherPlayers[0][3], otherPlayers[0][4:],
+            otherPlayers[1][0], otherPlayers[0][1], otherPlayers[0][2], otherPlayers[0][3], otherPlayers[0][4:],
+            otherPlayers[2][0], otherPlayers[0][1], otherPlayers[0][2], otherPlayers[0][3], otherPlayers[0][4:],
+            otherPlayers[3][0], otherPlayers[0][1], otherPlayers[0][2], otherPlayers[0][3], otherPlayers[0][4:],
+            otherPlayers[4][0], otherPlayers[0][1], otherPlayers[0][2], otherPlayers[0][3], otherPlayers[0][4:],
+            otherPlayers[5][0], otherPlayers[0][1], otherPlayers[0][2], otherPlayers[0][3], otherPlayers[0][4:],
+            otherPlayers[6][0], otherPlayers[0][1], otherPlayers[0][2], otherPlayers[0][3], otherPlayers[0][4:],
+
+
+            # otherPlayers[1], otherPlayers[2], otherPlayers[3], otherPlayers[4], otherPlayers[5],
+            # otherPlayers[6],
         )
 
         # print("--- %s seconds to get clock observation ---" % (time.time() - clockTime))
@@ -1314,10 +1323,10 @@ class UnderlordInteract():
                 name = item['icon']
                 if name not in self.items.banned:
                     self.selectItem(-1, i)
-                    return -10
+                    return -30
         elif self.underlordPicks is not None:
             self.selectItem(-1, 0)
-            return -10
+            return -30
         # else:
         #     return 0
 
