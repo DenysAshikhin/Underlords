@@ -104,6 +104,19 @@ while True:
     # print( not env.underlord.pickTime())
     # print(env.underlord.combatType)
     # print(env.underlord.finalPlacement)
+    
+    
+     if env.underlord.newRoundStarted:
+            if env.underlord.prevHP == env.underlord.health:
+                env.underlord.extraReward += 1000 * 0.05
+                print("It didn't loose!")
+            else:
+                print(f"Lost {env.underlord.prevHP - env.underlord.health} health")
+
+            env.underlord.prevHP = env.underlord.health
+            env.underlord.newRoundStarted = False
+    
+    
     if not env.underlord.pickTime():
         if env.underlord.combatType != 0 and env.underlord.finalPlacement == 0:
             if not closeStore:

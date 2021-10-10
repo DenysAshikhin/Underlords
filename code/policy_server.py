@@ -32,13 +32,13 @@ DEFAULT_CONFIG = with_common_config({
     "rollout_fragment_length": 20,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 5000,
+    "train_batch_size": 6500,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 250,
+    "sgd_minibatch_size": 500,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 10,
+    "num_sgd_iter": 2,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": True,
     # Stepsize of SGD.
@@ -52,11 +52,11 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [128, 128],
+        "fcnet_hiddens": [256, 256],
         "fcnet_activation": "relu",
         "use_lstm": True,
-        "max_seq_len": 40,
-        "lstm_cell_size": 1024,
+        "max_seq_len": 200,
+        "lstm_cell_size": 512,
         "lstm_use_prev_action": True
     },
     # Coefficient of the entropy regularizer.

@@ -160,6 +160,7 @@ class UnderlordInteract():
         self.strongPunish = False
         self.lockInPunish = False
         self.lost = False
+        self.extraReward = 0
 
         self.localHeroID = 1
         self.localItemID = 1
@@ -539,6 +540,7 @@ class UnderlordInteract():
         self.strongPunish = False
         self.lockInPunish = False
         self.bigPunish = False
+        self.extraReward = 0
 
         # self.allowMove = False
         # self.pickTime = False
@@ -1205,15 +1207,9 @@ class UnderlordInteract():
             else:
                 print("It chose something...at least")
 
-        if self.newRoundStarted:
-            if self.prevHP == self.health:
-                reward += firstPlace * 0.05
-                print("It didn't loose!")
-            else:
-                print(f"Lost {self.prevHP - self.health} health")
-
-            self.prevHP = self.health
-            self.newRoundStarted = False
+        if self.extraReward > 0:
+            reward += self.extraReward
+            self.extraReward = 0
 
         if self.lockInPunish:
             self.lockInPunish = False
