@@ -122,13 +122,13 @@ while True:
             if not closeStore:
                 env.underlord.closeStore(True)
                 closeStore = True
-                print('wow1')
-            print('wow3')
+                # print('wow1')
+            # print('wow3')
             time.sleep(0.1)
             continue
 
         elif closeStore:
-            print('wow2')
+            # print('wow2')
             time.sleep(0.3)
             env.underlord.openStore(None, None, True)
             closeStore = False
