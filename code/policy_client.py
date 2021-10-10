@@ -106,7 +106,7 @@ while True:
     # print(env.underlord.finalPlacement)
     
     
-     if env.underlord.newRoundStarted:
+    if env.underlord.newRoundStarted:
             if env.underlord.prevHP == env.underlord.health:
                 env.underlord.extraReward += 1000 * 0.05
                 print("It didn't loose!")
