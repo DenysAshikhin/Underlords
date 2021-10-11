@@ -1246,6 +1246,7 @@ class UnderlordInteract():
         if self.gold > 40:
             reward -= firstPlace * 0.005
 
+        # if action in [0, 2, 3]:
         if action in [0, 2, 3]:
 
             if self.gold >= 30:
