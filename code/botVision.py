@@ -1331,7 +1331,7 @@ class UnderlordInteract():
             if self.round < 10:
                 reward += firstPlace * 0.01 * self.round
                 self.rewardSummary['roundsSurvived']  += firstPlace * 0.01 * self.round
-            elif self.round < 16:
+            elif self.round < 18:
                 reward += firstPlace * 0.02 * self.round
                 self.rewardSummary['roundsSurvived']  += firstPlace * 0.02 * self.round
             elif self.round < 26:
