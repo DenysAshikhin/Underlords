@@ -199,6 +199,7 @@ while True:
     #     f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")
 
     if finalPosition != 0:
+        pring(env.underlord.rewardSummary)
         print(f"GAME OVER! final position: {finalPosition} - final reward: {runningReward} - bought: {env.underlord.localHeroID} heroes!")
         runningReward = 0
         reward = 0

@@ -101,6 +101,8 @@ class UnderlordInteract():
         self.prevHP = 100
         self.newRoundStarted = False
 
+
+        self.rewardSummary = {'purchases': 0, 'roundsSurvived': 0, 'finalPosition':0, 'unitLevelUp': 0, 'mainLevelUp': 0, 'extra': 0, 'lockIn': 0, 'itemPick': 0}
         self.server = True
 
         if rect is not None:
@@ -545,7 +547,8 @@ class UnderlordInteract():
         # self.allowMove = False
         # self.pickTime = False
         # self.pickTime = False
-
+        
+        self.rewardSummary = {'purchases': 0, 'roundsSurvived': 0, 'finalPosition':0, 'unitLevelUp': 0, 'mainLevelUp': 0, 'extra': 0, 'lockIn': 0, 'itemPick': 0}
         self.otherPlayersDict = {2: {'slot': 2, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
                                  3: {'slot': 3, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
                                  4: {'slot': 4, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
@@ -1203,17 +1206,22 @@ class UnderlordInteract():
                 print(f"it dun goofed: {acted}")
                 res = self.timeRunningOut()
                 reward += res
+                self.rewardSummary['itemPick'] += res
                 print(f"extra punish from item: {res}")
             else:
                 print("It chose something...at least")
 
+        
+
         if self.extraReward > 0:
             reward += self.extraReward
+            self.rewardSummary['extra'] += self.extraReward
             self.extraReward = 0
-
+            
         if self.lockInPunish:
             self.lockInPunish = False
             reward -= firstPlace * 0.0005
+            self.rewardSummary['lockIn'] -= firstPlace * 0.0005
 
         # if self.tinyPunish:
         #     self.tinyPunish = False
@@ -1251,17 +1259,22 @@ class UnderlordInteract():
 
             if self.gold >= 30:
                 reward += firstPlace * 0.02
+                self.rewardSummary['purchases'] += firstPlace * 0.02
             elif self.gold >= 20:
                 reward += firstPlace * 0.005
+                self.rewardSummary['purchases'] += firstPlace * 0.005
             elif self.gold >= 10:
                 reward += firstPlace * 0.001
+                self.rewardSummary['purchases'] += firstPlace * 0.001
 
         # note - to do : take into account tier of unit tiered up
 
         if tieredUp == 10:
             reward += firstPlace * 0.08
+            self.rewardSummary['unitLevelUp']  += firstPlace * 0.08
         elif tieredUp == 11:
             reward += firstPlace * 0.3
+            self.rewardSummary['unitLevelUp']  += firstPlace * 0.3
 
         if self.leveledUp:
             # don't want to reward for rushing early levels as I think that's just dumb
@@ -1280,6 +1293,7 @@ class UnderlordInteract():
                 # award = 10 + firstPlace * 0.00017 * (self.level ** 3) * ((self.boardUnitCount()+1) / self.level)
                 # print(f"Awarded: {award} for leveling up with: {self.boardUnitCount()} heroes!")
                 reward += award
+                self.rewardSummary['mainLevelUp']  += award
                 self.leveledUp = False
 
         # if earnedMoney != -1:
@@ -1291,29 +1305,41 @@ class UnderlordInteract():
 
             if self.finalPlacement == 1:
                 reward += firstPlace
+                self.rewardSummary['finalPosition']  += firstPlace
             elif self.finalPlacement == 2:
                 reward += firstPlace * 0.9
+                self.rewardSummary['finalPosition']  += firstPlace * 0.9
             elif self.finalPlacement == 3:
                 reward += firstPlace * 0.75
+                self.rewardSummary['finalPosition']  += firstPlace * 0.75
             elif self.finalPlacement == 4:
                 reward += firstPlace * 0.5
+                self.rewardSummary['finalPosition']  += firstPlace * 0.5
             elif self.finalPlacement == 5:
                 reward += firstPlace * 0.3
+                self.rewardSummary['finalPosition']  += firstPlace * 0.3
             elif self.finalPlacement == 6:
                 reward += firstPlace * 0.2
+                self.rewardSummary['finalPosition']  += firstPlace * 0.2
             elif self.finalPlacement == 7:
                 reward += firstPlace * 0.1
+                self.rewardSummary['finalPosition']  += firstPlace * 0.1
             elif self.finalPlacement == 8:
                 reward += firstPlace * 0
-
+                self.rewardSummary['finalPosition']  += firstPlace * 0
+                
             if self.round < 10:
                 reward += firstPlace * 0.01 * self.round
+                self.rewardSummary['roundsSurvived']  += firstPlace * 0.01 * self.round
             elif self.round < 16:
                 reward += firstPlace * 0.02 * self.round
+                self.rewardSummary['roundsSurvived']  += firstPlace * 0.02 * self.round
             elif self.round < 26:
                 reward += firstPlace * 0.03 * self.round
+                self.rewardSummary['roundsSurvived']  += firstPlace * 0.03 * self.round
             else:
                 reward += firstPlace * 0.03 * 25
+                self.rewardSummary['roundsSurvived']  += firstPlace * 0.03 * self.round
 
         # self.closeStore(skipCheck=True)
 
