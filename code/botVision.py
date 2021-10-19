@@ -1289,7 +1289,7 @@ class UnderlordInteract():
                 Reward for getting to level: 9: 123.93
                 Reward for getting to level: 10: 170
                 """
-                award = pow((self.boardUnitCount()*self.level, 1.2)/(1*1000)
+                award = pow((self.boardUnitCount()*self.level, 1.2)/(1000/firstPlace)
                 # award = 10 + firstPlace * 0.00017 * (self.level ** 3) * ((self.boardUnitCount()+1) / self.level)
                 # print(f"Awarded: {award} for leveling up with: {self.boardUnitCount()} heroes!")
                 reward += award
