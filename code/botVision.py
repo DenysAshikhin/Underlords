@@ -1352,7 +1352,7 @@ class UnderlordInteract():
     def timeRunningOut(self):
 
         # if self.currentTime <= 10:
-        firstPlace = 10
+        firstPlace = 1
 
         if self.itemPicks is not None:
 
