@@ -1168,7 +1168,7 @@ class UnderlordInteract():
     def act(self, action, x, y, selection=None):
 
         tieredUp = None
-        firstPlace = 1
+        firstPlace = 5
         earnedMoney = -1
 
         acted = -1
@@ -1352,7 +1352,7 @@ class UnderlordInteract():
     def timeRunningOut(self):
 
         # if self.currentTime <= 10:
-        firstPlace = 1
+        firstPlace = 5
 
         if self.itemPicks is not None:
 
