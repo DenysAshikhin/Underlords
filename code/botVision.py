@@ -1165,7 +1165,7 @@ class UnderlordInteract():
     def act(self, action, x, y, selection=None):
 
         tieredUp = None
-        firstPlace = 1000
+        firstPlace = 10
         earnedMoney = -1
 
         acted = -1
@@ -1325,6 +1325,7 @@ class UnderlordInteract():
     def timeRunningOut(self):
 
         # if self.currentTime <= 10:
+        firstPlace = 10
 
         if self.itemPicks is not None:
 
@@ -1334,10 +1335,10 @@ class UnderlordInteract():
                 name = item['icon']
                 if name not in self.items.banned:
                     self.selectItem(-1, i)
-                    return -30
+                    return -firstPlace*0.03
         elif self.underlordPicks is not None:
             self.selectItem(-1, 0)
-            return -30
+            return -firstPlace*0.03
         # else:
         #     return 0
 

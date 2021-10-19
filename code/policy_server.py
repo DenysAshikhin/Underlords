@@ -25,49 +25,49 @@ DEFAULT_CONFIG = with_common_config({
     # with a value function, see https://arxiv.org/pdf/1506.02438.pdf.
     "use_gae": True,
     # The GAE (lambda) parameter.
-    "lambda": 1.0,
+    "lambda": 0.995,
     # Initial coefficient for KL divergence.
     "kl_coeff": 0.2,
     # Size of batches collected from each worker.
     "rollout_fragment_length": 20,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 6500,
+    "train_batch_size": 4096,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 500,
+    "sgd_minibatch_size": 256,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 2,
+    "num_sgd_iter": 15,
     # Whether to shuffle sequences in the batch when training (recommended).
-    "shuffle_sequences": True,
+    "shuffle_sequences": False,
     # Stepsize of SGD.
-    "lr": 3e-5,
+    "lr": 2e-5,
     # Learning rate schedule.
     "lr_schedule": None,
     # Coefficient of the value function loss. IMPORTANT: you must tune this if
     # you set vf_share_layers=True inside your model's config.
-    "vf_loss_coeff": 1.0,
+    "vf_loss_coeff": 1,
     "model": {
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [256, 256],
+        "fcnet_hiddens": [512, 512],
         "fcnet_activation": "relu",
         "use_lstm": True,
-        "max_seq_len": 200,
+        "max_seq_len": 16,
         "lstm_cell_size": 512,
-        "lstm_use_prev_action": True
+        "lstm_use_prev_action": False
     },
     # Coefficient of the entropy regularizer.
     "entropy_coeff": 0.0,
     # Decay schedule for the entropy regularizer.
     "entropy_coeff_schedule": None,
     # PPO clip parameter.
-    "clip_param": 0.3,
+    "clip_param": 0.2,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
-    "vf_clip_param": 10000.0,
+    "vf_clip_param": 3000.0,
     # If specified, clip the global norm of gradients by this amount.
     "grad_clip": None,
     # Target value for KL divergence.
@@ -80,7 +80,7 @@ DEFAULT_CONFIG = with_common_config({
     # usually slower, but you might want to try it if you run into issues with
     # # the default optimizer.
     # "simple_optimizer": False,
-
+    #"reuse_actors": True,
     "num_gpus": 1,
     # Use the connector server to generate experiences.
     "input": (
@@ -114,7 +114,7 @@ DEFAULT_CONFIG = with_common_config({
     # },
     "create_env_on_driver": False,
     "log_sys_usage": False,
-    "normalize_actions": False,
+    # "normalize_actions": False,
     "compress_observations": True
     # Whether to fake GPUs (using CPUs).
     # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
