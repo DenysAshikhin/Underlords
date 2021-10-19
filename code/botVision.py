@@ -1168,7 +1168,7 @@ class UnderlordInteract():
     def act(self, action, x, y, selection=None):
 
         tieredUp = None
-        firstPlace = 10
+        firstPlace = 1
         earnedMoney = -1
 
         acted = -1
@@ -1258,11 +1258,11 @@ class UnderlordInteract():
         if action in [2, 3]:
 
             if self.gold >= 30:
-                reward += firstPlace * 0.02
-                self.rewardSummary['purchases'] += firstPlace * 0.02
+                reward += firstPlace * 0.01
+                self.rewardSummary['purchases'] += firstPlace * 0.01
             elif self.gold >= 20:
-                reward += firstPlace * 0.005
-                self.rewardSummary['purchases'] += firstPlace * 0.005
+                reward += firstPlace * 0.0025
+                self.rewardSummary['purchases'] += firstPlace * 0.0025
             elif self.gold >= 10:
                 reward += firstPlace * 0.001
                 self.rewardSummary['purchases'] += firstPlace * 0.001
@@ -1289,7 +1289,7 @@ class UnderlordInteract():
                 Reward for getting to level: 9: 123.93
                 Reward for getting to level: 10: 170
                 """
-                award = pow((self.boardUnitCount()) * self.level, 1.4)
+                award = pow((self.boardUnitCount()*self.level, 1.2)/(1*1000)
                 # award = 10 + firstPlace * 0.00017 * (self.level ** 3) * ((self.boardUnitCount()+1) / self.level)
                 # print(f"Awarded: {award} for leveling up with: {self.boardUnitCount()} heroes!")
                 reward += award
