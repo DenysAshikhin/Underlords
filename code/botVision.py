@@ -1284,7 +1284,7 @@ class UnderlordInteract():
                 if unitCount > 0:
                     unitCount+1 #adding +1 since we just leveled up, there is no way to have # units = level
                 # award = pow(self.boardUnitCount()*self.level, 1.2)/(1000/firstPlace)
-                award = (self.level / unitCount) * 0.1 * firstPlace
+                award = (unitCount / self.level) * 0.1 * firstPlace
                 # award = 10 + firstPlace * 0.00017 * (self.level ** 3) * ((self.boardUnitCount()+1) / self.level)
                 # print(f"Awarded: {award} for leveling up with: {self.boardUnitCount()} heroes!")
                 reward += award
