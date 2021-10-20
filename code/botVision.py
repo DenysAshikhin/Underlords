@@ -1280,16 +1280,11 @@ class UnderlordInteract():
             # don't want to reward for rushing early levels as I think that's just dumb
             if (self.level > 3):
                 # if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level):
-                """
-                Reward for getting to level: 4: 10.88
-                Reward for getting to level: 5: 21.25
-                Reward for getting to level: 6: 36.72
-                Reward for getting to level: 7: 58.31
-                Reward for getting to level: 8: 87.04
-                Reward for getting to level: 9: 123.93
-                Reward for getting to level: 10: 170
-                """
-                award = pow(self.boardUnitCount()*self.level, 1.2)/(1000/firstPlace)
+                unitCount = self.boardUnitCount()
+                if unitCount > 0:
+                    unitCount+1 #adding +1 since we just leveled up, there is no way to have # units = level
+                # award = pow(self.boardUnitCount()*self.level, 1.2)/(1000/firstPlace)
+                award = (self.level / unitCount) * 0.1 * firstPlace
                 # award = 10 + firstPlace * 0.00017 * (self.level ** 3) * ((self.boardUnitCount()+1) / self.level)
                 # print(f"Awarded: {award} for leveling up with: {self.boardUnitCount()} heroes!")
                 reward += award
