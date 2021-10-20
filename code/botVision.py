@@ -1324,16 +1324,16 @@ class UnderlordInteract():
                 self.rewardSummary['finalPosition']  += firstPlace * 0
                 
             if self.round < 10:
-                reward += firstPlace * 0.01 * self.round
+                reward += firstPlace * 0.005 * self.round
                 self.rewardSummary['roundsSurvived']  += firstPlace * 0.01 * self.round
             elif self.round < 18:
-                reward += firstPlace * 0.02 * self.round
+                reward += firstPlace * 0.01 * self.round
                 self.rewardSummary['roundsSurvived']  += firstPlace * 0.02 * self.round
             elif self.round < 26:
-                reward += firstPlace * 0.03 * self.round
+                reward += firstPlace * 0.015 * self.round
                 self.rewardSummary['roundsSurvived']  += firstPlace * 0.03 * self.round
             else:
-                reward += firstPlace * 0.03 * 25
+                reward += firstPlace * 0.015 * 25
                 self.rewardSummary['roundsSurvived']  += firstPlace * 0.03 * self.round
 
         # self.closeStore(skipCheck=True)

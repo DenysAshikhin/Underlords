@@ -47,7 +47,7 @@ DEFAULT_CONFIG = with_common_config({
     "lr_schedule": None,
     # Coefficient of the value function loss. IMPORTANT: you must tune this if
     # you set vf_share_layers=True inside your model's config.
-    "vf_loss_coeff": 1,
+    "vf_loss_coeff": 1.5,
     "model": {
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
@@ -55,7 +55,7 @@ DEFAULT_CONFIG = with_common_config({
         "fcnet_hiddens": [512, 512],
         "fcnet_activation": "relu",
         "use_lstm": True,
-        "max_seq_len": 16,
+        "max_seq_len": 32,
         "lstm_cell_size": 512,
         "lstm_use_prev_action": False
     },
@@ -67,7 +67,7 @@ DEFAULT_CONFIG = with_common_config({
     "clip_param": 0.2,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
-    "vf_clip_param": 5.0,
+    "vf_clip_param": 10.0,
     # If specified, clip the global norm of gradients by this amount.
     "grad_clip": None,
     # Target value for KL divergence.
