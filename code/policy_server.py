@@ -32,10 +32,10 @@ DEFAULT_CONFIG = with_common_config({
     "rollout_fragment_length": 20,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 4800,
+    "train_batch_size": 4500,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 256,
+    "sgd_minibatch_size": 512,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
     "num_sgd_iter": 15,
@@ -55,7 +55,7 @@ DEFAULT_CONFIG = with_common_config({
         "fcnet_hiddens": [512, 512],
         "fcnet_activation": "relu",
         "use_lstm": True,
-        "max_seq_len": 32,
+        "max_seq_len": 8,
         "lstm_cell_size": 512,
         "lstm_use_prev_action": False
     },
@@ -64,14 +64,14 @@ DEFAULT_CONFIG = with_common_config({
     # Decay schedule for the entropy regularizer.
     "entropy_coeff_schedule": None,
     # PPO clip parameter.
-    "clip_param": 0.2,
+    "clip_param": 0.3,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
     "vf_clip_param": 10.0,
     # If specified, clip the global norm of gradients by this amount.
     "grad_clip": None,
     # Target value for KL divergence.
-    "kl_target": 0.01,
+    "kl_target": 0.02,
     # Whether to rollout "complete_episodes" or "truncate_episodes".
     "batch_mode": "complete_episodes",
     # Which observation filter to apply to the observation.
