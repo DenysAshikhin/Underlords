@@ -1441,7 +1441,7 @@ class UnderlordInteract():
                 # print('break 3')
                 return -1
 
-            if x > 3 or y > 3:
+            if x > 2 or y > 3:
                 self.mediumPunish = True
                 # print('uh oh 3')
                 return -1
