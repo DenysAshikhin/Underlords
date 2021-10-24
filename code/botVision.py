@@ -2396,7 +2396,7 @@ class UnderlordInteract():
                     text=hero.name + ' - ' + hero.item.name,
                     bg=color)
             else:
-                self.boardLabels[x][y].config(
+                self.boardLabels[y][x].config(
                     image=hero.image,
                     text=hero.name,
                     bg=color)
