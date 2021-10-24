@@ -1874,8 +1874,7 @@ class UnderlordInteract():
 
                         if len(name) > 1:
                             if self.boardHeroes[i][j] is None:
-                                print(self.boardHeroes[i][j].name)
-                                print(len(self.boardHeroes[i][j].name))
+                                print("There should be a hero at spot (coords below)")
                                 print(texty)
                                 print(len(texty))
                                 print(f"{i}-{j}")
