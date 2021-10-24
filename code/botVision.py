@@ -733,7 +733,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        # return True
+        return True
         thresh = 20
         if self.round < 3:  # arbitrary large number cause you have a ton more time in the beginning
             thresh = 35
@@ -1807,6 +1807,7 @@ class UnderlordInteract():
         if self.heroToMove.item:
             self.heroToMove.item.hero = None
 
+
         if y == -1:
             mouse1.position = (self.benchX + (self.benchXOffset * x), self.benchY)
             if self.benchHeroes[x].item is not None:
@@ -2384,31 +2385,31 @@ class UnderlordInteract():
 
     def updateHeroItem(self, hero):
 
-        if self.itemToMove.name in self.items.banned:
-            # print('This item is not allowed to be used')
-            return -1
-        elif "melee_only" in self.items.itemData[self.itemToMove.name]:
-            if not hero.melee:
-                # print(f"{hero.name} is not melee!")
-                self.mediumPunish = True
-                return -1
-        elif "ranged_only" in self.items.itemData[self.itemToMove.name]:
-            if not hero.ranged:
-                # print(f"{hero.name} is not ranged!")
-                self.mediumPunish = True
-                return -1
-        elif "requires_ability" in self.items.itemData[self.itemToMove.name]:
-            if hero.preventMana != False:
-                # print(f"{hero.name} has mana ban?!")
-
-                if hero.preventMana == 1:
-                    # print('perma mana ban')
-                    self.mediumPunish = True
-                    return -1
-                elif hero.preventMana[hero.tier - 1] != 0:
-                    # print('mana ban til t3')
-                    self.mediumPunish = True
-                    return -1
+        # if self.itemToMove.name in self.items.banned:
+        #     # print('This item is not allowed to be used')
+        #     return -1
+        # elif "melee_only" in self.items.itemData[self.itemToMove.name]:
+        #     if not hero.melee:
+        #         # print(f"{hero.name} is not melee!")
+        #         self.mediumPunish = True
+        #         return -1
+        # elif "ranged_only" in self.items.itemData[self.itemToMove.name]:
+        #     if not hero.ranged:
+        #         # print(f"{hero.name} is not ranged!")
+        #         self.mediumPunish = True
+        #         return -1
+        # elif "requires_ability" in self.items.itemData[self.itemToMove.name]:
+        #     if hero.preventMana != False:
+        #         # print(f"{hero.name} has mana ban?!")
+        #
+        #         if hero.preventMana == 1:
+        #             # print('perma mana ban')
+        #             self.mediumPunish = True
+        #             return -1
+        #         elif hero.preventMana[hero.tier - 1] != 0:
+        #             # print('mana ban til t3')
+        #             self.mediumPunish = True
+        #             return -1
 
         self.updateWindowCoords()  # Need to leave this to get proper item coords
 
@@ -2433,9 +2434,17 @@ class UnderlordInteract():
         time.sleep(self.mouseSleepTime*1.5)
         mouse1.release(Button.left)
 
-        if originalHero is not None:
+        if originalHero is not None: #if item was equiped to someone before, now it no longer is
+
+            if originalHero.item:
+                originalHero.item.hero = None #if the hero had an item, remove that items hero link
+
             originalHero.item = None
             self.updateHeroLabel(originalHero)
+
+        if hero.item:
+            hero.item.hero = None#removing the existing's item on the new hero link
+
 
         hero.item = self.itemToMove
         self.itemToMove.hero = hero
@@ -2521,7 +2530,7 @@ class UnderlordInteract():
 
             mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
             time.sleep(self.mouseSleepTime)
-            mouse1.click(Button.left, 1)
+            # mouse1.click(Button.left, 1)
 
             time.sleep(self.mouseSleepTime)
 
@@ -2532,7 +2541,7 @@ class UnderlordInteract():
 
             mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
             time.sleep(self.mouseSleepTime)
-            mouse1.click(Button.left, 1)
+            # mouse1.click(Button.left, 1)
 
             time.sleep(self.mouseSleepTime)
 
@@ -2555,7 +2564,7 @@ class UnderlordInteract():
 
                 mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
                 time.sleep(self.mouseSleepTime)
-                mouse1.click(Button.left, 1)
+                # mouse1.click(Button.left, 1)
 
                 time.sleep(self.mouseSleepTime * 2)
 
@@ -2658,33 +2667,69 @@ class UnderlordInteract():
                         units["tierTwo"] += 1
                         units["tierTwoHeroes"].append(self.benchHeroes[i])
 
+        item = None
+        ID = 0
+
         if units["tierOne"] == self.levelThresh:  # If there is enough tier ones to make a tier 2,
             # first instance hero levels up, the rest should be removed from reference and update labels?
 
             originalHero = self.findOriginalHero(units["tierOneHeroes"])
 
+            if originalHero.item:
+                item = originalHero.item
+                ID = originalHero.localID
+
             originalHero.tier += 1
 
             units["tierTwoHeroes"].append(originalHero)
-            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
+
             units["tierTwo"] += 1
             units["tieredUp2"] = True
 
             for hero in units["tierOneHeroes"]:
                 if hero.localID != originalHero.localID:
+                    if hero.item:
+                        if hero.localID > ID:
+
+                            if item:
+                                item.hero=None # reseting the linked hero on the existing item (hero is gone now)
+
+                            item = hero.item
+                            ID = hero.localID
                     self.resetLabel(hero)
+
+            if item:
+                originalHero.item = item
+            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
 
         if units["tierTwo"] == self.levelThresh:
 
             originalHero = self.findOriginalHero(units["tierTwoHeroes"])
 
+
+            if originalHero.item and originalHero.localID > ID:
+                if item:
+                    item.hero = None  # reseting the linked hero on the existing item (hero is gone now)
+
+                item = originalHero.item
+                ID = originalHero.localID
+
             originalHero.tier += 1
-            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
+
             units["tieredUp3"] = True
 
             for hero in units["tierTwoHeroes"]:
                 if hero.localID != originalHero.localID:
+                    if hero.item:
+                        if hero.localID > ID:
+                            if item:
+                                item.hero=None # reseting the linked hero on the existing item (hero is gone now)
+                            item = hero.item
+                            ID = hero.localID
                     self.resetLabel(hero)
+            if item:
+                originalHero.item = item
+            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
 
         # if we tiered up, return that
         if units["tieredUp3"] == True:  # A tier 3 implies a tier 2 was upgraded, so this is returned first
@@ -2719,4 +2764,4 @@ def openVision():
 
     root.mainloop()
 
-# openVision()
+openVision()
