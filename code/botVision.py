@@ -733,6 +733,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
+        return True
         thresh = 20
         if self.round < 3:  # arbitrary large number cause you have a ton more time in the beginning
             thresh = 35
@@ -1964,7 +1965,6 @@ class UnderlordInteract():
                     oldCoords = self.heroToMove.coords
                     print("old cords: ")
                     print(oldCoords)
-                    oldCoords[1] += 1
 
                     # moving selected hero to new spot
                     self.benchHeroes[x] = self.heroToMove
@@ -1975,14 +1975,29 @@ class UnderlordInteract():
                     self.heroToMove = None
 
                     # print(oldCoords[0])
-                    self.boardHeroes[oldCoords[0]][oldCoords[1]] = tempHero
-                    # print(self.benchHeroes[oldCoords[0]])
-                    self.boardHeroes[oldCoords[0]][oldCoords[1]].coords = (oldCoords[0], oldCoords[1])
-                    print(
-                        f"Bench unit {self.boardHeroes[oldCoords[0]][oldCoords[1]].name} move to New coords: {self.boardHeroes[oldCoords[0]][oldCoords[1]].coords}")
-                    self.updateHeroLabel(self.boardHeroes[oldCoords[0]][oldCoords[1]])
 
-                    print("bench swap 4")
+                    #meaning we are moving from bench to bench
+                    if oldCoords[1] == -1:
+                        tempHero.coords = (oldCoords[0], oldCoords[1])
+                        self.benchHeroes[oldCoords[0]] = tempHero
+                        print(
+                            f"Board unit {self.benchHeroes[oldCoords[0]].name} move to New coords: {self.benchHeroes[oldCoords[0]].coords}")
+                        self.updateHeroLabel(self.benchHeroes[oldCoords[0]])
+
+                        print("bench swap 123")
+                    else:
+                        tempHero.coords = (oldCoords[0], oldCoords[1])
+                        self.boardHeroes[oldCoords[1]][oldCoords[0]] = tempHero
+                        print(
+                            f"Bench unit {self.boardHeroes[oldCoords[1]][oldCoords[0]].name} move to New coords: {self.boardHeroes[oldCoords[1]][oldCoords[0]].coords}")
+                        self.updateHeroLabel(self.boardHeroes[oldCoords[1]][oldCoords[0]])
+
+                        print("bench swap 4")
+
+
+
+                    # print(self.benchHeroes[oldCoords[0]])
+
                     self.boardUnitCount(True)
 
                     # print("Bench Spot Taken!")
@@ -2018,11 +2033,55 @@ class UnderlordInteract():
                     print("bench swap 6")
                     self.boardUnitCount(True)
 
+
                 else:
-                    # print("Board Spot Taken!")
-                    self.mediumPunish = True
+                    # keeping reference of hero in current spot
+
+                    tempHero = self.boardHeroes[x][y]
+                    oldCoords = self.heroToMove.coords
+
+                    print("old cords: ")
+                    print(oldCoords)
+
+                    # moving selected hero to new spot
+
+                    self.boardHeroes[x][y] = self.heroToMove
+                    # print(f"moved: {self.boardHeroes[x][y].name} from {self.boardHeroes[x][y].coords}")
+                    self.resetLabel(self.heroToMove)
+                    # print(f"successfully moved unit onto board: {x}-{y}:::{self.allowMove()}")
+                    self.moveGameHero(self.heroToMove, x, y)
+                    self.heroToMove.coords = (y, x)
+                    self.updateHeroLabel(self.heroToMove)
                     self.heroToMove = None
-                    return -1
+
+                    # print(oldCoords[0])
+
+
+                    # meaning we are moving from board to bench
+                    if oldCoords[1] == -1:
+
+                        tempHero.coords = (oldCoords[0], oldCoords[1])
+                        self.benchHeroes[oldCoords[0]] = tempHero
+                        print(
+                            f"Board unit {self.benchHeroes[oldCoords[0]].name} move to New coords: {self.benchHeroes[oldCoords[0]].coords}")
+
+                        self.updateHeroLabel(self.benchHeroes[oldCoords[0]])
+                        print("bench swap 1111")
+
+                    else:
+
+                        tempHero.coords = (oldCoords[0], oldCoords[1])
+                        self.boardHeroes[oldCoords[1]][oldCoords[0]] = tempHero
+                        print(
+                            f"Bench unit {self.boardHeroes[oldCoords[1]][oldCoords[0]].name} move to New coords: {self.boardHeroes[oldCoords[1]][oldCoords[0]].coords}")
+                        self.updateHeroLabel(self.boardHeroes[oldCoords[1]][oldCoords[0]])
+
+                        print("bench swap 4232")
+
+                    # print(self.benchHeroes[oldCoords[0]])
+
+                    self.boardUnitCount(True)
+
 
         elif self.itemToMove:  # Meaning we are trying to attach an item to a hero
 
@@ -2092,8 +2151,8 @@ class UnderlordInteract():
         if heroY == -1:
             mouse1.position = (self.benchX + (self.benchXOffset * heroX), self.benchY)
         else:
-            x, y = self.switchXY(heroX, heroY)
-            mouse1.position = (self.boardX + (self.boardXOffset * x), self.boardY + (self.boardYOffset * y))
+            # x, y = self.switchXY(heroX, heroY)
+            mouse1.position = (self.boardX + (self.boardXOffset * heroX), self.boardY + (self.boardYOffset * heroY))
         # print(f"Moving to board {mouse1.position}")
 
         time.sleep(self.mouseSleepTime * 2)
@@ -2380,7 +2439,7 @@ class UnderlordInteract():
             self.benchLabels[x].config(text="", bg='black', image=self.profilePics['None'])
             self.benchHeroes[x] = None
         else:
-            # x,y = self.switchXY(x,y)
+            x,y = self.switchXY(x,y)
             self.boardLabels[x][y].config(text="", bg='black', image=self.profilePics['None'])
             self.boardHeroes[x][y] = None
 
@@ -2650,4 +2709,4 @@ def openVision():
 
     root.mainloop()
 
-# openVision()
+openVision()
