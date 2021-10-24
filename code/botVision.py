@@ -733,7 +733,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        return True
+        # return True
         thresh = 20
         if self.round < 3:  # arbitrary large number cause you have a ton more time in the beginning
             thresh = 35
@@ -2385,31 +2385,31 @@ class UnderlordInteract():
 
     def updateHeroItem(self, hero):
 
-        # if self.itemToMove.name in self.items.banned:
-        #     # print('This item is not allowed to be used')
-        #     return -1
-        # elif "melee_only" in self.items.itemData[self.itemToMove.name]:
-        #     if not hero.melee:
-        #         # print(f"{hero.name} is not melee!")
-        #         self.mediumPunish = True
-        #         return -1
-        # elif "ranged_only" in self.items.itemData[self.itemToMove.name]:
-        #     if not hero.ranged:
-        #         # print(f"{hero.name} is not ranged!")
-        #         self.mediumPunish = True
-        #         return -1
-        # elif "requires_ability" in self.items.itemData[self.itemToMove.name]:
-        #     if hero.preventMana != False:
-        #         # print(f"{hero.name} has mana ban?!")
-        #
-        #         if hero.preventMana == 1:
-        #             # print('perma mana ban')
-        #             self.mediumPunish = True
-        #             return -1
-        #         elif hero.preventMana[hero.tier - 1] != 0:
-        #             # print('mana ban til t3')
-        #             self.mediumPunish = True
-        #             return -1
+        if self.itemToMove.name in self.items.banned:
+            # print('This item is not allowed to be used')
+            return -1
+        elif "melee_only" in self.items.itemData[self.itemToMove.name]:
+            if not hero.melee:
+                # print(f"{hero.name} is not melee!")
+                self.mediumPunish = True
+                return -1
+        elif "ranged_only" in self.items.itemData[self.itemToMove.name]:
+            if not hero.ranged:
+                # print(f"{hero.name} is not ranged!")
+                self.mediumPunish = True
+                return -1
+        elif "requires_ability" in self.items.itemData[self.itemToMove.name]:
+            if hero.preventMana != False:
+                # print(f"{hero.name} has mana ban?!")
+
+                if hero.preventMana == 1:
+                    # print('perma mana ban')
+                    self.mediumPunish = True
+                    return -1
+                elif hero.preventMana[hero.tier - 1] != 0:
+                    # print('mana ban til t3')
+                    self.mediumPunish = True
+                    return -1
 
         self.updateWindowCoords()  # Need to leave this to get proper item coords
 
@@ -2530,7 +2530,7 @@ class UnderlordInteract():
 
             mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
             time.sleep(self.mouseSleepTime)
-            # mouse1.click(Button.left, 1)
+            mouse1.click(Button.left, 1)
 
             time.sleep(self.mouseSleepTime)
 
@@ -2541,7 +2541,7 @@ class UnderlordInteract():
 
             mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
             time.sleep(self.mouseSleepTime)
-            # mouse1.click(Button.left, 1)
+            mouse1.click(Button.left, 1)
 
             time.sleep(self.mouseSleepTime)
 
@@ -2564,7 +2564,7 @@ class UnderlordInteract():
 
                 mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
                 time.sleep(self.mouseSleepTime)
-                # mouse1.click(Button.left, 1)
+                mouse1.click(Button.left, 1)
 
                 time.sleep(self.mouseSleepTime * 2)
 
@@ -2764,4 +2764,4 @@ def openVision():
 
     root.mainloop()
 
-openVision()
+# openVision()
