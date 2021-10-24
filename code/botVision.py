@@ -1999,7 +1999,7 @@ class UnderlordInteract():
                     self.resetLabel(self.heroToMove)
                     # print(f"successfully moved unit onto board: {x}-{y}:::{self.allowMove()}")
                     self.moveGameHero(self.heroToMove, x, y)
-                    self.heroToMove.coords = (x, y)
+                    self.heroToMove.coords = (y, x)
                     self.updateHeroLabel(self.heroToMove)
                     self.heroToMove = None
 
