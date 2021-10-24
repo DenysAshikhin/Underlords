@@ -1798,6 +1798,8 @@ class UnderlordInteract():
 
         if self.heroToMove is None:
             return -1
+        elif self.heroToMove.underlord:
+            return -1
 
         x, y = self.heroToMove.coords
         earnedMoney = 0
