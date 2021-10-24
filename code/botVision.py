@@ -1953,6 +1953,7 @@ class UnderlordInteract():
 
                     tempHero = self.benchHeroes[x]
                     oldCoords = self.heroToMove.coords
+                    oldCoords[1] += 1
 
                     # moving selected hero to new spot
                     self.benchHeroes[x] = self.heroToMove
