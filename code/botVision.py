@@ -878,8 +878,8 @@ class UnderlordInteract():
                             # self.benchHeroes[i].tier,
                             # self.benchHeroes[i].gold,
                             itemID,
-                            self.benchHeroes[i].coords[1],
-                            self.benchHeroes[i].coords[0] + 1,
+                            self.benchHeroes[i].coords[0],
+                            self.benchHeroes[i].coords[1] + 1,
                             isUnderlord]
 
                 if (self.benchHeroes[i].id + 1) > 71:
@@ -933,8 +933,8 @@ class UnderlordInteract():
                                 # self.boardHeroes[i][j].tier,
                                 # self.boardHeroes[i][j].gold,
                                 itemID,
-                                self.boardHeroes[i][j].coords[1],
-                                self.boardHeroes[i][j].coords[0] + 1,
+                                self.boardHeroes[i][j].coords[0],
+                                self.boardHeroes[i][j].coords[1] + 1,
                                 isUnderlord]
 
                     if (self.boardHeroes[i][j].id + 1) > 71:
