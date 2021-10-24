@@ -2084,6 +2084,8 @@ class UnderlordInteract():
 
         elif self.itemToMove:  # Meaning we are trying to attach an item to a hero
 
+            print("equiping item")
+            print(self.itemToMove)
             if y == -1:  # Meaning we are attaching an item to a unit on bench
                 if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
                     self.updateHeroItem(self.benchHeroes[x])
