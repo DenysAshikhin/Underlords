@@ -1804,6 +1804,9 @@ class UnderlordInteract():
         x, y = self.heroToMove.coords
         earnedMoney = 0
 
+        if self.heroToMove.item:
+            self.heroToMove.item.hero = None
+
         if y == -1:
             mouse1.position = (self.benchX + (self.benchXOffset * x), self.benchY)
             if self.benchHeroes[x].item is not None:
@@ -2160,11 +2163,11 @@ class UnderlordInteract():
             mouse1.position = (self.boardX + (self.boardXOffset * heroX), self.boardY + (self.boardYOffset * heroY))
         # print(f"Moving to board {mouse1.position}")
 
-        time.sleep(self.mouseSleepTime * 2)
+        time.sleep(self.mouseSleepTime * 1.5)
 
         mouse1.press(Button.left)
 
-        time.sleep(self.mouseSleepTime * 2)
+        time.sleep(self.mouseSleepTime * 1.5)
 
         if newY == -1:  # Moving onto the bench
             mouse1.position = (self.benchX + (self.benchXOffset * newX), self.benchY)
@@ -2174,9 +2177,9 @@ class UnderlordInteract():
             newX,newY = self.switchXY(newX,newY)
             mouse1.position = (self.boardX + (self.boardXOffset * newX), self.boardY + (self.boardYOffset * newY))
         # print(f"Moving to board {mouse1.position}")
-        time.sleep(self.mouseSleepTime * 2)
+        time.sleep(self.mouseSleepTime * 1.5)
         mouse1.release(Button.left)
-        time.sleep(self.mouseSleepTime * 2)
+        time.sleep(self.mouseSleepTime * 1.5)
 
     def getPunishment(self):
 
@@ -2414,18 +2417,20 @@ class UnderlordInteract():
         mouse1.position = (self.itemMoveX + (self.itemMoveXOffset * self.itemToMove.coords[1]),
                            self.itemMoveY + (self.itemMoveYOffset * self.itemToMove.coords[0]))
 
+
+        time.sleep(self.mouseSleepTime * 1.5)
         mouse1.press(Button.left)
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime*1.5)
 
         heroX, heroY = hero.coords
 
         if heroY == -1:
             mouse1.position = (self.benchX + (self.benchXOffset * heroX), self.benchY)
         else:
-            heroX, heroY = self.switchXY(heroX, heroY)
+            # heroX, heroY = self.switchXY(heroX, heroY)
             mouse1.position = (self.boardX + (self.boardXOffset * heroX), self.boardY + (self.boardYOffset * heroY))
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime*1.5)
         mouse1.release(Button.left)
 
         if originalHero is not None:
