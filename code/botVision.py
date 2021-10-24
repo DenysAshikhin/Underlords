@@ -1870,7 +1870,7 @@ class UnderlordInteract():
                     if texty != "" or self.boardHeroes[i][j] is not None:
                         index = texty.find('-')
                         name = texty
-                        
+
                         if len(name) > 1:
                             if self.boardHeroes[i][j] is None:
                                 print(self.boardHeroes[i][j].name)
@@ -1962,6 +1962,8 @@ class UnderlordInteract():
 
                     tempHero = self.benchHeroes[x]
                     oldCoords = self.heroToMove.coords
+                    print("old cords: ")
+                    print(oldCoords)
                     oldCoords[1] += 1
 
                     # moving selected hero to new spot
