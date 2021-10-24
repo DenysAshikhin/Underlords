@@ -1728,7 +1728,7 @@ class UnderlordInteract():
 
             if self.boardHeroes[x][y] is None:
                 # print(f"Found a spot for underlord at: {x}-{y}")
-                self.underlord = Hero(name, (x, y), self.underlordPics[name], True, ID=ID,
+                self.underlord = Hero(name, (y, x), self.underlordPics[name], True, ID=ID,
                                       localID=self.localHeroID, gold=0)
                 self.localHeroID += 1
                 self.updateHeroLabel(self.underlord)
