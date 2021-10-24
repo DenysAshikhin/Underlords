@@ -456,7 +456,7 @@ class UnderlordInteract():
 
                 if not training:
                     tempButton = tkinter.Button(master=self.shopFrame, text="Move", width=4, height=1,
-                                                command=lambda pos=i, idx=j: self.moveUnit(x=pos, y=idx))
+                                                command=lambda pos=j, idx=i: self.moveUnit(x=pos, y=idx))
                     tempButton.grid(row=4 + (2 * i), column=j)
 
         self.shopFrame.pack()
@@ -614,6 +614,25 @@ class UnderlordInteract():
 
     def testFunction(self, param1, param2):
         # print(self.HUD.getClockTimeLeft())
+
+        if self.localItemID < 4:
+            for i in range(3):
+                for j in range(4):
+
+                    melee = False
+                    ranged = False
+                    preventMana = False
+                    boughtItemId = 7
+                    name = 'tester item' + str(i) + str(j)
+                    self.itemObjects[i][j] = Item(name, (i, j),
+                                                  ID=2,
+                                                  melee=melee,
+                                                  ranged=ranged,
+                                                  preventMana=preventMana,
+                                                  localID=self.localItemID,
+                                                  legacyID=boughtItemId)
+                    self.localItemID += 1
+                    self.itemlabels[i][j].config(text=name)
         print(self.getObservation())
         # print(self.getGamePhase())
         # print(f"Punishment: {self.getPunishment()}")
@@ -859,8 +878,8 @@ class UnderlordInteract():
                             # self.benchHeroes[i].tier,
                             # self.benchHeroes[i].gold,
                             itemID,
+                            self.benchHeroes[i].coords[1],
                             self.benchHeroes[i].coords[0] + 1,
-                            self.benchHeroes[i].coords[1] + 1,
                             isUnderlord]
 
                 if (self.benchHeroes[i].id + 1) > 71:
@@ -914,8 +933,8 @@ class UnderlordInteract():
                                 # self.boardHeroes[i][j].tier,
                                 # self.boardHeroes[i][j].gold,
                                 itemID,
+                                self.boardHeroes[i][j].coords[1],
                                 self.boardHeroes[i][j].coords[0] + 1,
-                                self.boardHeroes[i][j].coords[1] + 1,
                                 isUnderlord]
 
                     if (self.boardHeroes[i][j].id + 1) > 71:
@@ -1189,7 +1208,7 @@ class UnderlordInteract():
             tieredUp = self.buy(x)
             print('buy')
         elif action == 4:
-            earnedMoney = self.sellHero(x, y)
+            earnedMoney = self.sellHero()
             print('sell hero')
         elif action == 5:
             acted = self.selectItem(x, y)
@@ -1385,6 +1404,10 @@ class UnderlordInteract():
         # gamePhase = self.getGamePhase()
 
         # print(f"gamePhase: {gamePhase}")
+        # x,y = self.switchXY(x, y)
+
+        print(f"select item {x} - {y}")
+
 
         if self.pickTime():
 
@@ -1418,7 +1441,7 @@ class UnderlordInteract():
                 # print('break 3')
                 return -1
 
-            if x > 2 or y > 3:
+            if x > 3 or y > 3:
                 self.mediumPunish = True
                 # print('uh oh 3')
                 return -1
@@ -1766,51 +1789,16 @@ class UnderlordInteract():
 
         return self.combatType == 0 and self.underlordPicks is None and self.itemPicks is None and not self.checkState
 
-    def sellHero(self, x=-1, y=-1):
+    def sellHero(self):
 
         if not self.allowMove():
             self.mediumPunish = True
             return -1
 
-        if x < -1 or x > 7:
-            # print('wrong x')
-            self.mediumPunish = True
-            return -1
-        if y < -1 or y > 3:
-            # print('wrong y')
-            self.mediumPunish = True
+        if self.heroToMove is None:
             return -1
 
-        if x == -1:
-            if self.heroToMove is None:
-                # print("No Hero Selected to Sell")
-                self.mediumPunish = True
-                return -1
-            elif self.heroToMove.underlord:
-                self.mediumPunish = True
-                return -1
-            else:
-                x, y = self.heroToMove.coords
-        else:
-
-            check = self.boardHeroCoordCheck(x, y)
-            if check == -1:
-                return check
-
-            if y == -1:
-                if self.benchHeroes[x] is None:
-                    # print(f"No hero on bench spot {x + 1} to sell!")
-                    self.mediumPunish = True
-                    return -1
-            elif self.boardHeroes[x][y] is None:
-                # print(f"No hero on board spot {x + 1}-{y + 1} to sell!")
-                self.mediumPunish = True
-                return -1
-            elif self.boardHeroes[x][y] is not None:
-                if self.boardHeroes[x][y].underlord:
-                    self.strongPunish = True
-                    return -1
-
+        x, y = self.heroToMove.coords
         earnedMoney = 0
 
         if y == -1:
@@ -1908,6 +1896,12 @@ class UnderlordInteract():
 
         return numHeroes
 
+    def switchXY(self, x, y):
+        temp = x
+        x = y
+        y = temp
+        return x, y
+
     def moveUnit(self, x=-1, y=-1):
 
         if self.heroToMove:
@@ -1929,70 +1923,6 @@ class UnderlordInteract():
             self.mediumPunish = True
             # print('invalid phase move unit')
             return -1
-
-        # We are allowing it to move units from the bench to the bench whenever, but it will be punished a bit
-        # since it doesn't accomplish anything
-        if self.heroToMove:
-            if self.heroToMove.coords[1] == -1:
-                if y == -1:
-                    if x > 7:
-                        self.mediumPunish = True
-                        return -1
-                    elif self.benchHeroes[x] is None:  # Making sure bench spot is open
-                        self.benchHeroes[x] = self.heroToMove
-                        self.resetLabel(self.heroToMove)
-                        self.moveGameHero(self.heroToMove, x, -1)
-                        self.heroToMove.coords = (x, -1)
-                        self.updateHeroLabel(self.heroToMove)
-                        self.heroToMove = None
-                        self.tinyPunish = True
-                        print("bench swap 2")
-                        self.boardUnitCount(True)
-                        return 1
-
-                    else:
-                        # keeping reference of hero in current spot
-
-                        tempHero = self.benchHeroes[x]
-                        oldCoords = self.heroToMove.coords
-
-                        # moving selected hero to new spot
-                        self.benchHeroes[x] = self.heroToMove
-                        self.resetLabel(self.heroToMove)
-                        self.moveGameHero(self.heroToMove, x, -1)
-                        self.heroToMove.coords = (x, -1)
-                        self.updateHeroLabel(self.heroToMove)
-                        self.heroToMove = None
-
-                        # print(oldCoords[0])
-                        self.benchHeroes[oldCoords[0]] = tempHero
-                        # print(self.benchHeroes[oldCoords[0]])
-                        self.benchHeroes[oldCoords[0]].coords = (oldCoords[0], oldCoords[1])
-                        self.updateHeroLabel(self.benchHeroes[oldCoords[0]])
-
-                        print("bench swap 1")
-                        self.boardUnitCount(True)
-
-                        # tiny punish to prevent AI from just spamming this
-                        self.tinyPunish = True
-                        return 1
-                        # print("Bench Spot Taken!")
-                        # self.mediumPunish = True
-                        # self.heroToMove = None
-                        # return -1
-        else:  # Meaning a hero has not yet been selected for movement, mark this hero as one to move
-            if y == -1:  # Meaning we are moving onto a bench spot
-                if x > 7:
-                    self.mediumPunish = True
-                    return -1
-                if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
-                    self.heroToMove = self.benchHeroes[x]
-                    return 1
-                else:
-                    # print("No Hero On This Bench!")
-                    self.mediumPunish = True
-                    self.heroToMove = None
-                    return -1
 
         if self.heroToMove:  # If a hero has been selected to move previously
             if y == -1:  # Meaning we are moving onto a bench spot
@@ -2050,6 +1980,8 @@ class UnderlordInteract():
 
             else:  # Meaning we are moving onto a board spot
 
+                x, y = self.switchXY(x, y)
+
                 if x > 3 or y > 7:
                     # print('the new wrong')
                     self.mediumPunish = True
@@ -2092,8 +2024,9 @@ class UnderlordInteract():
                     self.itemToMove = None
                     return -1
             else:
-
+                x, y = self.switchXY(x, y)
                 if x > 3 or y > 7:
+
                     # print('the new wrong x 2')
                     self.mediumPunish = True
                     return -1
@@ -2123,7 +2056,7 @@ class UnderlordInteract():
                     self.heroToMove = None
                     return -1
             else:
-
+                x, y = self.switchXY(x, y)
                 check = self.boardHeroCoordCheck(x, y)
                 if check == -1:
                     return check
@@ -2147,7 +2080,8 @@ class UnderlordInteract():
         if heroY == -1:
             mouse1.position = (self.benchX + (self.benchXOffset * heroX), self.benchY)
         else:
-            mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
+            x, y = self.switchXY(heroX, heroY)
+            mouse1.position = (self.boardX + (self.boardXOffset * x), self.boardY + (self.boardYOffset * y))
         # print(f"Moving to board {mouse1.position}")
 
         time.sleep(self.mouseSleepTime * 2)
@@ -2161,7 +2095,8 @@ class UnderlordInteract():
         # print(f"Moving to bench {mouse1.position}")
 
         else:
-            mouse1.position = (self.boardX + (self.boardXOffset * newY), self.boardY + (self.boardYOffset * newX))
+            newX,newY = self.switchXY(newX,newY)
+            mouse1.position = (self.boardX + (self.boardXOffset * newX), self.boardY + (self.boardYOffset * newY))
         # print(f"Moving to board {mouse1.position}")
         time.sleep(self.mouseSleepTime * 2)
         mouse1.release(Button.left)
@@ -2411,7 +2346,8 @@ class UnderlordInteract():
         if heroY == -1:
             mouse1.position = (self.benchX + (self.benchXOffset * heroX), self.benchY)
         else:
-            mouse1.position = (self.boardX + (self.boardXOffset * heroY), self.boardY + (self.boardYOffset * heroX))
+            heroX, heroY = self.switchXY(heroX, heroY)
+            mouse1.position = (self.boardX + (self.boardXOffset * heroX), self.boardY + (self.boardYOffset * heroY))
 
         time.sleep(self.mouseSleepTime)
         mouse1.release(Button.left)
@@ -2432,6 +2368,7 @@ class UnderlordInteract():
             self.benchLabels[x].config(text="", bg='black', image=self.profilePics['None'])
             self.benchHeroes[x] = None
         else:
+            # x,y = self.switchXY(x,y)
             self.boardLabels[x][y].config(text="", bg='black', image=self.profilePics['None'])
             self.boardHeroes[x][y] = None
 
@@ -2701,4 +2638,4 @@ def openVision():
 
     root.mainloop()
 
-# openVision()
+openVision()

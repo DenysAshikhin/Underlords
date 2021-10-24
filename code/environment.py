@@ -59,6 +59,8 @@ class UnderlordEnv(ExternalEnv):
         localHeroId = 100
         itemId = 70
         localItemId = 10
+        x = 8
+        y = 5
 
         # self.action_space = action_space
         # note to make sure 0's are reserved for n/a -> adding +1 to some values ( marked with a *)
@@ -102,26 +104,26 @@ class UnderlordEnv(ExternalEnv):
                         high=np.array([5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]),
                         dtype=np.float32),
 
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
              # below are the board heros (11 because 1 is underlord)
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
              # below are underlords to pick (whenever valid) -> underlord ID - specialty
              spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
              # below are the items
@@ -190,8 +192,8 @@ class UnderlordEnv(ExternalEnv):
                 # 0 = reroll, 1 = lock in, 2 = level up, 3 = buy unit from store, 4 = sell unit, 5 = choose item/underlord,
                 # 6 = move Item/Unit
                 7,
-                9,  # x-cordinate *
-                9  # y-cordinate *
+                8,  # x-cordinate *
+                5  # y-cordinate *
                 # 4  # selection -> used only when having to choose an item or underlord
             ]
         )

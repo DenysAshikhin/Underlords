@@ -126,6 +126,8 @@ heroId = 72
 localHeroId = 100
 itemId = 70
 localItemId = 10
+x = 8
+y = 5
 DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
             (spaces.Discrete(9),  # final position * (if not 0 means game is over!)
 
@@ -166,26 +168,26 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
                         high=np.array([5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]),
                         dtype=np.float32),
 
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
              # below are the board heros (11 because 1 is underlord)
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, 9, 9, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
              # below are underlords to pick (whenever valid) -> underlord ID - specialty
              spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
              # below are the items
@@ -248,7 +250,7 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
              spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
              spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId])
              ))
-DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([7, 9, 9])
+DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([7, 8, 5])
 
 ray.init(log_to_driver=False)
 
