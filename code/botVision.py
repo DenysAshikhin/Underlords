@@ -1868,12 +1868,12 @@ class UnderlordInteract():
                 for j in range(8):
                     texty = self.boardLabels[i][j]['text']
                     if texty != "" or self.boardHeroes[i][j] is not None:
-						index = texty.find('-')
-						name = texty
-						
-						if len(name) > 1:
-							if self.boardHeroes[i][j] is None:
-								print(self.boardHeroes[i][j].name)
+                        index = texty.find('-')
+                        name = texty
+                        
+                        if len(name) > 1:
+                            if self.boardHeroes[i][j] is None:
+                                print(self.boardHeroes[i][j].name)
                                 print(len(self.boardHeroes[i][j].name))
                                 print(texty)
                                 print(len(texty))
