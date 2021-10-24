@@ -1813,16 +1813,18 @@ class UnderlordInteract():
             self.heroToMove = None
         else:
 
-            if self.boardHeroes[y][x] is None:
+            x, y = self.switchXY(x, y)
+
+            if self.boardHeroes[x][y] is None:
                 self.mediumPunish = True
                 return -1
 
             mouse1.position = (self.boardX + (self.boardXOffset * y), self.boardY + (self.boardYOffset * x))
-            if self.boardHeroes[y][x].item is not None:
-                self.boardHeroes[y][x].item.hero = None
+            if self.boardHeroes[x][y].item is not None:
+                self.boardHeroes[x][y].item.hero = None
 
-            earnedMoney = self.boardHeroes[y][x].gold + (self.boardHeroes[y][x].tier - 1) * 2
-            self.resetLabel(self.boardHeroes[y][x])
+            earnedMoney = self.boardHeroes[x][y].gold + (self.boardHeroes[x][y].tier - 1) * 2
+            self.resetLabel(self.boardHeroes[x][y])
             self.heroToMove = None
         # print(f"Moving to board {mouse1.position}")
 
