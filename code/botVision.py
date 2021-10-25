@@ -2047,6 +2047,13 @@ class UnderlordInteract():
                     tempHero = self.boardHeroes[x][y]
                     oldCoords = self.heroToMove.coords
 
+                    if oldCoords[1] == -1:
+                        if tempHero.underlord:
+                            # can't swap bench unit onto an underlord!
+                            self.mediumPunish = True
+                            self.heroToMove = None
+                            return -1
+
                     print("old cords: ")
                     print(oldCoords)
 
