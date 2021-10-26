@@ -1864,6 +1864,12 @@ class UnderlordInteract():
                         name = texty[:index - 1]
                     else:
                         name = texty
+
+                    if self.benchHeroes[i] is None:
+                        print(texty)
+                        print(len(texty))
+                        print(f"index: {i}")
+                        raise Exception('benchUnit count error 55')
                     if not self.benchHeroes[i].underlord:
                         if self.benchHeroes[i].name != name:
                             print(self.benchHeroes[i].name)
@@ -2703,6 +2709,9 @@ class UnderlordInteract():
 
                             item = hero.item
                             ID = hero.localID
+                    if self.heroToMove:
+                        if self.heroToMove.localID == hero.localID:
+                            self.heroToMove = None
                     self.resetLabel(hero)
 
             if item:
@@ -2733,6 +2742,9 @@ class UnderlordInteract():
                                 item.hero=None # reseting the linked hero on the existing item (hero is gone now)
                             item = hero.item
                             ID = hero.localID
+                    if self.heroToMove:
+                        if self.heroToMove.localID == hero.localID:
+                            self.heroToMove = None
                     self.resetLabel(hero)
             if item:
                 originalHero.item = item
