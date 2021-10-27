@@ -1804,6 +1804,10 @@ class UnderlordInteract():
         x, y = self.heroToMove.coords
         earnedMoney = 0
 
+        if self.heroToMove.item:
+            self.heroToMove.item.hero = None
+
+
         if y == -1:
             mouse1.position = (self.benchX + (self.benchXOffset * x), self.benchY)
             if self.benchHeroes[x].item is not None:
@@ -1813,16 +1817,18 @@ class UnderlordInteract():
             self.heroToMove = None
         else:
 
-            if self.boardHeroes[y][x] is None:
+            x, y = self.switchXY(x, y)
+
+            if self.boardHeroes[x][y] is None:
                 self.mediumPunish = True
                 return -1
 
             mouse1.position = (self.boardX + (self.boardXOffset * y), self.boardY + (self.boardYOffset * x))
-            if self.boardHeroes[y][x].item is not None:
-                self.boardHeroes[y][x].item.hero = None
+            if self.boardHeroes[x][y].item is not None:
+                self.boardHeroes[x][y].item.hero = None
 
-            earnedMoney = self.boardHeroes[y][x].gold + (self.boardHeroes[y][x].tier - 1) * 2
-            self.resetLabel(self.boardHeroes[y][x])
+            earnedMoney = self.boardHeroes[x][y].gold + (self.boardHeroes[x][y].tier - 1) * 2
+            self.resetLabel(self.boardHeroes[x][y])
             self.heroToMove = None
         # print(f"Moving to board {mouse1.position}")
 
@@ -1858,6 +1864,12 @@ class UnderlordInteract():
                         name = texty[:index - 1]
                     else:
                         name = texty
+
+                    if self.benchHeroes[i] is None:
+                        print(texty)
+                        print(len(texty))
+                        print(f"index: {i}")
+                        raise Exception('benchUnit count error 55')
                     if not self.benchHeroes[i].underlord:
                         if self.benchHeroes[i].name != name:
                             print(self.benchHeroes[i].name)
@@ -2041,6 +2053,13 @@ class UnderlordInteract():
                     tempHero = self.boardHeroes[x][y]
                     oldCoords = self.heroToMove.coords
 
+                    if oldCoords[1] == -1:
+                        if tempHero.underlord:
+                            # can't swap bench unit onto an underlord!
+                            self.mediumPunish = True
+                            self.heroToMove = None
+                            return -1
+
                     print("old cords: ")
                     print(oldCoords)
 
@@ -2158,11 +2177,11 @@ class UnderlordInteract():
             mouse1.position = (self.boardX + (self.boardXOffset * heroX), self.boardY + (self.boardYOffset * heroY))
         # print(f"Moving to board {mouse1.position}")
 
-        time.sleep(self.mouseSleepTime * 2)
+        time.sleep(self.mouseSleepTime * 1.5)
 
         mouse1.press(Button.left)
 
-        time.sleep(self.mouseSleepTime * 2)
+        time.sleep(self.mouseSleepTime * 1.5)
 
         if newY == -1:  # Moving onto the bench
             mouse1.position = (self.benchX + (self.benchXOffset * newX), self.benchY)
@@ -2172,9 +2191,9 @@ class UnderlordInteract():
             newX,newY = self.switchXY(newX,newY)
             mouse1.position = (self.boardX + (self.boardXOffset * newX), self.boardY + (self.boardYOffset * newY))
         # print(f"Moving to board {mouse1.position}")
-        time.sleep(self.mouseSleepTime * 2)
+        time.sleep(self.mouseSleepTime * 1.5)
         mouse1.release(Button.left)
-        time.sleep(self.mouseSleepTime * 2)
+        time.sleep(self.mouseSleepTime * 1.5)
 
     def getPunishment(self):
 
@@ -2412,23 +2431,33 @@ class UnderlordInteract():
         mouse1.position = (self.itemMoveX + (self.itemMoveXOffset * self.itemToMove.coords[1]),
                            self.itemMoveY + (self.itemMoveYOffset * self.itemToMove.coords[0]))
 
+
+        time.sleep(self.mouseSleepTime * 1.5)
         mouse1.press(Button.left)
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime*1.5)
 
         heroX, heroY = hero.coords
 
         if heroY == -1:
             mouse1.position = (self.benchX + (self.benchXOffset * heroX), self.benchY)
         else:
-            heroX, heroY = self.switchXY(heroX, heroY)
+            # heroX, heroY = self.switchXY(heroX, heroY)
             mouse1.position = (self.boardX + (self.boardXOffset * heroX), self.boardY + (self.boardYOffset * heroY))
 
-        time.sleep(self.mouseSleepTime)
+        time.sleep(self.mouseSleepTime*1.5)
         mouse1.release(Button.left)
 
-        if originalHero is not None:
+        if originalHero is not None: #if item was equiped to someone before, now it no longer is
+
+            if originalHero.item:
+                originalHero.item.hero = None #if the hero had an item, remove that items hero link
+
             originalHero.item = None
             self.updateHeroLabel(originalHero)
+
+        if hero.item:
+            hero.item.hero = None#removing the existing's item on the new hero link
+
 
         hero.item = self.itemToMove
         self.itemToMove.hero = hero
@@ -2651,33 +2680,75 @@ class UnderlordInteract():
                         units["tierTwo"] += 1
                         units["tierTwoHeroes"].append(self.benchHeroes[i])
 
+        item = None
+        ID = 0
+
         if units["tierOne"] == self.levelThresh:  # If there is enough tier ones to make a tier 2,
             # first instance hero levels up, the rest should be removed from reference and update labels?
 
             originalHero = self.findOriginalHero(units["tierOneHeroes"])
 
+            if originalHero.item:
+                item = originalHero.item
+                ID = originalHero.localID
+
             originalHero.tier += 1
 
             units["tierTwoHeroes"].append(originalHero)
-            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
+
             units["tierTwo"] += 1
             units["tieredUp2"] = True
 
             for hero in units["tierOneHeroes"]:
                 if hero.localID != originalHero.localID:
+                    if hero.item:
+                        if hero.localID > ID:
+
+                            if item:
+                                item.hero=None # reseting the linked hero on the existing item (hero is gone now)
+
+                            item = hero.item
+                            ID = hero.localID
+                    if self.heroToMove:
+                        if self.heroToMove.localID == hero.localID:
+                            self.heroToMove = None
                     self.resetLabel(hero)
+
+            if item:
+                originalHero.item = item
+            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
 
         if units["tierTwo"] == self.levelThresh:
 
             originalHero = self.findOriginalHero(units["tierTwoHeroes"])
 
+
+            if originalHero.item and originalHero.localID > ID:
+                if item:
+                    item.hero = None  # reseting the linked hero on the existing item (hero is gone now)
+
+                item = originalHero.item
+                ID = originalHero.localID
+
             originalHero.tier += 1
-            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
+
             units["tieredUp3"] = True
 
             for hero in units["tierTwoHeroes"]:
                 if hero.localID != originalHero.localID:
+                    if hero.item:
+                        if hero.localID > ID:
+                            if item:
+                                item.hero=None # reseting the linked hero on the existing item (hero is gone now)
+                            item = hero.item
+                            ID = hero.localID
+                    if self.heroToMove:
+                        if self.heroToMove.localID == hero.localID:
+                            self.heroToMove = None
                     self.resetLabel(hero)
+            if item:
+                originalHero.item = item
+            self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
 
         # if we tiered up, return that
         if units["tieredUp3"] == True:  # A tier 3 implies a tier 2 was upgraded, so this is returned first
