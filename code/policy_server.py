@@ -52,12 +52,24 @@ DEFAULT_CONFIG = with_common_config({
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [512, 512],
-        "fcnet_activation": "relu",
-        "use_lstm": True,
-        "max_seq_len": 8,
-        "lstm_cell_size": 512,
-        "lstm_use_prev_action": False
+        "use_attention": False,
+        # The number of transformer units within GTrXL.
+        # A transformer unit in GTrXL consists of a) MultiHeadAttention module and
+        # b) a position-wise MLP.
+        "attention_num_transformer_units": 8,
+        # The input and output size of each transformer unit.
+        "attention_dim": 512,
+        # The number of attention heads within the MultiHeadAttention units.
+        "attention_num_heads": 8,
+        # The dim of a single head (within the MultiHeadAttention units).
+        "attention_head_dim": 64,
+        # The memory sizes for inference and training.
+        "attention_memory_inference": 512,
+        "attention_memory_training": 512,
+        # The output dim of the position-wise MLP.
+        "attention_position_wise_mlp_dim": 512,
+        # The initial bias values for the 2 GRU gates within a transformer unit.
+        "attention_init_gru_gate_bias": 2.0,
     },
     # Coefficient of the entropy regularizer.
     "entropy_coeff": 0.0,
