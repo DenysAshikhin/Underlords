@@ -117,7 +117,7 @@ class UnderlordInteract():
         }
 
         self.heroAlliances = {
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'],self.alliances['none']],
+            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
             'batrider': [self.alliances['knight'], self.alliances['troll'], self.alliances['none']],
             'bounty_hunter': [self.alliances['assassin'], self.alliances['rogue'], self.alliances['none']],
             'crystal_maiden': [self.alliances['human'], self.alliances['mage'], self.alliances['none']],
@@ -163,29 +163,22 @@ class UnderlordInteract():
             'death_prophet': [self.alliances['fallen'], self.alliances['heartless'], self.alliances['none']],
             'doom': [self.alliances['brute'], self.alliances['demon'], self.alliances['none']],
             'lina': [self.alliances['human'], self.alliances['mage'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
-            'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
+            'lone_druid': [self.alliances['savage'], self.alliances['shaman'], self.alliances['summoner']],
+            'mirana': [self.alliances['hunter'], self.alliances['vigilant'], self.alliances['none']],
+            'pangolier': [self.alliances['savage'], self.alliances['swordsman'], self.alliances['none']],
+            'rubick': [self.alliances['mage'], self.alliances['magus'], self.alliances['none']],
+            'sven': [self.alliances['knight'], self.alliances['rogue'], self.alliances['swordsman']],
+            'templar_assassin': [self.alliances['assassin'], self.alliances['vigilante'], self.alliances['void']],
+            'tidehunter': [self.alliances['scaled'], self.alliances['warrior'], self.alliances['none']],
+            'viper': [self.alliances['dragon'], self.alliances['poisoner'], self.alliances['none']],
+            'void_spirit': [self.alliances['spirit'], self.alliances['void'], self.alliances['none']],
+            'axe': [self.alliances['brawny'], self.alliances['brute'], self.alliances['none']],
+            'dragon_knight': [self.alliances['dragon'], self.alliances['human'], self.alliances['knight']],
+            'keeper_of_the_light': [self.alliances['human'], self.alliances['mage'], self.alliances['none']],
+            'medusa': [self.alliances['hunter'], self.alliances['scaled'], self.alliances['none']],
+            'troll_warlord': [self.alliances['troll'], self.alliances['warrior'], self.alliances['none']],
+            'skeleton_king': [self.alliances['fallen'], self.alliances['swordsman'], self.alliances['none']]
         }
-
 
         self.finalPlacement = 0
         self.rerollCost = 2
@@ -202,8 +195,8 @@ class UnderlordInteract():
         self.prevHP = 100
         self.newRoundStarted = False
 
-
-        self.rewardSummary = {'purchases': 0, 'roundsSurvived': 0, 'finalPosition':0, 'unitLevelUp': 0, 'mainLevelUp': 0, 'extra': 0, 'lockIn': 0, 'itemPick': 0}
+        self.rewardSummary = {'purchases': 0, 'roundsSurvived': 0, 'finalPosition': 0, 'unitLevelUp': 0,
+                              'mainLevelUp': 0, 'extra': 0, 'lockIn': 0, 'itemPick': 0}
         self.server = True
 
         if rect is not None:
@@ -648,8 +641,9 @@ class UnderlordInteract():
         # self.allowMove = False
         # self.pickTime = False
         # self.pickTime = False
-        
-        self.rewardSummary = {'purchases': 0, 'roundsSurvived': 0, 'finalPosition':0, 'unitLevelUp': 0, 'mainLevelUp': 0, 'extra': 0, 'lockIn': 0, 'itemPick': 0}
+
+        self.rewardSummary = {'purchases': 0, 'roundsSurvived': 0, 'finalPosition': 0, 'unitLevelUp': 0,
+                              'mainLevelUp': 0, 'extra': 0, 'lockIn': 0, 'itemPick': 0}
         self.otherPlayersDict = {2: {'slot': 2, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
                                  3: {'slot': 3, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
                                  4: {'slot': 4, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
@@ -719,7 +713,6 @@ class UnderlordInteract():
         if self.localItemID < 4:
             for i in range(3):
                 for j in range(4):
-
                     melee = False
                     ranged = False
                     preventMana = False
@@ -1006,10 +999,10 @@ class UnderlordInteract():
             benchHeros.append(tempHero)
 
         # 11 because I have to take into account the Underlord!!!
-        boardHeroes = [[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0],[0, 0, 0, 0, 0]]
+        boardHeroes = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]
         idx = 0
 
         for i in range(4):
@@ -1268,13 +1261,20 @@ class UnderlordInteract():
             # items to pick
             itemPick,
             # other players
-            otherPlayers[0][0], [otherPlayers[0][1] / 100], [otherPlayers[0][2] / 100], [otherPlayers[0][3] / 10],            otherPlayers[0][4], otherPlayers[0][5],
-            otherPlayers[1][0], [otherPlayers[1][1] / 100], [otherPlayers[1][2] / 100], [otherPlayers[1][3] / 10],            otherPlayers[1][4], otherPlayers[1][5],
-            otherPlayers[2][0], [otherPlayers[2][1] / 100], [otherPlayers[2][2] / 100], [otherPlayers[2][3] / 10],            otherPlayers[2][4], otherPlayers[2][5],
-            otherPlayers[3][0], [otherPlayers[3][1] / 100], [otherPlayers[3][2] / 100], [otherPlayers[3][3] / 10],            otherPlayers[3][4], otherPlayers[3][5],
-            otherPlayers[4][0], [otherPlayers[4][1] / 100], [otherPlayers[4][2] / 100], [otherPlayers[4][3] / 10],            otherPlayers[4][4], otherPlayers[4][5],
-            otherPlayers[5][0], [otherPlayers[5][1] / 100], [otherPlayers[5][2] / 100], [otherPlayers[5][3] / 10],            otherPlayers[5][4], otherPlayers[5][5],
-            otherPlayers[6][0], [otherPlayers[6][1] / 100], [otherPlayers[6][2] / 100], [otherPlayers[6][3] / 10],            otherPlayers[6][4], otherPlayers[6][5]
+            otherPlayers[0][0], [otherPlayers[0][1] / 100], [otherPlayers[0][2] / 100], [otherPlayers[0][3] / 10],
+            otherPlayers[0][4], otherPlayers[0][5],
+            otherPlayers[1][0], [otherPlayers[1][1] / 100], [otherPlayers[1][2] / 100], [otherPlayers[1][3] / 10],
+            otherPlayers[1][4], otherPlayers[1][5],
+            otherPlayers[2][0], [otherPlayers[2][1] / 100], [otherPlayers[2][2] / 100], [otherPlayers[2][3] / 10],
+            otherPlayers[2][4], otherPlayers[2][5],
+            otherPlayers[3][0], [otherPlayers[3][1] / 100], [otherPlayers[3][2] / 100], [otherPlayers[3][3] / 10],
+            otherPlayers[3][4], otherPlayers[3][5],
+            otherPlayers[4][0], [otherPlayers[4][1] / 100], [otherPlayers[4][2] / 100], [otherPlayers[4][3] / 10],
+            otherPlayers[4][4], otherPlayers[4][5],
+            otherPlayers[5][0], [otherPlayers[5][1] / 100], [otherPlayers[5][2] / 100], [otherPlayers[5][3] / 10],
+            otherPlayers[5][4], otherPlayers[5][5],
+            otherPlayers[6][0], [otherPlayers[6][1] / 100], [otherPlayers[6][2] / 100], [otherPlayers[6][3] / 10],
+            otherPlayers[6][4], otherPlayers[6][5]
 
             # otherPlayers[1], otherPlayers[2], otherPlayers[3], otherPlayers[4], otherPlayers[5],
             # otherPlayers[6],
@@ -1332,13 +1332,11 @@ class UnderlordInteract():
             else:
                 print("It chose something...at least")
 
-        
-
         if self.extraReward > 0:
             reward += self.extraReward
             self.rewardSummary['extra'] += self.extraReward
             self.extraReward = 0
-            
+
         if self.lockInPunish:
             self.lockInPunish = False
             reward -= firstPlace * 0.0005
@@ -1392,10 +1390,10 @@ class UnderlordInteract():
 
         if tieredUp == 10:
             reward += firstPlace * 0.08
-            self.rewardSummary['unitLevelUp']  += firstPlace * 0.08
+            self.rewardSummary['unitLevelUp'] += firstPlace * 0.08
         elif tieredUp == 11:
             reward += firstPlace * 0.3
-            self.rewardSummary['unitLevelUp']  += firstPlace * 0.3
+            self.rewardSummary['unitLevelUp'] += firstPlace * 0.3
 
         if self.leveledUp:
             # don't want to reward for rushing early levels as I think that's just dumb
@@ -1403,13 +1401,13 @@ class UnderlordInteract():
                 # if (self.level > 4) and ((self.boardUnitCount() + 1) >= self.level):
                 unitCount = self.boardUnitCount()
                 if unitCount > 0:
-                    unitCount+1 #adding +1 since we just leveled up, there is no way to have # units = level
+                    unitCount + 1  # adding +1 since we just leveled up, there is no way to have # units = level
                 # award = pow(self.boardUnitCount()*self.level, 1.2)/(1000/firstPlace)
                 award = (unitCount / self.level) * 0.1 * firstPlace
                 # award = 10 + firstPlace * 0.00017 * (self.level ** 3) * ((self.boardUnitCount()+1) / self.level)
                 # print(f"Awarded: {award} for leveling up with: {self.boardUnitCount()} heroes!")
                 reward += award
-                self.rewardSummary['mainLevelUp']  += award
+                self.rewardSummary['mainLevelUp'] += award
                 self.leveledUp = False
 
         # if earnedMoney != -1:
@@ -1421,41 +1419,41 @@ class UnderlordInteract():
 
             if self.finalPlacement == 1:
                 reward += firstPlace
-                self.rewardSummary['finalPosition']  += firstPlace
+                self.rewardSummary['finalPosition'] += firstPlace
             elif self.finalPlacement == 2:
                 reward += firstPlace * 0.9
-                self.rewardSummary['finalPosition']  += firstPlace * 0.9
+                self.rewardSummary['finalPosition'] += firstPlace * 0.9
             elif self.finalPlacement == 3:
                 reward += firstPlace * 0.75
-                self.rewardSummary['finalPosition']  += firstPlace * 0.75
+                self.rewardSummary['finalPosition'] += firstPlace * 0.75
             elif self.finalPlacement == 4:
                 reward += firstPlace * 0.5
-                self.rewardSummary['finalPosition']  += firstPlace * 0.5
+                self.rewardSummary['finalPosition'] += firstPlace * 0.5
             elif self.finalPlacement == 5:
                 reward += firstPlace * 0.3
-                self.rewardSummary['finalPosition']  += firstPlace * 0.3
+                self.rewardSummary['finalPosition'] += firstPlace * 0.3
             elif self.finalPlacement == 6:
                 reward += firstPlace * 0.2
-                self.rewardSummary['finalPosition']  += firstPlace * 0.2
+                self.rewardSummary['finalPosition'] += firstPlace * 0.2
             elif self.finalPlacement == 7:
                 reward += firstPlace * 0.1
-                self.rewardSummary['finalPosition']  += firstPlace * 0.1
+                self.rewardSummary['finalPosition'] += firstPlace * 0.1
             elif self.finalPlacement == 8:
                 reward += firstPlace * 0
-                self.rewardSummary['finalPosition']  += firstPlace * 0
-                
+                self.rewardSummary['finalPosition'] += firstPlace * 0
+
             if self.round < 10:
                 reward += firstPlace * 0.005 * self.round
-                self.rewardSummary['roundsSurvived']  += firstPlace * 0.01 * self.round
+                self.rewardSummary['roundsSurvived'] += firstPlace * 0.01 * self.round
             elif self.round < 18:
                 reward += firstPlace * 0.01 * self.round
-                self.rewardSummary['roundsSurvived']  += firstPlace * 0.02 * self.round
+                self.rewardSummary['roundsSurvived'] += firstPlace * 0.02 * self.round
             elif self.round < 26:
                 reward += firstPlace * 0.015 * self.round
-                self.rewardSummary['roundsSurvived']  += firstPlace * 0.03 * self.round
+                self.rewardSummary['roundsSurvived'] += firstPlace * 0.03 * self.round
             else:
                 reward += firstPlace * 0.015 * 25
-                self.rewardSummary['roundsSurvived']  += firstPlace * 0.03 * self.round
+                self.rewardSummary['roundsSurvived'] += firstPlace * 0.03 * self.round
 
         # self.closeStore(skipCheck=True)
 
@@ -1478,10 +1476,10 @@ class UnderlordInteract():
                 name = item['icon']
                 if name not in self.items.banned:
                     self.selectItem(-1, i)
-                    return -firstPlace*0.03
+                    return -firstPlace * 0.03
         elif self.underlordPicks is not None:
             self.selectItem(-1, 0)
-            return -firstPlace*0.03
+            return -firstPlace * 0.03
         # else:
         #     return 0
 
@@ -1509,7 +1507,6 @@ class UnderlordInteract():
         # x,y = self.switchXY(x, y)
 
         print(f"select item {x} - {y}")
-
 
         if self.pickTime():
 
@@ -1908,7 +1905,6 @@ class UnderlordInteract():
         if self.heroToMove.item:
             self.heroToMove.item.hero = None
 
-
         if y == -1:
             mouse1.position = (self.benchX + (self.benchXOffset * x), self.benchY)
             if self.benchHeroes[x].item is not None:
@@ -2090,7 +2086,7 @@ class UnderlordInteract():
 
                     # print(oldCoords[0])
 
-                    #meaning we are moving from bench to bench
+                    # meaning we are moving from bench to bench
                     if oldCoords[1] == -1:
                         tempHero.coords = (oldCoords[0], oldCoords[1])
                         self.benchHeroes[oldCoords[0]] = tempHero
@@ -2107,8 +2103,6 @@ class UnderlordInteract():
                         self.updateHeroLabel(self.boardHeroes[oldCoords[1]][oldCoords[0]])
 
                         print("bench swap 4")
-
-
 
                     # print(self.benchHeroes[oldCoords[0]])
 
@@ -2177,7 +2171,6 @@ class UnderlordInteract():
 
                     # print(oldCoords[0])
 
-
                     # meaning we are moving from board to bench
                     if oldCoords[1] == -1:
 
@@ -2220,7 +2213,6 @@ class UnderlordInteract():
             else:
                 x, y = self.switchXY(x, y)
                 if x > 3 or y > 7:
-
                     # print('the new wrong x 2')
                     self.mediumPunish = True
                     return -1
@@ -2289,7 +2281,7 @@ class UnderlordInteract():
         # print(f"Moving to bench {mouse1.position}")
 
         else:
-            newX,newY = self.switchXY(newX,newY)
+            newX, newY = self.switchXY(newX, newY)
             mouse1.position = (self.boardX + (self.boardXOffset * newX), self.boardY + (self.boardYOffset * newY))
         # print(f"Moving to board {mouse1.position}")
         time.sleep(self.mouseSleepTime * 1.5)
@@ -2532,10 +2524,9 @@ class UnderlordInteract():
         mouse1.position = (self.itemMoveX + (self.itemMoveXOffset * self.itemToMove.coords[1]),
                            self.itemMoveY + (self.itemMoveYOffset * self.itemToMove.coords[0]))
 
-
         time.sleep(self.mouseSleepTime * 1.5)
         mouse1.press(Button.left)
-        time.sleep(self.mouseSleepTime*1.5)
+        time.sleep(self.mouseSleepTime * 1.5)
 
         heroX, heroY = hero.coords
 
@@ -2545,20 +2536,19 @@ class UnderlordInteract():
             # heroX, heroY = self.switchXY(heroX, heroY)
             mouse1.position = (self.boardX + (self.boardXOffset * heroX), self.boardY + (self.boardYOffset * heroY))
 
-        time.sleep(self.mouseSleepTime*1.5)
+        time.sleep(self.mouseSleepTime * 1.5)
         mouse1.release(Button.left)
 
-        if originalHero is not None: #if item was equiped to someone before, now it no longer is
+        if originalHero is not None:  # if item was equiped to someone before, now it no longer is
 
             if originalHero.item:
-                originalHero.item.hero = None #if the hero had an item, remove that items hero link
+                originalHero.item.hero = None  # if the hero had an item, remove that items hero link
 
             originalHero.item = None
             self.updateHeroLabel(originalHero)
 
         if hero.item:
-            hero.item.hero = None#removing the existing's item on the new hero link
-
+            hero.item.hero = None  # removing the existing's item on the new hero link
 
         hero.item = self.itemToMove
         self.itemToMove.hero = hero
@@ -2572,7 +2562,7 @@ class UnderlordInteract():
             self.benchLabels[x].config(text="", bg='black', image=self.profilePics['None'])
             self.benchHeroes[x] = None
         else:
-            x,y = self.switchXY(x,y)
+            x, y = self.switchXY(x, y)
             self.boardLabels[x][y].config(text="", bg='black', image=self.profilePics['None'])
             self.boardHeroes[x][y] = None
 
@@ -2806,7 +2796,7 @@ class UnderlordInteract():
                         if hero.localID > ID:
 
                             if item:
-                                item.hero=None # reseting the linked hero on the existing item (hero is gone now)
+                                item.hero = None  # reseting the linked hero on the existing item (hero is gone now)
 
                             item = hero.item
                             ID = hero.localID
@@ -2822,7 +2812,6 @@ class UnderlordInteract():
         if units["tierTwo"] == self.levelThresh:
 
             originalHero = self.findOriginalHero(units["tierTwoHeroes"])
-
 
             if originalHero.item and originalHero.localID > ID:
                 if item:
@@ -2840,7 +2829,7 @@ class UnderlordInteract():
                     if hero.item:
                         if hero.localID > ID:
                             if item:
-                                item.hero=None # reseting the linked hero on the existing item (hero is gone now)
+                                item.hero = None  # reseting the linked hero on the existing item (hero is gone now)
                             item = hero.item
                             ID = hero.localID
                     if self.heroToMove:
