@@ -168,7 +168,7 @@ class UnderlordInteract():
             'pangolier': [self.alliances['savage'], self.alliances['swordsman'], self.alliances['none']],
             'rubick': [self.alliances['mage'], self.alliances['magus'], self.alliances['none']],
             'sven': [self.alliances['knight'], self.alliances['rogue'], self.alliances['swordsman']],
-            'templar_assassin': [self.alliances['assassin'], self.alliances['vigilante'], self.alliances['void']],
+            'templar_assassin': [self.alliances['assassin'], self.alliances['vigilant'], self.alliances['void']],
             'tidehunter': [self.alliances['scaled'], self.alliances['warrior'], self.alliances['none']],
             'viper': [self.alliances['dragon'], self.alliances['poisoner'], self.alliances['none']],
             'void_spirit': [self.alliances['spirit'], self.alliances['void'], self.alliances['none']],
@@ -1297,6 +1297,9 @@ class UnderlordInteract():
         hadToPick = self.pickTime()
 
         if action == 0:
+            if self.rerollCost == 0:
+                self.rerollStore()
+                print('rerolling!')
             # self.rerollStore()
             # print('rerolling')
             print("wanted to reroll")
@@ -2873,4 +2876,4 @@ def openVision():
 
     root.mainloop()
 
-# openVision()
+openVision()
