@@ -13,5 +13,5 @@ class Hero:
         self.preventMana = preventMana
         self.gold = gold
         self.localID = localID
-        self.mainUnderlord = mainUnderlord,
+        self.mainUnderlord = mainUnderlord
         self.mainUnderlordType = mainUnderlordType
