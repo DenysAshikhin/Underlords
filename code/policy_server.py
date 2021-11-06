@@ -29,16 +29,16 @@ DEFAULT_CONFIG = with_common_config({
     # Initial coefficient for KL divergence.
     "kl_coeff": 0.2,
     # Size of batches collected from each worker.
-    "rollout_fragment_length": 20,
+    "rollout_fragment_length": 36,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
     "train_batch_size": 4000,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 512,
+    "sgd_minibatch_size": 128,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 15,
+    "num_sgd_iter": 10,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": False,
     # Stepsize of SGD.
@@ -47,36 +47,25 @@ DEFAULT_CONFIG = with_common_config({
     "lr_schedule": None,
     # Coefficient of the value function loss. IMPORTANT: you must tune this if
     # you set vf_share_layers=True inside your model's config.
-    "vf_loss_coeff": 1.5,
+    "vf_loss_coeff": 1.25,
     "model": {
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "use_attention": False,
-        # The number of transformer units within GTrXL.
-        # A transformer unit in GTrXL consists of a) MultiHeadAttention module and
-        # b) a position-wise MLP.
-        "attention_num_transformer_units": 8,
-        # The input and output size of each transformer unit.
-        "attention_dim": 512,
-        # The number of attention heads within the MultiHeadAttention units.
-        "attention_num_heads": 8,
-        # The dim of a single head (within the MultiHeadAttention units).
-        "attention_head_dim": 64,
-        # The memory sizes for inference and training.
-        "attention_memory_inference": 512,
-        "attention_memory_training": 512,
-        # The output dim of the position-wise MLP.
-        "attention_position_wise_mlp_dim": 512,
-        # The initial bias values for the 2 GRU gates within a transformer unit.
-        "attention_init_gru_gate_bias": 2.0,
+
+        "fcnet_hiddens": [600, 600],
+        "fcnet_activation": "relu",
+        "use_lstm": True,
+        "max_seq_len": 32,
+        "lstm_cell_size": 600,
+        "lstm_use_prev_action": False
     },
     # Coefficient of the entropy regularizer.
     "entropy_coeff": 0.0,
     # Decay schedule for the entropy regularizer.
     "entropy_coeff_schedule": None,
     # PPO clip parameter.
-    "clip_param": 0.3,
+    "clip_param": 0.25,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
     "vf_clip_param": 20.0,
