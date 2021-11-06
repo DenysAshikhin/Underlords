@@ -151,7 +151,7 @@ class UnderlordInteract():
             'alchemist': [self.alliances['brute'], self.alliances['poisoner'], self.alliances['rogue']],
             'beastmaster': [self.alliances['brawny'], self.alliances['hunter'], self.alliances['shaman']],
             'ember_spirit': [self.alliances['assassin'], self.alliances['spirit'], self.alliances['swordsman']],
-            'lifestealer': [self.alliances['brute'], self.alliances['healer'], self.alliances['none']],
+            'life_stealer': [self.alliances['brute'], self.alliances['healer'], self.alliances['none']],
             'lycan': [self.alliances['human'], self.alliances['savage'], self.alliances['summoner']],
             'omniknight': [self.alliances['healer'], self.alliances['human'], self.alliances['knight']],
             'puck': [self.alliances['dragon'], self.alliances['mage'], self.alliances['none']],
