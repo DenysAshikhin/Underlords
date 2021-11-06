@@ -53,11 +53,11 @@ DEFAULT_CONFIG = with_common_config({
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
 
-        "fcnet_hiddens": [600, 600],
+        "fcnet_hiddens": [608, 608],
         "fcnet_activation": "relu",
         "use_lstm": True,
         "max_seq_len": 32,
-        "lstm_cell_size": 600,
+        "lstm_cell_size": 608,
         "lstm_use_prev_action": False
     },
     # Coefficient of the entropy regularizer.
