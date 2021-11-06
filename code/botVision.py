@@ -141,12 +141,12 @@ class UnderlordInteract():
             'legion_commander': [self.alliances['champion'], self.alliances['human'], self.alliances['none']],
             'luna': [self.alliances['knight'], self.alliances['vigilant'], self.alliances['none']],
             'meepo': [self.alliances['rogue'], self.alliances['summoner'], self.alliances['none']],
-            'natures_prophet': [self.alliances['shaman'], self.alliances['summoner'], self.alliances['none']],
+            'nature_prophet': [self.alliances['shaman'], self.alliances['summoner'], self.alliances['none']],
             'pudge': [self.alliances['heartless'], self.alliances['warrior'], self.alliances['none']],
-            'queen_of_pain': [self.alliances['assassin'], self.alliances['demon'], self.alliances['poisoner']],
+            'queenofpain': [self.alliances['assassin'], self.alliances['demon'], self.alliances['poisoner']],
             'spirit_breaker': [self.alliances['brute'], self.alliances['savage'], self.alliances['none']],
             'storm_spirit': [self.alliances['mage'], self.alliances['spirit'], self.alliances['none']],
-            'windranger': [self.alliances['hunter'], self.alliances['vigilant'], self.alliances['none']],
+            'windrunner': [self.alliances['hunter'], self.alliances['vigilant'], self.alliances['none']],
             'abaddon': [self.alliances['fallen'], self.alliances['knight'], self.alliances['none']],
             'alchemist': [self.alliances['brute'], self.alliances['poisoner'], self.alliances['rogue']],
             'beastmaster': [self.alliances['brawny'], self.alliances['hunter'], self.alliances['shaman']],
@@ -2696,6 +2696,10 @@ class UnderlordInteract():
 
                 self.benchHeroes[x] = self.createHero(name, uniqueID, x, -1,
                                                       self.localHeroID)
+                print('bough!!')
+                print(self.benchHeroes[x].mainUnderlord)
+
+                print(self.benchHeroes[x].mainUnderlordType)
                 self.localHeroID += 1
 
                 self.benchLabels[x].config(text=f"{self.benchHeroes[x].name}",
@@ -2741,7 +2745,9 @@ class UnderlordInteract():
                     melee=melee,
                     ranged=ranged,
                     preventMana=preventMana,
-                    localID=localID)
+                    localID=localID,
+                    mainUnderlord=0,
+                    mainUnderlordType=0)
 
     def findOriginalHero(self, heros):
 
