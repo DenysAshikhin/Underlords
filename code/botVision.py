@@ -2696,10 +2696,10 @@ class UnderlordInteract():
 
                 self.benchHeroes[x] = self.createHero(name, uniqueID, x, -1,
                                                       self.localHeroID)
-                print('bough!!')
-                print(self.benchHeroes[x].mainUnderlord)
-
-                print(self.benchHeroes[x].mainUnderlordType)
+                # print('bough!!')
+                # print(self.benchHeroes[x].mainUnderlord)
+                #
+                # print(self.benchHeroes[x].mainUnderlordType)
                 self.localHeroID += 1
 
                 self.benchLabels[x].config(text=f"{self.benchHeroes[x].name}",
@@ -2745,9 +2745,7 @@ class UnderlordInteract():
                     melee=melee,
                     ranged=ranged,
                     preventMana=preventMana,
-                    localID=localID,
-                    mainUnderlord=0,
-                    mainUnderlordType=0)
+                    localID=localID)
 
     def findOriginalHero(self, heros):
 
