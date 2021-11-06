@@ -1027,18 +1027,20 @@ class UnderlordInteract():
                 if self.boardHeroes[i][j] is not None:
 
                     isUnderlord = 0
+                    alliances = [0,0,0]
 
                     if self.boardHeroes[i][j].underlord:
                         isUnderlord = 2
                     else:
                         isUnderlord = 1
+                        alliances = self.heroAlliances[self.boardHeroes[i][j].name]
 
                     itemID = 0
 
                     if self.boardHeroes[i][j].item is not None:
                         itemID = self.boardHeroes[i][j].item.localID
 
-                    alliances = self.heroAlliances[self.boardHeroes[i][j].name]
+
 
                     tempHero = [
                         alliances[0], alliances[1], alliances[2],
