@@ -1199,7 +1199,10 @@ class UnderlordInteract():
         for otherPlayer in self.otherPlayersDict:
 
             otherPlayerTiers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            otherPlayerHeros = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            otherPlayerHeros = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                                ]
             other = self.otherPlayersDict[otherPlayer]
             temp = [other['slot'], other['health'], other['gold'], other['level']]
 
@@ -1226,7 +1229,12 @@ class UnderlordInteract():
                 # temp.append(goodID)
                 # temp.append(tier)
                 otherPlayerTiers[idx] = tier
-                otherPlayerHeros[idx] = goodID
+
+                alliances = self.heroAlliances[name]
+
+                otherPlayerHeros[idx*3] = alliances[0]
+                otherPlayerHeros[(idx*3) + 1] = alliances[1]
+                otherPlayerHeros[(idx * 3) + 2] = alliances[2]
                 idx += 1
 
                 if other['slot'] > 8:
