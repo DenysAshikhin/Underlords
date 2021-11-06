@@ -938,13 +938,17 @@ class UnderlordInteract():
             for idx in range(5):
                 heroData = self.underlords.underlordDataID[self.shopUnits[idx]]
                 name = heroData['texturename']
-                uniqueID = self.shop.classIDMap[name]
 
-                shopHeros.append(int(uniqueID) + 1)
-                if (int(uniqueID) + 1) > 70:
-                    raise RuntimeError('error 1')
+                shopHeros.extend(self.heroAlliances[name])
+
+
+                # uniqueID = self.shop.classIDMap[name]
+
+                # shopHeros.append(int(uniqueID) + 1)
+                # if (int(uniqueID) + 1) > 70:
+                #     raise RuntimeError('error 1')
         except:  # meaning we haven't yet received data about the store units
-            shopHeros = [0, 0, 0, 0, 0]
+            shopHeros = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         benchHeros = []
         playerHeroTier = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -968,14 +972,25 @@ class UnderlordInteract():
 
                 playerHeroTier[i] = self.benchHeroes[i].tier
                 playerHeroCost[i] = self.benchHeroes[i].gold
-                tempHero = [self.benchHeroes[i].id + 1,
+
+                alliances = self.heroAlliances[self.benchHeroes[i].name]
+
+                tempHero = [
+                            alliances[0], alliances[1], alliances[2],
+
+                            #self.benchHeroes[i].id + 1,
+
                             # self.benchHeroes[i].localID, 
                             # self.benchHeroes[i].tier,
                             # self.benchHeroes[i].gold,
                             itemID,
                             self.benchHeroes[i].coords[0],
                             self.benchHeroes[i].coords[1] + 1,
-                            isUnderlord]
+
+                    self.benchHeroes[i].mainUnderlord,
+                    self.benchHeroes[i].mainUnderlordType
+                            # isUnderlord
+                ]
 
                 if (self.benchHeroes[i].id + 1) > 71:
                     raise RuntimeError('error 2')
@@ -995,14 +1010,14 @@ class UnderlordInteract():
                     raise RuntimeError('error 8')
 
             else:
-                tempHero = [0, 0, 0, 0, 0]
+                tempHero = [0, 0, 0, 0, 0, 0, 0, 0]
             benchHeros.append(tempHero)
 
         # 11 because I have to take into account the Underlord!!!
-        boardHeroes = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0],
-                       [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]
+        boardHeroes = [[0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
+                       [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]]
         idx = 0
 
         for i in range(4):
@@ -1023,14 +1038,23 @@ class UnderlordInteract():
                     if self.boardHeroes[i][j].item is not None:
                         itemID = self.boardHeroes[i][j].item.localID
 
-                    tempHero = [self.boardHeroes[i][j].id + 1,
+                    alliances = self.heroAlliances[self.boardHeroes[i][j].name]
+
+                    tempHero = [
+                        alliances[0], alliances[1], alliances[2],
+                                # self.boardHeroes[i][j].id + 1,
+
                                 # self.boardHeroes[i][j].localID,
                                 # self.boardHeroes[i][j].tier,
                                 # self.boardHeroes[i][j].gold,
                                 itemID,
                                 self.boardHeroes[i][j].coords[0],
                                 self.boardHeroes[i][j].coords[1] + 1,
-                                isUnderlord]
+
+                        self.boardHeroes[i][j].mainUnderlord,
+                        self.boardHeroes[i][j].mainUnderlordType
+                                # isUnderlord
+                    ]
 
                     if (self.boardHeroes[i][j].id + 1) > 71:
                         raise RuntimeError('error 11')
@@ -1830,7 +1854,7 @@ class UnderlordInteract():
             if self.boardHeroes[x][y] is None:
                 # print(f"Found a spot for underlord at: {x}-{y}")
                 self.underlord = Hero(name, (y, x), self.underlordPics[name], True, ID=ID,
-                                      localID=self.localHeroID, gold=0)
+                                      localID=self.localHeroID, gold=0, mainUnderlord=underlord[0], mainUnderlordType=underlord[1])
                 self.localHeroID += 1
                 self.updateHeroLabel(self.underlord)
                 self.boardHeroes[x][y] = self.underlord

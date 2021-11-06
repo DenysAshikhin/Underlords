@@ -134,6 +134,7 @@ DEFAULT_CONFIG = with_common_config({
 
 })
 
+allianceId = 27
 heroId = 72
 localHeroId = 100
 itemId = 70
@@ -169,7 +170,7 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
 
              # below are the store heros
-             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
              # below are the bench heroes
              # first the levels of all the heroes
              spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
@@ -180,26 +181,29 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
                         high=np.array([5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]),
                         dtype=np.float32),
 
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             # Alliance composition of units
+
+
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
              # below are the board heros (11 because 1 is underlord)
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
-             spaces.MultiDiscrete([heroId, localItemId, x, y, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
              # below are underlords to pick (whenever valid) -> underlord ID - specialty
              spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
              # below are the items
@@ -218,49 +222,49 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
 
              spaces.Discrete(9),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
 
              spaces.Discrete(9),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
 
              spaces.Discrete(9),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
 
              spaces.Discrete(9),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
 
              spaces.Discrete(9),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
 
              spaces.Discrete(9),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
              spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId, heroId])
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId])
              ))
 DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([7, 8, 5])
 
