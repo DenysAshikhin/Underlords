@@ -161,7 +161,7 @@ class UnderlordInteract():
             'terrorblade': [self.alliances['demon'], self.alliances['fallen'], self.alliances['hunter']],
             'treant_protector': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
             'death_prophet': [self.alliances['fallen'], self.alliances['heartless'], self.alliances['none']],
-            'doom': [self.alliances['brute'], self.alliances['demon'], self.alliances['none']],
+            'doom_bringer': [self.alliances['brute'], self.alliances['demon'], self.alliances['none']],
             'lina': [self.alliances['human'], self.alliances['mage'], self.alliances['none']],
             'lone_druid': [self.alliances['savage'], self.alliances['shaman'], self.alliances['summoner']],
             'mirana': [self.alliances['hunter'], self.alliances['vigilant'], self.alliances['none']],
