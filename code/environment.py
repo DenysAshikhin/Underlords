@@ -149,47 +149,47 @@ class UnderlordEnv(ExternalEnv):
              spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
              spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
 
-             spaces.Discrete(9),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
-
-             spaces.Discrete(9),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
-
-             spaces.Discrete(9),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
-
-             spaces.Discrete(9),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
-
-             spaces.Discrete(9),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
-
-             spaces.Discrete(9),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
-             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
-             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId])
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId])
              ))
 
         self.action_space = spaces.MultiDiscrete(

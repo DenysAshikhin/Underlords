@@ -171,7 +171,7 @@ class UnderlordInteract():
             'templar_assassin': [self.alliances['assassin'], self.alliances['vigilant'], self.alliances['void']],
             'tidehunter': [self.alliances['scaled'], self.alliances['warrior'], self.alliances['none']],
             'viper': [self.alliances['dragon'], self.alliances['poisoner'], self.alliances['none']],
-            'void_spirit': [self.alliances['spirit'], self.alliances['void'], self.alliances['none']],
+            'faceless_void': [self.alliances['spirit'], self.alliances['void'], self.alliances['none']],
             'axe': [self.alliances['brawny'], self.alliances['brute'], self.alliances['none']],
             'dragon_knight': [self.alliances['dragon'], self.alliances['human'], self.alliances['knight']],
             'keeper_of_the_light': [self.alliances['human'], self.alliances['mage'], self.alliances['none']],
@@ -248,6 +248,8 @@ class UnderlordInteract():
         self.itemMoveY = self.y + 185
         self.itemMoveYOffset = 35
         self.gamePhase = None
+
+        self.currentOtherPlayer = 0
 
         # Punishments to be received at reward calculation if previously did illegal actions.
         self.tinyPunish = False
@@ -569,6 +571,8 @@ class UnderlordInteract():
         self.mediumPunish = False
         self.strongPunish = False
         self.lost = False
+
+        self.currentOtherPlayer = 0
 
         self.localHeroID = 1
         self.localItemID = 1
@@ -1295,20 +1299,24 @@ class UnderlordInteract():
             # items to pick
             itemPick,
             # other players
-            otherPlayers[0][0], [otherPlayers[0][1] / 100], [otherPlayers[0][2] / 100], [otherPlayers[0][3] / 10],
-            otherPlayers[0][4], otherPlayers[0][5],
-            otherPlayers[1][0], [otherPlayers[1][1] / 100], [otherPlayers[1][2] / 100], [otherPlayers[1][3] / 10],
-            otherPlayers[1][4], otherPlayers[1][5],
-            otherPlayers[2][0], [otherPlayers[2][1] / 100], [otherPlayers[2][2] / 100], [otherPlayers[2][3] / 10],
-            otherPlayers[2][4], otherPlayers[2][5],
-            otherPlayers[3][0], [otherPlayers[3][1] / 100], [otherPlayers[3][2] / 100], [otherPlayers[3][3] / 10],
-            otherPlayers[3][4], otherPlayers[3][5],
-            otherPlayers[4][0], [otherPlayers[4][1] / 100], [otherPlayers[4][2] / 100], [otherPlayers[4][3] / 10],
-            otherPlayers[4][4], otherPlayers[4][5],
-            otherPlayers[5][0], [otherPlayers[5][1] / 100], [otherPlayers[5][2] / 100], [otherPlayers[5][3] / 10],
-            otherPlayers[5][4], otherPlayers[5][5],
-            otherPlayers[6][0], [otherPlayers[6][1] / 100], [otherPlayers[6][2] / 100], [otherPlayers[6][3] / 10],
-            otherPlayers[6][4], otherPlayers[6][5]
+            otherPlayers[self.currentOtherPlayer][0],
+            [otherPlayers[self.currentOtherPlayer][1] / 100],
+            [otherPlayers[self.currentOtherPlayer][2] / 100],
+            [otherPlayers[self.currentOtherPlayer][3] / 10],
+            otherPlayers[self.currentOtherPlayer][4],
+            otherPlayers[self.currentOtherPlayer][5],
+            # otherPlayers[1][0], [otherPlayers[1][1] / 100], [otherPlayers[1][2] / 100], [otherPlayers[1][3] / 10],
+            # otherPlayers[1][4], otherPlayers[1][5],
+            # otherPlayers[2][0], [otherPlayers[2][1] / 100], [otherPlayers[2][2] / 100], [otherPlayers[2][3] / 10],
+            # otherPlayers[2][4], otherPlayers[2][5],
+            # otherPlayers[3][0], [otherPlayers[3][1] / 100], [otherPlayers[3][2] / 100], [otherPlayers[3][3] / 10],
+            # otherPlayers[3][4], otherPlayers[3][5],
+            # otherPlayers[4][0], [otherPlayers[4][1] / 100], [otherPlayers[4][2] / 100], [otherPlayers[4][3] / 10],
+            # otherPlayers[4][4], otherPlayers[4][5],
+            # otherPlayers[5][0], [otherPlayers[5][1] / 100], [otherPlayers[5][2] / 100], [otherPlayers[5][3] / 10],
+            # otherPlayers[5][4], otherPlayers[5][5],
+            # otherPlayers[6][0], [otherPlayers[6][1] / 100], [otherPlayers[6][2] / 100], [otherPlayers[6][3] / 10],
+            # otherPlayers[6][4], otherPlayers[6][5]
 
             # otherPlayers[1], otherPlayers[2], otherPlayers[3], otherPlayers[4], otherPlayers[5],
             # otherPlayers[6],
@@ -1317,6 +1325,10 @@ class UnderlordInteract():
         # print("--- %s seconds to get clock observation ---" % (time.time() - clockTime))
 
         # print("--- %s seconds to get observation ---" % (time.time() - overallTime))
+
+        self.currentOtherPlayer += 1
+        if self.currentOtherPlayer == 7:
+            self.currentOtherPlayer = 0
 
         return obs
 
