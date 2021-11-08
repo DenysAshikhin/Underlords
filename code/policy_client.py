@@ -139,7 +139,7 @@ while True:
     # print(f"time: {time}")
     gameObservation = env.underlord.getObservation()
 
-    print(gameObservation)
+    # print(gameObservation)
 
     if not env.observation_space.contains(gameObservation):
         print(gameObservation)
