@@ -29,7 +29,7 @@ DEFAULT_CONFIG = with_common_config({
     # Initial coefficient for KL divergence.
     "kl_coeff": 0.2,
     # Size of batches collected from each worker.
-    "rollout_fragment_length": 32,
+    "rollout_fragment_length": 128,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
     "train_batch_size": 4000,
@@ -42,7 +42,7 @@ DEFAULT_CONFIG = with_common_config({
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": False,
     # Stepsize of SGD.
-    "lr": 2e-5,
+    "lr": 3e-5,
     # Learning rate schedule.
     "lr_schedule": None,
     # Coefficient of the value function loss. IMPORTANT: you must tune this if
@@ -53,22 +53,22 @@ DEFAULT_CONFIG = with_common_config({
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
 
-        "fcnet_hiddens": [608, 608],
+        "fcnet_hiddens": [560, 560],
         "fcnet_activation": "relu",
         "use_lstm": True,
         "max_seq_len": 32,
-        "lstm_cell_size": 608,
+        "lstm_cell_size": 560,
         "lstm_use_prev_action": False
     },
     # Coefficient of the entropy regularizer.
-    "entropy_coeff": 0.0,
+    "entropy_coeff": 0.0001,
     # Decay schedule for the entropy regularizer.
     "entropy_coeff_schedule": None,
     # PPO clip parameter.
     "clip_param": 0.25,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
-    "vf_clip_param": 20.0,
+    "vf_clip_param": 30.0,
     # If specified, clip the global norm of gradients by this amount.
     "grad_clip": None,
     # Target value for KL divergence.
