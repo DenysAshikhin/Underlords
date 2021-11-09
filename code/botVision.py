@@ -141,7 +141,7 @@ class UnderlordInteract():
             'legion_commander': [self.alliances['champion'], self.alliances['human'], self.alliances['none']],
             'luna': [self.alliances['knight'], self.alliances['vigilant'], self.alliances['none']],
             'meepo': [self.alliances['rogue'], self.alliances['summoner'], self.alliances['none']],
-            'natures_prophet': [self.alliances['shaman'], self.alliances['summoner'], self.alliances['none']],
+            'nature_prophet': [self.alliances['shaman'], self.alliances['summoner'], self.alliances['none']],
             'pudge': [self.alliances['heartless'], self.alliances['warrior'], self.alliances['none']],
             'queen_of_pain': [self.alliances['assassin'], self.alliances['demon'], self.alliances['poisoner']],
             'spirit_breaker': [self.alliances['brute'], self.alliances['savage'], self.alliances['none']],
