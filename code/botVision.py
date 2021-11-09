@@ -171,13 +171,14 @@ class UnderlordInteract():
             'templar_assassin': [self.alliances['assassin'], self.alliances['vigilant'], self.alliances['void']],
             'tidehunter': [self.alliances['scaled'], self.alliances['warrior'], self.alliances['none']],
             'viper': [self.alliances['dragon'], self.alliances['poisoner'], self.alliances['none']],
-            'faceless_void': [self.alliances['spirit'], self.alliances['void'], self.alliances['none']],
+            'void_spirit': [self.alliances['spirit'], self.alliances['void'], self.alliances['none']],
             'axe': [self.alliances['brawny'], self.alliances['brute'], self.alliances['none']],
             'dragon_knight': [self.alliances['dragon'], self.alliances['human'], self.alliances['knight']],
             'keeper_of_the_light': [self.alliances['human'], self.alliances['mage'], self.alliances['none']],
             'medusa': [self.alliances['hunter'], self.alliances['scaled'], self.alliances['none']],
             'troll_warlord': [self.alliances['troll'], self.alliances['warrior'], self.alliances['none']],
-            'skeleton_king': [self.alliances['fallen'], self.alliances['swordsman'], self.alliances['none']]
+            'skeleton_king': [self.alliances['fallen'], self.alliances['swordsman'], self.alliances['none']],
+            'faceless_void': [self.alliances['spirit'], self.alliances['void'],self.alliances['none']]
         }
 
         self.finalPlacement = 0
