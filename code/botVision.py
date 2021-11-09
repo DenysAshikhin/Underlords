@@ -205,7 +205,7 @@ class UnderlordInteract():
             'meepo': [self.alliances['rogue'], self.alliances['summoner'], self.alliances['none']],
             'natures_prophet': [self.alliances['shaman'], self.alliances['summoner'], self.alliances['none']],
             'pudge': [self.alliances['heartless'], self.alliances['warrior'], self.alliances['none']],
-            'queen_of_pain': [self.alliances['assassin'], self.alliances['demon'], self.alliances['poisoner']],
+            'queenofpain': [self.alliances['assassin'], self.alliances['demon'], self.alliances['poisoner']],
             'spirit_breaker': [self.alliances['brute'], self.alliances['savage'], self.alliances['none']],
             'storm_spirit': [self.alliances['mage'], self.alliances['spirit'], self.alliances['none']],
             'windranger': [self.alliances['hunter'], self.alliances['vigilant'], self.alliances['none']],
