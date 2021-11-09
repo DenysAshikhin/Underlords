@@ -208,7 +208,7 @@ class UnderlordInteract():
             'queenofpain': [self.alliances['assassin'], self.alliances['demon'], self.alliances['poisoner']],
             'spirit_breaker': [self.alliances['brute'], self.alliances['savage'], self.alliances['none']],
             'storm_spirit': [self.alliances['mage'], self.alliances['spirit'], self.alliances['none']],
-            'windranger': [self.alliances['hunter'], self.alliances['vigilant'], self.alliances['none']],
+            'windrunne  r': [self.alliances['hunter'], self.alliances['vigilant'], self.alliances['none']],
             'abaddon': [self.alliances['fallen'], self.alliances['knight'], self.alliances['none']],
             'alchemist': [self.alliances['brute'], self.alliances['poisoner'], self.alliances['rogue']],
             'beastmaster': [self.alliances['brawny'], self.alliances['hunter'], self.alliances['shaman']],
