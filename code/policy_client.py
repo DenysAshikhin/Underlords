@@ -144,7 +144,7 @@ while True:
     if not env.observation_space.contains(gameObservation):
         print(gameObservation)
         print("Not lined up 1")
-        return 1
+        sys.exit()
 
 
     # obs_time = time.time() - start_time
@@ -209,7 +209,7 @@ while True:
         if not env.observation_space.contains(finalObs):
             print(gameObservation)
             print("Not lined up 3")
-            return 1
+            sys.exit()
         # if not env.observation_space.contains(finalObs):
         #     print(gameObservation)
         #     print("Not lined up 4")
