@@ -1270,7 +1270,7 @@ class UnderlordInteract():
         finalTime = 0
         if self.currentTime > 20:
             finalTime = 19.9
-        else if self.currentTime < 0:
+        elif self.currentTime < 0:
             finalTime = self.currentTime + 1
         else:
             finalTime = self.currentTime
