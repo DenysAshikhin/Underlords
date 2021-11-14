@@ -141,9 +141,10 @@ while True:
 
     # print(gameObservation)
 
-    # if not env.observation_space.contains(gameObservation):
-    #     print(gameObservation)
-    #     print("Not lined up 1")
+    if not env.observation_space.contains(gameObservation):
+        print(gameObservation)
+        print("Not lined up 1")
+        return 1
 
 
     # obs_time = time.time() - start_time
@@ -205,9 +206,10 @@ while True:
         # need to call a reset of env here
         finalObs = env.underlord.getObservation()
 
-        # if not env.observation_space.contains(finalObs):
-        #     print(gameObservation)
-        #     print("Not lined up 3")
+        if not env.observation_space.contains(finalObs):
+            print(gameObservation)
+            print("Not lined up 3")
+            return 1
         # if not env.observation_space.contains(finalObs):
         #     print(gameObservation)
         #     print("Not lined up 4")
