@@ -29,10 +29,10 @@ DEFAULT_CONFIG = with_common_config({
     # Initial coefficient for KL divergence.
     "kl_coeff": 0.2,
     # Size of batches collected from each worker.
-    "rollout_fragment_length": 128,
+    "rollout_fragment_length": 64,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 4096,
+    "train_batch_size": 7168,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
     "sgd_minibatch_size": 128,
@@ -56,16 +56,16 @@ DEFAULT_CONFIG = with_common_config({
         "fcnet_hiddens": [1024, 1024],
         "fcnet_activation": "relu",
         "use_lstm": True,
-        "max_seq_len": 32,
-        "lstm_cell_size": 768,
+        "max_seq_len": 16,
+        "lstm_cell_size": 512,
         "lstm_use_prev_action": False
     },
     # Coefficient of the entropy regularizer.
-    "entropy_coeff": 0.0001,
+    "entropy_coeff": 0.00005,
     # Decay schedule for the entropy regularizer.
     "entropy_coeff_schedule": None,
     # PPO clip parameter.
-    "clip_param": 0.25,
+    "clip_param": 0.3,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
     "vf_clip_param": 30.0,
