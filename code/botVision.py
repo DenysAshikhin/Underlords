@@ -1266,7 +1266,13 @@ class UnderlordInteract():
             temp.append(otherPlayerHeros)
             otherPlayers.append(temp)
 
-        finalTime = int(self.proper_round(self.currentTime)) + 1
+        # finalTime = int(self.proper_round(self.currentTime)) + 1
+        finalTime = 0
+        if self.currentTime > 20:
+            finalTime = 20
+        else:
+            finalTime = self.currentTime + 1
+
         if finalTime < 0:
             finalTime = 0
 
@@ -1280,7 +1286,7 @@ class UnderlordInteract():
             self.finalPlacement, [self.health / 100], [self.gold / 100], [self.level / 10], [self.remainingEXP / 50],
             [self.round / 50], lockedIn,
             punishLockIn, self.combatType,
-            heroToMove, itemToMove, self.rerollCost, rerolledItem, [finalTime / 30],
+            heroToMove, itemToMove, self.rerollCost, rerolledItem, [finalTime / 20],
             # store heros
             shopHeros,
             playerHeroTier,

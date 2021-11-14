@@ -135,20 +135,18 @@ while True:
 
 
     # print('getting observation')
-    start_time = time.time()
+    # start_time = time.time()
     # print(f"time: {time}")
     gameObservation = env.underlord.getObservation()
 
     # print(gameObservation)
 
-    if not env.observation_space.contains(gameObservation):
-        print(gameObservation)
-        print("Not lined up 1")
     # if not env.observation_space.contains(gameObservation):
     #     print(gameObservation)
-    #     print("Not lined up 2")
+    #     print("Not lined up 1")
 
-    obs_time = time.time() - start_time
+
+    # obs_time = time.time() - start_time
 
     # print(gameObservation)
     # print("--- %s seconds to get observation ---" % (time.time() - start_time))
@@ -165,7 +163,7 @@ while True:
     # start_time = time.time()
     # print(action[0], action[1] - 1, action[2] - 1, action[3] - 1)
 
-    act_time = time.time()
+    # act_time = time.time()
     # print(gameObservation)
     #
     # for i in range(10):
@@ -186,7 +184,7 @@ while True:
     reward = env.underlord.act(action=action[0], x=action[1], y=action[2] - 1)
     root.update()
     runningReward += reward
-    act_time = time.time() - act_time
+    # act_time = time.time() - act_time
     # print("--- %s seconds to get do action ---" % (time.time() - start_time))
     # print(f"running reward: {reward}")
     client.log_returns(episode_id=episode_id, reward=reward)
@@ -207,9 +205,9 @@ while True:
         # need to call a reset of env here
         finalObs = env.underlord.getObservation()
 
-        if not env.observation_space.contains(finalObs):
-            print(gameObservation)
-            print("Not lined up 3")
+        # if not env.observation_space.contains(finalObs):
+        #     print(gameObservation)
+        #     print("Not lined up 3")
         # if not env.observation_space.contains(finalObs):
         #     print(gameObservation)
         #     print("Not lined up 4")
@@ -237,8 +235,8 @@ while True:
             env.underlord.startNewGame()
 
         env.underlord.openStore()
-        env.underlord.lockIn()
-        env.underlord.lockIn()
+        # env.underlord.lockIn()
+        # env.underlord.lockIn()
         # print('got past restarting of the new episode, for loop should begin anew!')
 
     # timeLeft = gameObservation[13]
