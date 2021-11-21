@@ -116,6 +116,67 @@ class UnderlordInteract():
             'warrior': 26
         }
 
+        self.alliancesThresh = {
+            'none': 0,
+            'assassin': 3,
+            'brawny': 2,
+            'brute': 2,
+            'champion': 1,
+            'demon': 1,
+            'dragon': 2,
+            'fallen': 3,
+            'healer': 2,
+            'heartless': 3,
+            'human': 2,
+            'hunter': 3,
+            'knight': 2,
+            'mage': 3,
+            'magus': 1,
+            'poisoner': 3,
+            'rogue': 2,
+            'savage': 2,
+            'scaled': 2,
+            'shaman': 2,
+            'spirit': 3,
+            'summoner': 2,
+            'swordsman': 3,
+            'troll': 2,
+            'vigilant': 2,
+            'void': 3,
+            'warrior': 3
+        }
+
+        self.alliancesMaxTier = {
+            'none': 0,
+            'assassin': 2,
+            'brawny': 2,
+            'brute': 2,
+            'champion': 1,
+            'demon': 1,
+            'dragon': 1,
+            'fallen': 2,
+            'healer': 2,
+            'heartless': 3,
+            'human': 3,
+            'hunter': 2,
+            'knight': 3,
+            'mage': 2,
+            'magus': 1,
+            'poisoner': 1,
+            'rogue': 2,
+            'savage': 3,
+            'scaled': 2,
+            'shaman': 3,
+            'spirit': 1,
+            'summoner': 2,
+            'swordsman': 2,
+            'troll': 2,
+            'vigilant': 2,
+            'void': 1,
+            'warrior': 2
+        }
+
+
         self.heroAlliances = {
             'anti_mage': [self.alliances['hunter'], self.alliances['rogue'], self.alliances['none']],
             'batrider': [self.alliances['knight'], self.alliances['troll'], self.alliances['none']],
