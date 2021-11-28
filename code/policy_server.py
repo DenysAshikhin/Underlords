@@ -130,6 +130,7 @@ itemId = 70
 localItemId = 10
 x = 8
 y = 5
+tier = 6
 DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
             (spaces.Discrete(9),  # final position * (if not 0 means game is over!)
 
@@ -150,7 +151,7 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
              spaces.Discrete(2),  # locked in
              spaces.Discrete(2),  # punish for locking in this round
              spaces.Discrete(6),  # gamePhase *
-             spaces.MultiDiscrete([9, 9]),  # heroToMove: heroLocalID, isUnderlord
+             spaces.MultiDiscrete([x, y]),  # heroToMove: x, y coord
              spaces.Discrete(localItemId),  # itemToMove: localID*,
              spaces.Discrete(3),  # reRoll cost
              spaces.Discrete(2),  # rerolled (item)
@@ -159,7 +160,9 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
 
              # below are the store heros
-             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, tier, allianceId, allianceId, allianceId, tier,
+                                   allianceId, allianceId, allianceId, tier, allianceId, allianceId, allianceId, tier,
+                                   allianceId, allianceId, allianceId, tier]),
              # below are the bench heroes
              # first the levels of all the heroes
              spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
@@ -171,6 +174,13 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
                         dtype=np.float32),
 
              # Alliance composition of units
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                      0, 0, 0, 0, 0, 0, 0]),
+                        high=np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                       1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                       1, 1, 1, 1, 1, 1, 1]),
+                        dtype=np.float32),
 
 
              spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
@@ -205,8 +215,6 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
              # below are the items to pick from
              spaces.MultiDiscrete([itemId, itemId, itemId]),
              # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
-
-
 
              spaces.Discrete(9),
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),

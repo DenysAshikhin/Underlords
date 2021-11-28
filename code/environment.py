@@ -63,6 +63,7 @@ class UnderlordEnv(ExternalEnv):
         x = 8
         y = 5
         underlordsId = 9
+        tier = 6
 
         # self.action_space = action_space
         # note to make sure 0's are reserved for n/a -> adding +1 to some values ( marked with a *)
@@ -86,7 +87,7 @@ class UnderlordEnv(ExternalEnv):
              spaces.Discrete(2),  # locked in
              spaces.Discrete(2),  # punish for locking in this round
              spaces.Discrete(6),  # gamePhase *
-             spaces.MultiDiscrete([9, 9]),  # heroToMove: heroLocalID, isUnderlord
+             spaces.MultiDiscrete([x, y]),  # heroToMove: x, y coord
              spaces.Discrete(localItemId),  # itemToMove: localID*,
              spaces.Discrete(3),  # reRoll cost
              spaces.Discrete(2),  # rerolled (item)
@@ -95,7 +96,9 @@ class UnderlordEnv(ExternalEnv):
              spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
 
              # below are the store heros
-             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, tier, allianceId, allianceId, allianceId, tier,
+                                   allianceId, allianceId, allianceId, tier, allianceId, allianceId, allianceId, tier,
+                                   allianceId, allianceId, allianceId, tier]),
              # below are the bench heroes
              # first the levels of all the heroes
              spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
@@ -107,6 +110,13 @@ class UnderlordEnv(ExternalEnv):
                         dtype=np.float32),
 
              # Alliance composition of units
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                      0, 0, 0, 0, 0, 0, 0]),
+                        high=np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                       1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                       1, 1, 1, 1, 1, 1, 1]),
+                        dtype=np.float32),
 
 
              spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
@@ -197,8 +207,8 @@ class UnderlordEnv(ExternalEnv):
                 # 0 = reroll, 1 = lock in, 2 = level up, 3 = buy unit from store, 4 = sell unit, 5 = choose item/underlord,
                 # 6 = move Item/Unit
                 7,
-                8,  # x-cordinate *
-                5  # y-cordinate *
+                x,  # x-cordinate *
+                y  # y-cordinate *
                 # 4  # selection -> used only when having to choose an item or underlord
             ]
         )
@@ -227,7 +237,7 @@ class UnderlordEnv(ExternalEnv):
         Multiple episodes may be started at the same time.
         """
         while True:
-            time.sleep(1)
+            time.sleep(0.25)
         #
         # if self.sleep:
         #     time.sleep(999999)

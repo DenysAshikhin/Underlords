@@ -105,15 +105,31 @@ while True:
     # print(env.underlord.combatType)
     # print(env.underlord.finalPlacement)
     
-    
+    # Rewards to be handed out on a per round basis (currently for not loosing a round and starting gold for economy
     if env.underlord.newRoundStarted:
             if env.underlord.prevHP == env.underlord.health:
-                env.underlord.extraReward += 10 * 0.025
+                env.underlord.extraReward += env.underlord.firstPlace * 0.025
+                env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.025
                 print("It didn't loose!")
             else:
                 print(f"Lost {env.underlord.prevHP - env.underlord.health} health")
 
             env.underlord.prevHP = env.underlord.health
+
+            if env.underlord.prevGold >= 40:
+                env.underlord.extraReward -= env.underlord.firstPlace * 0.1
+                env.underlord.rewardSummary['economy'] -= env.underlord.firstPlace * 0.1
+            elif env.underlord.prevGold >= 30:
+                env.underlord.extraReward += env.underlord.firstPlace * 0.1
+                env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.1
+            elif env.underlord.prevGold >= 20:
+                env.underlord.extraReward += env.underlord.firstPlace * 0.05
+                env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.05
+            elif env.underlord.prevGold >= 10:
+                env.underlord.extraReward += env.underlord.firstPlace * 0.025
+                env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.025
+
+
             env.underlord.newRoundStarted = False
     
     
