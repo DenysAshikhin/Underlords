@@ -819,13 +819,22 @@ class UnderlordInteract():
             for idx in range(5):
                 heroData = self.underlords.underlordDataID[self.shopUnits[idx]]
                 name = heroData['texturename']
+<<<<<<< Updated upstream
                 uniqueID = self.shop.classIDMap[name]
+=======
+                tempArr = self.heroAlliances[name]
+                tempArr.append(heroData['goldCost'])
+>>>>>>> Stashed changes
 
                 shopHeros.append(int(uniqueID) + 1)
                 if (int(uniqueID) + 1) > 70:
                     raise RuntimeError('error 1')
         except:  # meaning we haven't yet received data about the store units
+<<<<<<< Updated upstream
             shopHeros = [0, 0, 0, 0, 0]
+=======
+            shopHeros = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+>>>>>>> Stashed changes
 
         benchHeros = []
         for i in range(8):
@@ -2516,8 +2525,22 @@ class UnderlordInteract():
         # if 'goldCost' not in fullHero:
         #     print(f"couldnt find goldCost in {fullHero}")
         #     print(heroName)
+        gold = -1
 
-        gold = fullHero['goldCost']
+        try:
+            gold = fullHero['goldCost']
+        except:
+
+            print(f"Hero: {heroName}")
+            print("Data:")
+            print(fullHero)
+            raise Exception('Could not find goldCost!!!')
+
+        if gold < 0:
+            print(f"Hero: {heroName}")
+            print("Data:")
+            print(fullHero)
+            raise Exception('Could not find goldCost!!!')
 
         if fullHero['attackRange'] == 1:
             melee = True

@@ -5954,7 +5954,8 @@
     },
     "None": {
       "stat": 123,
-      "id": -2
+      "id": -2,
+      "goldCost": 0
     },
     "abaddon": {
       "abilities": [
