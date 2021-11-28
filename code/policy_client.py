@@ -101,34 +101,53 @@ closeStore = False
 
 while True:
 
-    # if not env.underlord.pickTime():
-    #     if env.underlord.combatType != 0 and env.underlord.finalPlacement == 0:
-    #         if not closeStore:
-    #             env.underlord.closeStore(True)
-    #             closeStore = True
-    #         time.sleep(0.1)
-    #         continue
-    #
-    #     elif closeStore:
-    #         time.sleep(0.5)
-    #         env.underlord.openStore(None, None, True)
-    #         closeStore = False
+    # print( not env.underlord.pickTime())
+    # print(env.underlord.combatType)
+    # print(env.underlord.finalPlacement)
+    
+    
+    if env.underlord.newRoundStarted:
+            if env.underlord.prevHP == env.underlord.health:
+                env.underlord.extraReward += 10 * 0.025
+                print("It didn't loose!")
+            else:
+                print(f"Lost {env.underlord.prevHP - env.underlord.health} health")
+
+            env.underlord.prevHP = env.underlord.health
+            env.underlord.newRoundStarted = False
+    
+    
+    if not env.underlord.pickTime():
+        if env.underlord.combatType != 0 and env.underlord.finalPlacement == 0:
+            if not closeStore:
+                env.underlord.closeStore(True)
+                closeStore = True
+                # print('wow1')
+            # print('wow3')
+            time.sleep(0.1)
+            continue
+
+        elif closeStore:
+            # print('wow2')
+            time.sleep(0.3)
+            env.underlord.openStore(None, None, True)
+            closeStore = False
 
 
     # print('getting observation')
-    start_time = time.time()
+    # start_time = time.time()
     # print(f"time: {time}")
     gameObservation = env.underlord.getObservation()
+
     # print(gameObservation)
 
     if not env.observation_space.contains(gameObservation):
         print(gameObservation)
         print("Not lined up 1")
-    # if not env.observation_space.contains(gameObservation):
-    #     print(gameObservation)
-    #     print("Not lined up 2")
+        sys.exit()
 
-    obs_time = time.time() - start_time
+
+    # obs_time = time.time() - start_time
 
     # print(gameObservation)
     # print("--- %s seconds to get observation ---" % (time.time() - start_time))
@@ -145,7 +164,7 @@ while True:
     # start_time = time.time()
     # print(action[0], action[1] - 1, action[2] - 1, action[3] - 1)
 
-    act_time = time.time()
+    # act_time = time.time()
     # print(gameObservation)
     #
     # for i in range(10):
@@ -163,10 +182,10 @@ while True:
 
     # reward = env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1, selection=action[3] - 1)
 
-    reward = env.underlord.act(action=action[0], x=action[1] - 1, y=action[2] - 1)
+    reward = env.underlord.act(action=action[0], x=action[1], y=action[2] - 1)
     root.update()
     runningReward += reward
-    act_time = time.time() - act_time
+    # act_time = time.time() - act_time
     # print("--- %s seconds to get do action ---" % (time.time() - start_time))
     # print(f"running reward: {reward}")
     client.log_returns(episode_id=episode_id, reward=reward)
@@ -180,6 +199,7 @@ while True:
     #     f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")
 
     if finalPosition != 0:
+        print(env.underlord.rewardSummary)
         print(f"GAME OVER! final position: {finalPosition} - final reward: {runningReward} - bought: {env.underlord.localHeroID} heroes!")
         runningReward = 0
         reward = 0
@@ -189,6 +209,7 @@ while True:
         if not env.observation_space.contains(finalObs):
             print(gameObservation)
             print("Not lined up 3")
+            sys.exit()
         # if not env.observation_space.contains(finalObs):
         #     print(gameObservation)
         #     print("Not lined up 4")
@@ -216,8 +237,8 @@ while True:
             env.underlord.startNewGame()
 
         env.underlord.openStore()
-        env.underlord.lockIn()
-        env.underlord.lockIn()
+        # env.underlord.lockIn()
+        # env.underlord.lockIn()
         # print('got past restarting of the new episode, for loop should begin anew!')
 
     # timeLeft = gameObservation[13]

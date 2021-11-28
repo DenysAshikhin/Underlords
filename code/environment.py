@@ -1,6 +1,6 @@
 import os
 from tkinter import Tk
-
+import numpy as np
 from gym import spaces
 from PIL import ImageTk, Image
 import gym
@@ -56,83 +56,149 @@ class UnderlordEnv(ExternalEnv):
         self.daemon = True
 
         heroId = 72
+        allianceId = 27
         localHeroId = 100
         itemId = 70
         localItemId = 10
+        x = 8
+        y = 5
+        underlordsId = 9
 
         # self.action_space = action_space
         # note to make sure 0's are reserved for n/a -> adding +1 to some values ( marked with a *)
         self.observation_space = spaces.Tuple(
-    (spaces.Discrete(9),  # final position * (if not 0 means game is over!)
-     spaces.Discrete(101),  # health *
-     spaces.Discrete(100),  # gold
-     spaces.Discrete(11),  # level *
-     spaces.Discrete(99),  # remaining EXP to level up
-     spaces.Discrete(50),  # round
-     spaces.Discrete(2),  # locked in
-     spaces.Discrete(2),  # punish for locking in this round
-     spaces.Discrete(6),  # gamePhase *
-     spaces.MultiDiscrete([9, 9]),  # heroToMove: heroLocalID, isUnderlord
-     spaces.Discrete(localItemId),  # itemToMove: localID*,
-     spaces.Discrete(3),  # reRoll cost
-     spaces.Discrete(2),  # rerolled (item)
-     spaces.Discrete(35),  # current round timer
-     # below are the store heros
-     spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId]),
-     # below are the bench heroes
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     # below are the board heros (11 because 1 is underlord)
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     # below are underlords to pick (whenever valid) -> underlord ID - specialty
-     spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
-     # below are the items
-     spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     # spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     # below are the items to pick from
-     spaces.MultiDiscrete([itemId, itemId, itemId]),
-     # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4]),
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4]),
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4]),
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4]),
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4]),
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4]),
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4])
-     ))
+            (spaces.Discrete(9),  # final position * (if not 0 means game is over!)
+
+             # spaces.Discrete(101),  # health *
+             # spaces.Discrete(100),  # gold
+             # spaces.Discrete(11),  # level *
+
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+
+             # spaces.Discrete(99),  # remaining EXP to level up
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+
+             # spaces.Discrete(50),  # round
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+
+             spaces.Discrete(2),  # locked in
+             spaces.Discrete(2),  # punish for locking in this round
+             spaces.Discrete(6),  # gamePhase *
+             spaces.MultiDiscrete([9, 9]),  # heroToMove: heroLocalID, isUnderlord
+             spaces.Discrete(localItemId),  # itemToMove: localID*,
+             spaces.Discrete(3),  # reRoll cost
+             spaces.Discrete(2),  # rerolled (item)
+
+             # spaces.Discrete(35),  # current round timer
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+
+             # below are the store heros
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             # below are the bench heroes
+             # first the levels of all the heroes
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+                        high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]),
+                        dtype=np.float32),
+             # now the cost of all the heroes
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+                        high=np.array([5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]),
+                        dtype=np.float32),
+
+             # Alliance composition of units
+
+
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             # below are the board heros (11 because 1 is underlord)
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             # below are underlords to pick (whenever valid) -> underlord ID - specialty
+             spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
+             # below are the items
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             # spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             # below are the items to pick from
+             spaces.MultiDiscrete([itemId, itemId, itemId]),
+             # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
+
+             spaces.Discrete(9),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId])
+             ))
 
         self.action_space = spaces.MultiDiscrete(
             [
                 # 0 = reroll, 1 = lock in, 2 = level up, 3 = buy unit from store, 4 = sell unit, 5 = choose item/underlord,
                 # 6 = move Item/Unit
                 7,
-                9,  # x-cordinate *
-                9  # y-cordinate *
+                8,  # x-cordinate *
+                5  # y-cordinate *
                 # 4  # selection -> used only when having to choose an item or underlord
             ]
         )

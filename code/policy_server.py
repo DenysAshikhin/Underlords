@@ -7,7 +7,7 @@ from ray.tune.logger import pretty_print
 
 from ray.rllib.examples.env.random_env import RandomEnv
 from gym import spaces
-
+import numpy as np
 import argparse
 
 parser = argparse.ArgumentParser(description='Optional app description')
@@ -25,53 +25,54 @@ DEFAULT_CONFIG = with_common_config({
     # with a value function, see https://arxiv.org/pdf/1506.02438.pdf.
     "use_gae": True,
     # The GAE (lambda) parameter.
-    "lambda": 1.0,
+    "lambda": 0.995,
     # Initial coefficient for KL divergence.
     "kl_coeff": 0.2,
     # Size of batches collected from each worker.
-    "rollout_fragment_length": 20,
+    "rollout_fragment_length": 64,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 3500,
+    "train_batch_size": 7168,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 350,
+    "sgd_minibatch_size": 128,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 20,
+    "num_sgd_iter": 10,
     # Whether to shuffle sequences in the batch when training (recommended).
-    "shuffle_sequences": True,
+    "shuffle_sequences": False,
     # Stepsize of SGD.
     "lr": 3e-5,
     # Learning rate schedule.
     "lr_schedule": None,
     # Coefficient of the value function loss. IMPORTANT: you must tune this if
     # you set vf_share_layers=True inside your model's config.
-    "vf_loss_coeff": 1.0,
+    "vf_loss_coeff": 1.25,
     "model": {
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
-        "fcnet_hiddens": [128, 128],
+
+        "fcnet_hiddens": [1024, 1024],
         "fcnet_activation": "relu",
-        #"use_lstm": True
-        #"max_seq_len": 20,
-        #"lstm_cell_size": 1024,
-        #"lstm_use_prev_action": True
+        "use_lstm": True,
+        "max_seq_len": 16,
+        "lstm_cell_size": 512,
+        "lstm_use_prev_action": False
     },
     # Coefficient of the entropy regularizer.
-    "entropy_coeff": 0.0,
+    "entropy_coeff": 0.00005,
     # Decay schedule for the entropy regularizer.
     "entropy_coeff_schedule": None,
     # PPO clip parameter.
     "clip_param": 0.3,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
-    "vf_clip_param": 10000.0,
+    "vf_clip_param": 30.0,
     # If specified, clip the global norm of gradients by this amount.
     "grad_clip": None,
     # Target value for KL divergence.
-    "kl_target": 0.01,
+    "kl_target": 0.02,
     # Whether to rollout "complete_episodes" or "truncate_episodes".
     "batch_mode": "complete_episodes",
     # Which observation filter to apply to the observation.
@@ -80,9 +81,7 @@ DEFAULT_CONFIG = with_common_config({
     # usually slower, but you might want to try it if you run into issues with
     # # the default optimizer.
     # "simple_optimizer": False,
-    # Whether to fake GPUs (using CPUs).
-    # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
-    # "_fake_gpus": True,
+    #"reuse_actors": True,
     "num_gpus": 1,
     # Use the connector server to generate experiences.
     "input": (
@@ -97,98 +96,168 @@ DEFAULT_CONFIG = with_common_config({
     "framework": "tf",
     # "eager_tracing": True,
     "explore": True,
-    "exploration_config": {
-        "type": "Curiosity",  # <- Use the Curiosity module for exploring.
-        "eta": 0.6,  # Weight for intrinsic rewards before being added to extrinsic ones.
-        "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
-        "feature_dim": 1152, # Dimensionality of the generated feature vectors.
-        # Setup of the feature net (used to encode observations into feature (latent) vectors).
-        "inverse_net_hiddens": [64, 128], # Hidden layers of the "inverse" model.
-        "inverse_net_activation": "relu",  # Activation of the "inverse" model.
-        "forward_net_hiddens": [64, 128],  # Hidden layers of the "forward" model.
-        "forward_net_activation": "relu",  # Activation of the "forward" model.
-        "beta": 0.2,  # Weight for the "forward" loss (beta) over the "inverse" loss (1.0 - beta).
-        # Specify, which exploration sub-type to use (usually, the algo's "default"
-        # exploration, e.g. EpsilonGreedy for DQN, StochasticSampling for PG/SAC).
-        "sub_exploration": {
-            "type": "StochasticSampling",
-        }
-    },
+    # "exploration_config": {
+    #     "type": "Curiosity",  # <- Use the Curiosity module for exploring.
+    #     "eta": 0.6,  # Weight for intrinsic rewards before being added to extrinsic ones.
+    #     "lr": 0.001,  # Learning rate of the curiosity (ICM) module.
+    #     "feature_dim": 1152, # Dimensionality of the generated feature vectors.
+    #     # Setup of the feature net (used to encode observations into feature (latent) vectors).
+    #     "inverse_net_hiddens": [64, 128], # Hidden layers of the "inverse" model.
+    #     "inverse_net_activation": "relu",  # Activation of the "inverse" model.
+    #     "forward_net_hiddens": [64, 128],  # Hidden layers of the "forward" model.
+    #     "forward_net_activation": "relu",  # Activation of the "forward" model.
+    #     "beta": 0.2,  # Weight for the "forward" loss (beta) over the "inverse" loss (1.0 - beta).
+    #     # Specify, which exploration sub-type to use (usually, the algo's "default"
+    #     # exploration, e.g. EpsilonGreedy for DQN, StochasticSampling for PG/SAC).
+    #     "sub_exploration": {
+    #         "type": "StochasticSampling",
+    #     }
+    # },
     "create_env_on_driver": False,
     "log_sys_usage": False,
-    "normalize_actions": False
-    #"compress_observations": True
+    # "normalize_actions": False,
+    "compress_observations": True
+    # Whether to fake GPUs (using CPUs).
+    # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
+    #"_fake_gpus": True,
 
 })
 
+allianceId = 27
 heroId = 72
 localHeroId = 100
 itemId = 70
 localItemId = 10
+x = 8
+y = 5
 DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
-    (spaces.Discrete(9),  # final position * (if not 0 means game is over!)
-     spaces.Discrete(101),  # health *
-     spaces.Discrete(100),  # gold
-     spaces.Discrete(11),  # level *
-     spaces.Discrete(99),  # remaining EXP to level up
-     spaces.Discrete(50),  # round
-     spaces.Discrete(2),  # locked in
-     spaces.Discrete(2),  # punish for locking in this round
-     spaces.Discrete(6),  # gamePhase *
-     spaces.MultiDiscrete([9, 9]),  # heroToMove: heroLocalID, isUnderlord
-     spaces.Discrete(localItemId),  # itemToMove: localID*,
-     spaces.Discrete(3),  # reRoll cost
-     spaces.Discrete(2),  # rerolled (item)
-     spaces.Discrete(35),  # current round timer
-     # below are the store heros
-     spaces.MultiDiscrete([heroId, heroId, heroId, heroId, heroId]),
-     # below are the bench heroes
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     # below are the board heros (11 because 1 is underlord)
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]), spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     spaces.MultiDiscrete([heroId, 4, 6, localItemId, 9, 9, 3]),
-     # below are underlords to pick (whenever valid) -> underlord ID - specialty
-     spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
-     # below are the items
-     spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     # spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
-     # below are the items to pick from
-     spaces.MultiDiscrete([itemId, itemId, itemId]),
-     # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4]),
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4]),
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4]),
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4]),
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4]),
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4]),
-     spaces.MultiDiscrete(
-         [9, 101, 100, 11, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4, heroId, 4,
-          heroId, 4, heroId, 4])
-     ))
-DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([7, 9, 9])
+            (spaces.Discrete(9),  # final position * (if not 0 means game is over!)
+
+             # spaces.Discrete(101),  # health *
+             # spaces.Discrete(100),  # gold
+             # spaces.Discrete(11),  # level *
+
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+
+             # spaces.Discrete(99),  # remaining EXP to level up
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+
+             # spaces.Discrete(50),  # round
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+
+             spaces.Discrete(2),  # locked in
+             spaces.Discrete(2),  # punish for locking in this round
+             spaces.Discrete(6),  # gamePhase *
+             spaces.MultiDiscrete([9, 9]),  # heroToMove: heroLocalID, isUnderlord
+             spaces.Discrete(localItemId),  # itemToMove: localID*,
+             spaces.Discrete(3),  # reRoll cost
+             spaces.Discrete(2),  # rerolled (item)
+
+             # spaces.Discrete(35),  # current round timer
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+
+             # below are the store heros
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             # below are the bench heroes
+             # first the levels of all the heroes
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+                        high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]),
+                        dtype=np.float32),
+             # now the cost of all the heroes
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+                        high=np.array([5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]),
+                        dtype=np.float32),
+
+             # Alliance composition of units
+
+
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             # below are the board heros (11 because 1 is underlord)
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, localItemId, x, y, 5, 3]),
+             # below are underlords to pick (whenever valid) -> underlord ID - specialty
+             spaces.MultiDiscrete([5, 3, 5, 3, 5, 3, 5, 3]),
+             # below are the items
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             # spaces.MultiDiscrete([itemId, localItemId, 4, 5]), spaces.MultiDiscrete([itemId, localItemId, 4, 5]),
+             # below are the items to pick from
+             spaces.MultiDiscrete([itemId, itemId, itemId]),
+             # below are dicts of other players: slot, health, gold, level, boardUnits (ID, Tier)
+
+
+
+             spaces.Discrete(9),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId]),
+             #
+             # spaces.Discrete(9),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
+             # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
+             # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId])
+             ))
+DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([7, 8, 5])
 
 ray.init(log_to_driver=False)
 
