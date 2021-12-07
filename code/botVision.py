@@ -1404,13 +1404,15 @@ class UnderlordInteract():
 
     def act(self, action, x, y, selection=None):
 
-        tieredUp = None
+        tieredUp = -1
         firstPlace = 10
         earnedMoney = -1
 
         acted = -1
 
         hadToPick = self.pickTime()
+
+        actionSucceed = -1
 
         if action == 0:
             if self.rerollCost == 0:
@@ -1423,7 +1425,7 @@ class UnderlordInteract():
             self.lockIn()
             print('lock in')
         elif action == 2:
-            self.clickUp()
+            actionSucceed = self.clickUp()
             print('click up')
         elif action == 3:
             tieredUp = self.buy(x)
@@ -1493,7 +1495,7 @@ class UnderlordInteract():
             reward -= firstPlace * 0.005
 
         # if action in [0, 2, 3]:
-        if action in [2, 3]:
+        elif action in [2, 3] and (actionSucceed > -1 or tieredUp > -1):
 
             if self.gold >= 30:
                 reward += firstPlace * 0.01
@@ -2454,6 +2456,7 @@ class UnderlordInteract():
 
         time.sleep(self.mouseSleepTime * 2)
         self.closeStore()
+        return 1
 
     def lockIn(self):
 
@@ -2796,7 +2799,7 @@ class UnderlordInteract():
                 time.sleep(self.mouseSleepTime * 2)
 
                 self.closeStore()
-                return
+                return 1
 
         # Punishment for buying when no space on bench + no tier up possible goes here
 
