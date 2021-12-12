@@ -833,14 +833,15 @@ class UnderlordInteract():
         #                                           legacyID=boughtItemId)
         #             self.localItemID += 1
         #             self.itemlabels[i][j].config(text=name)
-        print('pre')
-        time.sleep(2)
-        print('post')
-        keyPress('[SPACE]')
+        # print('pre')
+        # time.sleep(2)
+        # self.lockIn()
+        # print('post')
+        # keyPress('2')
         print(self.getObservation())
         # print(self.getGamePhase())
         # print(f"Punishment: {self.getPunishment()}")
-        self.boardUnitCount(True)
+        # self.boardUnitCount(True)
 
         # self.itemObjects[0][1] = Item('claymore', (0,1), melee=True)
         # self.itemlabels[0][1].config(text='claymore')
@@ -1048,7 +1049,7 @@ class UnderlordInteract():
             for idx in range(5):
                 heroData = self.underlords.underlordDataID[self.shopUnits[idx]]
                 name = heroData['texturename']
-                tempArr = self.heroAlliances[name]
+                tempArr = list(self.heroAlliances[name])
                 try:
                     tempArr.append(heroData['goldCost'])
                 except:
@@ -1154,9 +1155,13 @@ class UnderlordInteract():
                     else:
                         isUnderlord = 1
                         alliances = self.heroAlliances[self.boardHeroes[i][j].name]
-
+                        # print(f"alliances for: {self.boardHeroes[i][j].name}")
+                        # print(alliances)
+                        # print("-----")
                         if self.boardHeroes[i][j].name not in accountedHeros:
+                            accountedHeros[self.boardHeroes[i][j].name] = True
                             for alliance in alliances:
+                                # print(f"alliance: {alliance}")
                                 playerAlliances[alliance] += 1
 
                     itemID = 0
@@ -1511,6 +1516,7 @@ class UnderlordInteract():
 
             if acted < 1:
                 print(f"it dun goofed: {acted}")
+                print(f"whether is saw stuff to pick? {hadToPick}")
                 res = self.timeRunningOut()
                 reward += res
                 self.rewardSummary['itemPick'] += res
@@ -2826,7 +2832,7 @@ class UnderlordInteract():
             # self.closeStore()
             return -1
 
-        self.openStore()
+        # self.openStore()
 
         if result == 10:  # meaning it tiered up, no need to create a new underlord on bench
 
@@ -2836,7 +2842,7 @@ class UnderlordInteract():
 
             time.sleep(self.mouseSleepTime)
 
-            self.closeStore()
+            # self.closeStore()
 
             return 10
         elif result == 11:
@@ -2847,7 +2853,7 @@ class UnderlordInteract():
 
             time.sleep(self.mouseSleepTime)
 
-            self.closeStore()
+            # self.closeStore()
             return 11
 
         for x in range(8):
@@ -2868,13 +2874,15 @@ class UnderlordInteract():
                 self.benchLabels[x].config(text=f"{self.benchHeroes[x].name}",
                                            image=self.benchHeroes[x].image)
 
-                mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
-                time.sleep(self.mouseSleepTime)
-                mouse1.click(Button.left, 1)
+                keyPress(str(idx + 1))
 
-                time.sleep(self.mouseSleepTime * 2)
+                # mouse1.position = (self.x + self.storeMap[idx], self.y + 130)
+                # time.sleep(self.mouseSleepTime)
+                # mouse1.click(Button.left, 1)
 
-                self.closeStore()
+                # time.sleep(self.mouseSleepTime * 2)
+
+                # self.closeStore()
                 return
 
         # Punishment for buying when no space on bench + no tier up possible goes here
