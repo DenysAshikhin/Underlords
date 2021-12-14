@@ -1057,7 +1057,7 @@ class UnderlordInteract():
                     print("data: ")
                     print(heroData)
                     raise Exception("GOLD COST NOT FOUND LINE 1014")
-                shopHeros.extend(self.heroAlliances[name])
+                shopHeros.extend(tempArr)
 
                 # uniqueID = self.shop.classIDMap[name]
 
