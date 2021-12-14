@@ -160,6 +160,7 @@ while True:
     if not env.observation_space.contains(gameObservation):
         print(gameObservation)
         print("Not lined up 1")
+        print(env.underlord.heroAlliances)
         sys.exit()
 
 

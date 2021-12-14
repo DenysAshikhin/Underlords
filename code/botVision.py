@@ -938,7 +938,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        return True
+        # return True
         thresh = 20
         if self.round < 3:  # arbitrary large number cause you have a ton more time in the beginning
             thresh = 35
@@ -1057,7 +1057,7 @@ class UnderlordInteract():
                     print("data: ")
                     print(heroData)
                     raise Exception("GOLD COST NOT FOUND LINE 1014")
-                shopHeros.extend(self.heroAlliances[name])
+                shopHeros.extend(tempArr)
 
                 # uniqueID = self.shop.classIDMap[name]
 
@@ -1215,9 +1215,9 @@ class UnderlordInteract():
             if playerAlliances[i] > self.alliancesMaxTier[str(i)]:
                 playerAlliances[i] = self.alliancesMaxTier[str(i)]
 
-        print("activated alliances!!")
-        print(playerAlliances)
-        print("---------------")
+        # print("activated alliances!!")
+        # print(playerAlliances)
+        # print("---------------")
 
         underlordsPick = []
 
@@ -1427,6 +1427,7 @@ class UnderlordInteract():
             shopHeros,
             playerHeroTier,
             playerHeroCost,
+            playerAlliances,
             # bench heroes
             benchHeros[0], benchHeros[1], benchHeros[2], benchHeros[3], benchHeros[4], benchHeros[5], benchHeros[6],
             benchHeros[7],
@@ -3097,4 +3098,4 @@ def openVision():
     root.mainloop()
 
 
-openVision()
+#openVision()
