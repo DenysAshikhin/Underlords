@@ -18,6 +18,7 @@ parser.add_argument('-checkpoint', type=str, help='location of checkpoint to res
 args = parser.parse_args()
 
 DEFAULT_CONFIG = with_common_config({
+    "gamma": 0.999,
     # Should use a critic as a baseline (otherwise don't use value baseline;
     # required for using GAE).
     "use_critic": True,
@@ -25,20 +26,22 @@ DEFAULT_CONFIG = with_common_config({
     # with a value function, see https://arxiv.org/pdf/1506.02438.pdf.
     "use_gae": True,
     # The GAE (lambda) parameter.
-    "lambda": 0.995,
+    "lambda": 0.98,
     # Initial coefficient for KL divergence.
-    "kl_coeff": 0.2,
+    "kl_coeff": 0.2,    
+    # Target value for KL divergence.
+    "kl_target": 0.02,
     # Size of batches collected from each worker.
     "rollout_fragment_length": 64,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 7168,
+    "train_batch_size": 8192,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 128,
+    "sgd_minibatch_size": 256,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
-    "num_sgd_iter": 10,
+    "num_sgd_iter": 1,
     # Whether to shuffle sequences in the batch when training (recommended).
     "shuffle_sequences": False,
     # Stepsize of SGD.
@@ -47,16 +50,16 @@ DEFAULT_CONFIG = with_common_config({
     "lr_schedule": None,
     # Coefficient of the value function loss. IMPORTANT: you must tune this if
     # you set vf_share_layers=True inside your model's config.
-    "vf_loss_coeff": 1.25,
+    "vf_loss_coeff": 1.0,
     "model": {
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
         "vf_share_layers": False,
 
-        "fcnet_hiddens": [1024, 1024],
+        "fcnet_hiddens": [1280, 1280],
         "fcnet_activation": "relu",
         "use_lstm": True,
-        "max_seq_len": 16,
+        "max_seq_len": 32,
         "lstm_cell_size": 512,
         "lstm_use_prev_action": False
     },
@@ -65,14 +68,12 @@ DEFAULT_CONFIG = with_common_config({
     # Decay schedule for the entropy regularizer.
     "entropy_coeff_schedule": None,
     # PPO clip parameter.
-    "clip_param": 0.3,
+    "clip_param": 0.25,
     # Clip param for the value function. Note that this is sensitive to the
     # scale of the rewards. If your expected V is large, increase this.
     "vf_clip_param": 30.0,
     # If specified, clip the global norm of gradients by this amount.
     "grad_clip": None,
-    # Target value for KL divergence.
-    "kl_target": 0.02,
     # Whether to rollout "complete_episodes" or "truncate_episodes".
     "batch_mode": "complete_episodes",
     # Which observation filter to apply to the observation.
@@ -80,7 +81,7 @@ DEFAULT_CONFIG = with_common_config({
     # Uses the sync samples optimizer instead of the multi-gpu one. This is
     # usually slower, but you might want to try it if you run into issues with
     # # the default optimizer.
-    # "simple_optimizer": False,
+    "simple_optimizer": True,
     #"reuse_actors": True,
     "num_gpus": 1,
     # Use the connector server to generate experiences.
@@ -92,7 +93,10 @@ DEFAULT_CONFIG = with_common_config({
     # Disable OPE, since the rollouts are coming from online clients.
     "input_evaluation": [],
     # "callbacks": MyCallbacks,
-    "env_config": {"sleep": True},
+    "env": RandomEnv,
+    "env_config": {
+    "sleep": True
+    },
     "framework": "tf",
     # "eager_tracing": True,
     "explore": True,
@@ -120,7 +124,6 @@ DEFAULT_CONFIG = with_common_config({
     # Whether to fake GPUs (using CPUs).
     # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
     #"_fake_gpus": True,
-
 })
 
 allianceId = 27
@@ -272,7 +275,9 @@ ray.init(log_to_driver=False)
 #print(f"running on: {args.ip}:44444")
 
 # trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
-trainer = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
+
+# trainer = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
+trainer = PPOTrainer
 
 # trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 # trainer = APPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
@@ -280,27 +285,35 @@ trainer = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
 # checkpoint_path = CHECKPOINT_FILE.format(args.run)
 
 
-checkpoint_path = "checkpointsA/"
+#checkpoint_path = "checkpointsA/"
 
-print(args.checkpoint)
+#print(args.checkpoint)
 
-if args.checkpoint:
-    # Attempt to restore from checkpoint, if possible.
-    if os.path.exists(args.checkpoint):
-        print('path FOUND!')
-        print("Restoring from checkpoint path", args.checkpoint)
-        trainer.restore(args.checkpoint)
-    else:
-        print("That path does not exist!")
+#if args.checkpoint:
+#    # Attempt to restore from checkpoint, if possible.
+#    if os.path.exists(args.checkpoint):
+#        print('path FOUND!')
+#        print("Restoring from checkpoint path", args.checkpoint)
+#        trainer.restore(args.checkpoint)
+#    else:
+#        print("That path does not exist!")
 
-# Serving and training loop.
-i = 0
-while True:
+## Serving and training loop.
+#i = 0
+#while True:
 
-    print(pretty_print(trainer.train()))
-    print(f"Finished train run #{i + 1}")
-    i += 1
-    if i % 2 == 0:
-        checkpoint = trainer.save(checkpoint_path)
-        print("Last checkpoint", checkpoint)
+#   print(pretty_print(trainer.train()))
+#   print(f"Finished train run #{i + 1}")
+#    i += 1
+#    if i % 1 == 0:
+#        checkpoint = trainer.save(checkpoint_path)
+#        print("Last checkpoint", checkpoint)
 
+from ray import tune
+name = "" + args.checkpoint
+print(f"Starting: {name}")
+tune.run(trainer, 
+#resume = True, 
+config=DEFAULT_CONFIG, name=name, keep_checkpoints_num = None, checkpoint_score_attr = "episode_reward_mean", max_failures = 1,
+#restore="C:\\Users\\ashyk\\ray_results\\GAE_98-Gamma_999\\PPO_RandomEnv_2f211_00000_0_2021-11-28_20-25-06\\checkpoint_000069\\checkpoint-69",
+checkpoint_freq = 1, checkpoint_at_end = True)
