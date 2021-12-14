@@ -1678,7 +1678,7 @@ class UnderlordInteract():
     def getGamePhase(self, skipCheck=False):
 
         if not skipCheck:
-            self.closeStore(skipCheck=True)
+            self.closeStore(newGame=True)
             time.sleep(0.4)
 
         # start_time = time.time()
@@ -2588,7 +2588,7 @@ class UnderlordInteract():
         keyPress('r')
 
 
-    def closeStore(self, skipCheck=False):
+    def closeStore(self, skipCheck=False, newGame=False):
 
         # self.updateWindowCoords()
 
@@ -2599,6 +2599,12 @@ class UnderlordInteract():
             # mouse1.click(Button.left, 1)
             # time.sleep(self.mouseSleepTime)
             keyPress('[SPACE]')
+        elif newGame:
+            time.sleep(self.mouseSleepTime)
+            mouse1.position = (self.shopX + 15, self.shopY + 15)
+            time.sleep(self.mouseSleepTime)
+            mouse1.click(Button.left, 1)
+            time.sleep(self.mouseSleepTime)
         # elif self.combatType != 0:
         #     if self.shop.shopOpen():
         #         mouse1.position = (self.shopX, self.shopY)
