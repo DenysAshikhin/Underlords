@@ -1427,6 +1427,7 @@ class UnderlordInteract():
             shopHeros,
             playerHeroTier,
             playerHeroCost,
+            playerAlliances,
             # bench heroes
             benchHeros[0], benchHeros[1], benchHeros[2], benchHeros[3], benchHeros[4], benchHeros[5], benchHeros[6],
             benchHeros[7],
