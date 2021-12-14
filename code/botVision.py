@@ -1215,9 +1215,9 @@ class UnderlordInteract():
             if playerAlliances[i] > self.alliancesMaxTier[str(i)]:
                 playerAlliances[i] = self.alliancesMaxTier[str(i)]
 
-        print("activated alliances!!")
-        print(playerAlliances)
-        print("---------------")
+        # print("activated alliances!!")
+        # print(playerAlliances)
+        # print("---------------")
 
         underlordsPick = []
 
