@@ -1517,7 +1517,7 @@ class UnderlordInteract():
 
             if acted < 1:
                 print(f"it dun goofed: {acted}")
-                print(f"whether is saw stuff to pick? {hadToPick}")
+                print(f"its x {x} - {y}")
                 res = self.timeRunningOut()
                 reward += res
                 self.rewardSummary['itemPick'] += res
@@ -2012,6 +2012,7 @@ class UnderlordInteract():
                 name = 'support_damage_dealer'
         else:
             # print('No clue what underlord that is!')
+            sys.exit()
             return -1
 
         for x, y in preferences:
