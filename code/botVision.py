@@ -1484,6 +1484,8 @@ class UnderlordInteract():
         acted = -1
 
         hadToPick = self.pickTime()
+        if hadToPick:
+            print("It has to pick!")
 
         if action == 0:
             if self.rerollCost == 0:
@@ -1505,10 +1507,10 @@ class UnderlordInteract():
             earnedMoney = self.sellHero()
             print('sell hero')
         elif action == 5:
-            acted = self.selectItem(x, y)
+            acted = self.selectItem(x=x, y=y)
             print('select item')
         elif action == 6:
-            self.moveUnit(x, y)
+            self.moveUnit(x=x, y=y)
             print('move unit7')
 
         reward = 0
@@ -1709,7 +1711,8 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     return -1
 
-                return self.buyItem(y, self.itemPicks)
+                selectedItem = self.buyItem(y, self.itemPicks)
+                return selectedItem
 
             elif self.underlordPicks is not None:
 
@@ -1717,8 +1720,8 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     # print('break 2')
                     return -1
-
-                return self.buyUnderlord(self.underlordPicks, y)
+                selectedUnderlord = self.buyUnderlord(self.underlordPicks, y)
+                return selectedUnderlord
 
         else:
 
@@ -2012,7 +2015,6 @@ class UnderlordInteract():
                 name = 'support_damage_dealer'
         else:
             # print('No clue what underlord that is!')
-            sys.exit()
             return -1
 
         for x, y in preferences:
