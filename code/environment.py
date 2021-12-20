@@ -59,7 +59,7 @@ class UnderlordEnv(ExternalEnv):
         allianceId = 27
         localHeroId = 100
         itemId = 70
-        localItemId = 10
+        localItemId = 13
         x = 8
         y = 5
         underlordsId = 9
