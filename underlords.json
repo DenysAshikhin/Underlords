@@ -5950,7 +5950,8 @@
     "xnull": {
       "stat": 123,
       "id": -1,
-      "texturename": "xnull"
+      "texturename": "xnull",
+      "goldCost":  0
     },
     "None": {
       "stat": 123,

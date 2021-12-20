@@ -152,6 +152,36 @@ class UnderlordInteract():
             'warrior': 26
         }
 
+        self.alliancesReverse = {
+            0: 'none',
+            1: 'assassin',
+            2: 'brawny',
+            3: 'brute',
+            4: 'champion',
+            5: 'demon',
+            6: 'dragon',
+            7: 'fallen',
+            8: 'healer',
+            9: 'heartless',
+            10: 'human',
+            11: 'hunter',
+            12: 'knight',
+            13: 'mage',
+            14: 'magus',
+            15: 'poisoner',
+            16: 'rogue',
+            17: 'savage',
+            18: 'scaled',
+            19: 'shaman',
+            20: 'spirit',
+            21: 'summoner',
+            22: 'swordsman',
+            23: 'troll',
+            24: 'vigilant',
+            25: 'void',
+            26: 'warrior'
+        }
+
         self.alliancesThresh = {
             '0': 1,
             '1': 3,
@@ -162,7 +192,7 @@ class UnderlordInteract():
             '6': 2,
             '7': 3,
             '8': 2,
-            '9': 3,
+            '9': 2,
             '10': 2,
             '11': 3,
             '12': 2,
@@ -276,6 +306,7 @@ class UnderlordInteract():
             'troll_warlord': [self.alliances['troll'], self.alliances['warrior'], self.alliances['none']],
             'skeleton_king': [self.alliances['fallen'], self.alliances['swordsman'], self.alliances['none']]
         }
+        self.currentAlliances = ""
 
         self.finalPlacement = 0
         self.rerollCost = 2
@@ -454,6 +485,7 @@ class UnderlordInteract():
 
         self.levelThresh = 3  # level threshold for tiering up a unit
 
+        self.allianceLabel = None
         self.hudLabel = None
         self.toBuy = None
         self.shopFrame = Frame(
@@ -532,8 +564,11 @@ class UnderlordInteract():
         # self.shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
         self.hudLabel = Label(master=self.shopFrame, foreground='white', background='black',
                               text="Hi", compound='top')
+        self.allianceLabel = Label(master=self.shopFrame, foreground='white', background='black',
+                                   text="Hi", compound='top')
 
         self.hudLabel.grid(row=hudRow, column=4, padx=5, pady=5)
+        self.allianceLabel.grid(row=hudRow, column=4 - 1, padx=5, pady=5)
 
         self.rerollButton = tkinter.Button(
             master=self.shopFrame,
@@ -544,7 +579,7 @@ class UnderlordInteract():
             fg="yellow",
             command=self.rerollStore
         )
-        self.rerollButton.grid(row=hudRow, column=3)
+        self.rerollButton.grid(row=hudRow+1, column=3)
 
         self.buyItem1 = tkinter.Button(
             master=self.shopFrame,
@@ -576,16 +611,16 @@ class UnderlordInteract():
             command=lambda pos=2: self.selectItem(selection=pos)
         )
         self.buyItem3.grid(row=hudRow + 1, column=2)
-        self.buyItem4 = tkinter.Button(
-            master=self.shopFrame,
-            text="buyItem4",
-            width=10,
-            height=1,
-            bg="blue",
-            fg="yellow",
-            command=lambda pos=3: self.selectItem(selection=pos)
-        )
-        self.buyItem4.grid(row=hudRow + 1, column=3)
+        # self.buyItem4 = tkinter.Button(
+        #     master=self.shopFrame,
+        #     text="buyItem4",
+        #     width=10,
+        #     height=1,
+        #     bg="blue",
+        #     fg="yellow",
+        #     command=lambda pos=3: self.selectItem(selection=pos)
+        # )
+        # self.buyItem4.grid(row=hudRow + 1, column=3)
 
         self.testButton = tkinter.Button(
             master=self.shopFrame,
@@ -719,6 +754,8 @@ class UnderlordInteract():
         self.lockedIn = False
         self.leveledUp = False
 
+        self.currentAlliances = ""
+
         self.finalPlacement = 0
         self.rerollCost = 2
         self.underlordPicks = None
@@ -805,7 +842,8 @@ class UnderlordInteract():
         # self.shopFrame.grid(row=1, column=0, pady=0, columnspan=5)
         self.hudLabel.config(foreground='white', background='black',
                              text="Hi", compound='top', image='')
-
+        self.allianceLabel.config(foreground='white', background='black',
+                                  text="Hi", compound='top', image='')
         for i in range(4):
             for j in range(8):
                 self.boardLabels[i][j].config(foreground='white', background='black',
@@ -938,7 +976,6 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        # return True
         thresh = 20
         if self.round < 3:  # arbitrary large number cause you have a ton more time in the beginning
             thresh = 35
@@ -1003,9 +1040,7 @@ class UnderlordInteract():
 
         # if phase not in ['select', 'choose']:
 
-        # making sure it is not time to pick an underlord or
-        if self.itemPicks is None and self.underlordPicks is None:
-            self.updateShop(skipCheck=True)
+
 
         # gamePhase = -1
         #
@@ -1218,6 +1253,11 @@ class UnderlordInteract():
         # print("activated alliances!!")
         # print(playerAlliances)
         # print("---------------")
+
+        self.currentAlliances = ""
+        for i in range(1, len(playerAlliances)):
+            if playerAlliances[i] > 0:
+                self.currentAlliances += f"{self.alliancesReverse[i]} - {str(playerAlliances[i])[:4]}\n"
 
         underlordsPick = []
 
@@ -1473,6 +1513,11 @@ class UnderlordInteract():
         self.currentOtherPlayer += 1
         if self.currentOtherPlayer == 7:
             self.currentOtherPlayer = 0
+
+        # making sure it is not time to pick an underlord or
+        if self.itemPicks is None and self.underlordPicks is None:
+            self.updateShop(skipCheck=True)
+
 
         return obs
 
@@ -2059,16 +2104,23 @@ class UnderlordInteract():
 
             try:
                 heroName = self.underlords.underlordDataID[self.shopUnits[i]]['texturename']
+                heroCost = self.underlords.underlordDataID[self.shopUnits[i]]['goldCost']
                 tempImage = self.profilePics[heroName]
                 self.shopImages.append(tempImage)
                 self.shopLabels[i].config(image=tempImage,
-                                          text=f"{heroName}", bg=color)
-            except:  # meaning we haven't recieved data for store yet
+                                          text=f"{heroName}-{heroCost}", bg=color)
+            except Exception as e:  # meaning we haven't recieved data for store yet
+                # print('caught error:')
+                # print(e)
                 return 1
 
         tempString = "\nUnit Count %d" % self.boardUnitCount() + "/%d" % self.level + "\nGold Count: %d" % self.gold \
                      + "\nHealth Count: %d" % self.health + "\nRemaining EXP: %d\n" % self.remainingEXP + "Rounds Won %d" % self.wins + "/%d" % self.round
         self.hudLabel.config(text=tempString)
+
+        # print('current alliacnes:')
+        # print(self.currentAlliances)
+        self.allianceLabel.config(text=self.currentAlliances)
 
         rerollText = "Reroll 2"
 
@@ -2588,7 +2640,6 @@ class UnderlordInteract():
         # self.closeStore()
         keyPress('r')
 
-
     def closeStore(self, skipCheck=False, newGame=False):
 
         # self.updateWindowCoords()
@@ -2911,13 +2962,13 @@ class UnderlordInteract():
         try:
             gold = fullHero['goldCost']
         except:
-            print(f"Could not find gold for: {name}")
+            print(f"Could not find gold for: {heroName}")
             print("data: ")
             print(fullHero)
             raise Exception("GOLD COST NOT FOUND LINE 2829")
 
         if gold < 0:
-            print(f"Could not find gold for: {name}")
+            print(f"Could not find gold for: {heroName}")
             print("data: ")
             print(fullHero)
             raise Exception("GOLD COST NOT FOUND LINE 2835")
@@ -3105,4 +3156,4 @@ def openVision():
     root.mainloop()
 
 
-#openVision()
+# openVision()
