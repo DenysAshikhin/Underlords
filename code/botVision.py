@@ -1756,6 +1756,7 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     return -1
 
+                print(f"Selecting item: {y}")
                 selectedItem = self.buyItem(y, self.itemPicks)
                 return selectedItem
 
@@ -1765,6 +1766,7 @@ class UnderlordInteract():
                     self.mediumPunish = True
                     # print('break 2')
                     return -1
+                print(f"Selecting underlord: {y}")
                 selectedUnderlord = self.buyUnderlord(self.underlordPicks, y)
                 return selectedUnderlord
 
@@ -1812,7 +1814,7 @@ class UnderlordInteract():
                 return 1
 
     def buyItem(self, selection, itemList):
-
+    
         if selection > 3:
             self.mediumPunish = True
             return -1
