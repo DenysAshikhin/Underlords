@@ -323,7 +323,7 @@ class UnderlordInteract():
         self.prevHP = 100
         self.prevGold = 0
         self.newRoundStarted = False
-        self.firstPlace = 10;
+        self.firstPlace = 1;
 
         self.rewardSummary = {'economy': 0, 'roundsSurvived': 0, 'finalPosition': 0, 'unitLevelUp': 0,
                               'mainLevelUp': 0, 'wins': 0, 'lockIn': 0, 'itemPick': 0}

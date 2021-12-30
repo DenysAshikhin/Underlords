@@ -35,10 +35,10 @@ DEFAULT_CONFIG = with_common_config({
     "rollout_fragment_length": 64,
     # Number of timesteps collected for each SGD round. This defines the size
     # of each SGD epoch.
-    "train_batch_size": 20480,
+    "train_batch_size": 32768,
     # Total SGD batch size across all devices for SGD. This defines the
     # minibatch size within each epoch.
-    "sgd_minibatch_size": 256,
+    "sgd_minibatch_size": 512,
     # Number of SGD iterations in each outer loop (i.e., number of epochs to
     # execute per train batch).
     "num_sgd_iter": 1,
