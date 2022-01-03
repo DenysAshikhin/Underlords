@@ -323,7 +323,7 @@ class UnderlordInteract():
         self.prevHP = 100
         self.prevGold = 0
         self.newRoundStarted = False
-        self.firstPlace = 1;
+        self.firstPlace = 1
 
         self.rewardSummary = {'economy': 0, 'roundsSurvived': 0, 'finalPosition': 0, 'unitLevelUp': 0,
                               'mainLevelUp': 0, 'wins': 0, 'lockIn': 0, 'itemPick': 0}
@@ -2456,7 +2456,8 @@ class UnderlordInteract():
         elif self.itemToMove:  # Meaning we are trying to attach an item to a hero
 
             print("equiping item")
-            print(self.itemToMove)
+            print(self.itemToMove.name)
+            print(f"cords: {self.itemToMove.coords[0]} - {self.itemToMove.coords[1]}")
             if y == -1:  # Meaning we are attaching an item to a unit on bench
                 if self.benchHeroes[x] is not None:  # Making sure bench spot has a hero
                     self.updateHeroItem(self.benchHeroes[x])
