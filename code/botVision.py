@@ -355,9 +355,9 @@ class UnderlordInteract():
         self.rerollY = self.shopY + 82
         self.clickUpX = self.rerollX
         self.clickUpY = self.rerollY + 70
-        self.benchX = self.x + 250
+        self.benchX = self.x + 255
         self.benchXOffset = 90
-        self.benchY = self.y + 800
+        self.benchY = self.y + 805
         self.boardX = self.x + 300
         self.boardXOffset = 80
         self.boardY = self.y + 400
@@ -1882,8 +1882,9 @@ class UnderlordInteract():
                     if holderItem is not None:
                         tempHolder = itemObject
                         self.itemObjects[i][j] = holderItem
-                        self.itemObjects[i][j].x = i
-                        self.itemObjects[i][j].y = j
+                        # self.itemObjects[i][j].x = i
+                        # self.itemObjects[i][j].y = j
+                        self.itemObjects[i][j].coords = (i,j)
                         self.itemlabels[i][j].config(text=holderItem.name)
                         holderItem = tempHolder
 
@@ -2721,9 +2722,9 @@ class UnderlordInteract():
         self.rerollY = self.shopY + 82
         self.clickUpX = self.rerollX
         self.clickUpY = self.rerollY + 70
-        self.benchX = self.x + 250
+        self.benchX = self.x + 255
         self.benchXOffset = 90
-        self.benchY = self.y + 800
+        self.benchY = self.y + 805
         self.boardX = self.x + 300
         self.boardXOffset = 80
         self.boardY = self.y + 400
