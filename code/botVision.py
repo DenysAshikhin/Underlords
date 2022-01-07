@@ -854,23 +854,23 @@ class UnderlordInteract():
     def testFunction(self, param1, param2):
         # print(self.HUD.getClockTimeLeft())
 
-        # if self.localItemID < 4:
-        #     for i in range(3):
-        #         for j in range(4):
-        #             melee = False
-        #             ranged = False
-        #             preventMana = False
-        #             boughtItemId = 7
-        #             name = 'tester item' + str(i) + str(j)
-        #             self.itemObjects[i][j] = Item(name, (i, j),
-        #                                           ID=2,
-        #                                           melee=melee,
-        #                                           ranged=ranged,
-        #                                           preventMana=preventMana,
-        #                                           localID=self.localItemID,
-        #                                           legacyID=boughtItemId)
-        #             self.localItemID += 1
-        #             self.itemlabels[i][j].config(text=name)
+        if self.localItemID < 4:
+            for i in range(3):
+                for j in range(4):
+                    melee = False
+                    ranged = False
+                    preventMana = False
+                    boughtItemId = 7
+                    name = 'tester item' + str(i) + str(j)
+                    self.itemObjects[i][j] = Item(name, (i, j),
+                                                  ID=2,
+                                                  melee=melee,
+                                                  ranged=ranged,
+                                                  preventMana=preventMana,
+                                                  localID=self.localItemID,
+                                                  legacyID=boughtItemId)
+                    self.localItemID += 1
+                    self.itemlabels[i][j].config(text=name)
         # print('pre')
         # time.sleep(2)
         # self.lockIn()
@@ -976,6 +976,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
+        # return True
         thresh = 20
         if self.round < 3:  # arbitrary large number cause you have a ton more time in the beginning
             thresh = 35
@@ -2814,6 +2815,7 @@ class UnderlordInteract():
                 originalHero.item.hero = None  # if the hero had an item, remove that items hero link
 
             originalHero.item = None
+            print(f"removing item from hero: {originalHero.name}: {originalHero.coords[0]}-{originalHero.coords[1]}")
             self.updateHeroLabel(originalHero)
 
         if hero.item:
