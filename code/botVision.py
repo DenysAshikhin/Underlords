@@ -3097,6 +3097,7 @@ class UnderlordInteract():
 
             if item:
                 originalHero.item = item
+                item.hero = originalHero
             self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
 
         if units["tierTwo"] == self.levelThresh:
@@ -3128,6 +3129,7 @@ class UnderlordInteract():
                     self.resetLabel(hero)
             if item:
                 originalHero.item = item
+                item.hero = originalHero
             self.updateHeroLabel(originalHero)  # Updating label to for color to indicate tier
 
         # if we tiered up, return that

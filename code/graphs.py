@@ -43,10 +43,30 @@ def animate(i):
             print('no sum yet')
 
         try:
+            plt.annotate('Eco: %0.3f' % economy[len(economy) - 1], xy=(1, economy[len(economy) - 1]), xytext=(8, 0),
+                         xycoords=('axes fraction', 'data'), textcoords='offset points')
 
-            for var in (economy, roundSurvived, finalPosition, unitLevelUp, mainLevelUp, wins, lockIn, itemPick):
-                plt.annotate('%0.3f' % var[len(var)-1], xy=(1, var[len(var)-1]), xytext=(8, 0),
-                             xycoords=('axes fraction', 'data'), textcoords='offset points')
+            plt.annotate('Rounds: %0.3f' % roundSurvived[len(roundSurvived) - 1],
+                         xy=(1, roundSurvived[len(roundSurvived) - 1]), xytext=(8, 0),
+                         xycoords=('axes fraction', 'data'), textcoords='offset points')
+            plt.annotate('Pos: %0.3f' % finalPosition[len(finalPosition) - 1],
+                         xy=(1, finalPosition[len(finalPosition) - 1]), xytext=(8, 0),
+                         xycoords=('axes fraction', 'data'), textcoords='offset points')
+            plt.annotate('Tiering: %0.3f' % unitLevelUp[len(unitLevelUp) - 1],
+                         xy=(1, unitLevelUp[len(unitLevelUp) - 1]), xytext=(8, 0),
+                         xycoords=('axes fraction', 'data'), textcoords='offset points')
+            plt.annotate('Leveling: %0.3f' % mainLevelUp[len(mainLevelUp) - 1],
+                         xy=(1, mainLevelUp[len(mainLevelUp) - 1]), xytext=(8, 0),
+                         xycoords=('axes fraction', 'data'), textcoords='offset points')
+            plt.annotate('Wins: %0.3f' % wins[len(wins) - 1], xy=(1, wins[len(wins) - 1]), xytext=(8, 0),
+                         xycoords=('axes fraction', 'data'), textcoords='offset points')
+            plt.annotate('Locking: %0.3f' % lockIn[len(lockIn) - 1], xy=(1, lockIn[len(lockIn) - 1]), xytext=(8, 0),
+                         xycoords=('axes fraction', 'data'), textcoords='offset points')
+            plt.annotate('Picks: %0.3f' % itemPick[len(itemPick) - 1], xy=(1, itemPick[len(itemPick) - 1]),
+                         xytext=(8, 0),
+                         xycoords=('axes fraction', 'data'), textcoords='offset points')
+
+
         except Exception as e:
             print(e)
             print("Error trying to annotate")
