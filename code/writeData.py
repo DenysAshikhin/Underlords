@@ -62,7 +62,7 @@ def writeCurrentGameToHistoryCSV(rewards):
     currentLength = len(data['average'])
 
     try:
-        counter = data['counter'][0]
+        counter = data['counter'][currentLength-1]
         counter = counter + 1
 
         economy = rewards['economy']

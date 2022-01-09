@@ -257,6 +257,7 @@ while True:
 
             writer.resetCurrentGame()
             counter = 0
+            properCounter = 0
 
         client.end_episode(episode_id=episode_id, observation=finalObs)
         env.underlord.resetEnv()
