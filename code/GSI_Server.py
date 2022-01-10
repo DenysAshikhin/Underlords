@@ -6,7 +6,6 @@
 
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from operator import attrgetter
 from threading import Thread
 import json
 
@@ -69,6 +68,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
                             if 'units' in publicData:
                                 self.server.env.otherPlayersDict[slot]['units'] = publicData['units']
+                                #publicData['units'].position is a dict: {'x': 4, 'y' 2}
 
                             continue
                         else:
@@ -115,6 +115,9 @@ class RequestHandler(BaseHTTPRequestHandler):
 
                             if 'units' in publicData:
                                 units = publicData['units']  # It's all units
+
+                            if 'opponent_player_slot' in publicData:
+                                self.server.env.currentOpponent = publicData['opponent_player_slot']
 
                             if 'item_slots' in publicData:
 

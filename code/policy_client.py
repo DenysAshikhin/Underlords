@@ -9,6 +9,7 @@ from environment import UnderlordEnv
 import logging
 import time
 import argparse
+import writeData as writer
 from six.moves import queue
 
 from logger import logger
@@ -29,11 +30,12 @@ parser.add_argument('-local', type=str,
                     help='Whether to create and update a local copy of the AI (adds delay) or query server for each action.'
                          'possible values: "local" or "remote"')
 
+parser.add_argument('-data', type=str,
+                    help='Whether or not to log data')
+
 args = parser.parse_args()
 
 update = 3600.0
-
-
 
 local = 'local'
 
@@ -45,9 +47,9 @@ if args.update:
 
 if args.local:
     local = args.local
-    
+
 if local == 'remote':
-    remoteee=True
+    remoteee = True
 
 print(f"Going to update {local}-y  at {update} seconds interval")
 
@@ -99,40 +101,64 @@ runningReward = 0
 
 closeStore = False
 
+if args.data:
+    counter = 0
+    properCounter = 0
+    writer.resetCurrentGame()
+
 while True:
 
     # print( not env.underlord.pickTime())
     # print(env.underlord.combatType)
     # print(env.underlord.finalPlacement)
-    
+
     # Rewards to be handed out on a per round basis (currently for not loosing a round and starting gold for economy
     if env.underlord.newRoundStarted:
-            if env.underlord.prevHP == env.underlord.health:
-                env.underlord.extraReward += env.underlord.firstPlace * 0.025
-                env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.025
-                print("It didn't loose!")
-            else:
-                print(f"Lost {env.underlord.prevHP - env.underlord.health} health")
 
-            env.underlord.prevHP = env.underlord.health
+        if env.underlord.prevHP == env.underlord.health:
+            maxPain = env.underlord.calculateBoardStrength()
+            lostHP = env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health'] - env.underlord.prevEnemyHP
+            percentage = lostHP / maxPain
+            env.underlord.extraReward += env.underlord.firstPlace * 0.2 * (env.underlord.round/30) * percentage
+            env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.2 * (env.underlord.round/30) * percentage
+            print(f"Dealt {lostHP} health, {percentage}% of max damage")
+        else:
+            maxPain = env.underlord.calculateEnemyBoardStrength()
+            lostHP = env.underlord.prevHP - env.underlord.health
+            percentage = lostHP / maxPain
+            print(f"Lost {lostHP} health, {percentage}% of max damage")
 
-            if env.underlord.prevGold >= 40:
-                env.underlord.extraReward -= env.underlord.firstPlace * 0.1
-                env.underlord.rewardSummary['economy'] -= env.underlord.firstPlace * 0.1
-            elif env.underlord.prevGold >= 30:
-                env.underlord.extraReward += env.underlord.firstPlace * 0.1
-                env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.1
-            elif env.underlord.prevGold >= 20:
-                env.underlord.extraReward += env.underlord.firstPlace * 0.05
-                env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.05
-            elif env.underlord.prevGold >= 10:
-                env.underlord.extraReward += env.underlord.firstPlace * 0.025
-                env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.025
+            if percentage > 0.36:
+                env.underlord.extraReward -= env.underlord.firstPlace * 0.2 * (env.underlord.round / 30) * percentage
+                env.underlord.rewardSummary['losses'] += env.underlord.firstPlace * 0.2 * (env.underlord.round / 30) * percentage
 
+        env.underlord.prevHP = env.underlord.health
+        env.underlord.prevEnemyHP = env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health']
 
-            env.underlord.newRoundStarted = False
-    
-    
+        if env.underlord.prevGold >= 40:
+            env.underlord.extraReward -= env.underlord.firstPlace * 0.1
+            env.underlord.rewardSummary['economy'] -= env.underlord.firstPlace * 0.1
+            # runningReward += env.underlord.firstPlace * 0.1
+
+        elif env.underlord.prevGold >= 30:
+            env.underlord.extraReward += env.underlord.firstPlace * 0.1
+            env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.1
+            # runningReward -= env.underlord.firstPlace * 0.1
+
+        elif env.underlord.prevGold >= 20:
+            env.underlord.extraReward += env.underlord.firstPlace * 0.05
+            env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.05
+            # runningReward += env.underlord.firstPlace * 0.05
+
+        elif env.underlord.prevGold >= 10:
+            env.underlord.extraReward += env.underlord.firstPlace * 0.025
+            env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.025
+            # runningReward += env.underlord.firstPlace * 0.05
+
+        env.underlord.prevGold = env.underlord.gold
+
+        env.underlord.newRoundStarted = False
+
     if not env.underlord.pickTime():
         if env.underlord.combatType != 0 and env.underlord.finalPlacement == 0:
             if not closeStore:
@@ -149,7 +175,6 @@ while True:
             env.underlord.openStore(None, None, True)
             closeStore = False
 
-
     # print('getting observation')
     # start_time = time.time()
     # print(f"time: {time}")
@@ -162,7 +187,6 @@ while True:
         print("Not lined up 1")
         print(env.underlord.heroAlliances)
         sys.exit()
-
 
     # obs_time = time.time() - start_time
 
@@ -215,9 +239,16 @@ while True:
     # print(
     #     f"Round: {gameObservation[5]} - Time Left: {gameObservation[12]} - Obs duration: {obs_time} - Act duration: {act_time} - Overall duration: {time.time() - start_time}")
 
+    if args.data:
+        if counter % 10 == 0:
+            writer.writeCurrentGameToCSV(properCounter, env.underlord.rewardSummary)
+            properCounter = properCounter + 1
+        counter = counter + 1
+
     if finalPosition != 0:
         print(env.underlord.rewardSummary)
-        print(f"GAME OVER! final position: {finalPosition} - final reward: {runningReward} - bought: {env.underlord.localHeroID} heroes!")
+        print(
+            f"GAME OVER! final position: {finalPosition} - final reward: {runningReward} - bought: {env.underlord.localHeroID} heroes!")
         runningReward = 0
         reward = 0
         # need to call a reset of env here
@@ -230,6 +261,10 @@ while True:
         # if not env.observation_space.contains(finalObs):
         #     print(gameObservation)
         #     print("Not lined up 4")
+
+        # Update historical Data right away
+        if args.data:
+            writer.writeCurrentGameToHistoryCSV(env.underlord.rewardSummary)
 
         client.end_episode(episode_id=episode_id, observation=finalObs)
         env.underlord.resetEnv()
@@ -245,8 +280,15 @@ while True:
 
         if remoteee:
             print("remote sleep")
-            time.sleep(45)
+            time.sleep(40)
             print('remote sleep done')
+
+        # After giving 45 seconds to look at charts, reset current game
+
+        if args.data:
+            writer.resetCurrentGame()
+            counter = 0
+            properCounter = 0
 
         episode_id = client.start_episode(episode_id=None)
 

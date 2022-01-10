@@ -234,6 +234,17 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
                                    allianceId, allianceId, allianceId,
                                    allianceId, allianceId, allianceId,
                                    allianceId, allianceId, allianceId]),
+             #Coords of the enemy units
+             spaces.MultiDiscrete([8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4]),
 
              # spaces.Discrete(9),
              # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),
@@ -277,7 +288,7 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
              # spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([3, 3, 3, 3, 3, 3, 3, 3, 3, 3]), dtype=np.float32),
              # spaces.MultiDiscrete([allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId, allianceId])
              ))
-DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([7, 8, 5])
+DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([8, 8, 5])
 
 ray.init(log_to_driver=False)
 
