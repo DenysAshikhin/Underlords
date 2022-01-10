@@ -118,7 +118,7 @@ while True:
         if env.underlord.prevHP == env.underlord.health:
             env.underlord.extraReward += env.underlord.firstPlace * 0.025
             env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.025
-            runningReward += env.underlord.firstPlace * 0.025
+            # runningReward += env.underlord.firstPlace * 0.025
             print("It didn't loose!")
         else:
             print(f"Lost {env.underlord.prevHP - env.underlord.health} health")
@@ -128,22 +128,22 @@ while True:
         if env.underlord.prevGold >= 40:
             env.underlord.extraReward -= env.underlord.firstPlace * 0.1
             env.underlord.rewardSummary['economy'] -= env.underlord.firstPlace * 0.1
-            runningReward += env.underlord.firstPlace * 0.1
+            # runningReward += env.underlord.firstPlace * 0.1
 
         elif env.underlord.prevGold >= 30:
             env.underlord.extraReward += env.underlord.firstPlace * 0.1
             env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.1
-            runningReward -= env.underlord.firstPlace * 0.1
+            # runningReward -= env.underlord.firstPlace * 0.1
 
         elif env.underlord.prevGold >= 20:
             env.underlord.extraReward += env.underlord.firstPlace * 0.05
             env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.05
-            runningReward += env.underlord.firstPlace * 0.05
+            # runningReward += env.underlord.firstPlace * 0.05
 
         elif env.underlord.prevGold >= 10:
             env.underlord.extraReward += env.underlord.firstPlace * 0.025
             env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.025
-            runningReward += env.underlord.firstPlace * 0.05
+            # runningReward += env.underlord.firstPlace * 0.05
 
 
         env.underlord.newRoundStarted = False
