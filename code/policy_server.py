@@ -234,6 +234,17 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
                                    allianceId, allianceId, allianceId,
                                    allianceId, allianceId, allianceId,
                                    allianceId, allianceId, allianceId]),
+             #Coords of the enemy units
+             spaces.MultiDiscrete([8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4,
+                                   8, 4]),
 
              # spaces.Discrete(9),
              # spaces.Box(low=np.array([0]), high=np.array([1]), dtype=np.float32),

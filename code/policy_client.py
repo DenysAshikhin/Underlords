@@ -114,15 +114,26 @@ while True:
 
     # Rewards to be handed out on a per round basis (currently for not loosing a round and starting gold for economy
     if env.underlord.newRoundStarted:
+
         if env.underlord.prevHP == env.underlord.health:
-            env.underlord.extraReward += env.underlord.firstPlace * 0.15 * (env.underlord.round/30)
-            env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.15 * (env.underlord.round/30)
-            # runningReward += env.underlord.firstPlace * 0.025
-            print("It didn't loose!")
+            maxPain = env.underlord.calculateBoardStrength()
+            lostHP = env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health'] - env.underlord.prevEnemyHP
+            percentage = lostHP / maxPain
+            env.underlord.extraReward += env.underlord.firstPlace * 0.2 * (env.underlord.round/30) * percentage
+            env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.2 * (env.underlord.round/30) * percentage
+            print(f"Dealt {lostHP} health, {percentage}% of max damage")
         else:
-            print(f"Lost {env.underlord.prevHP - env.underlord.health} health")
+            maxPain = env.underlord.calculateEnemyBoardStrength()
+            lostHP = env.underlord.prevHP - env.underlord.health
+            percentage = lostHP / maxPain
+            print(f"Lost {lostHP} health, {percentage}% of max damage")
+
+            if percentage > 0.36:
+                env.underlord.extraReward -= env.underlord.firstPlace * 0.2 * (env.underlord.round / 30) * percentage
+                env.underlord.rewardSummary['losses'] += env.underlord.firstPlace * 0.2 * (env.underlord.round / 30) * percentage
 
         env.underlord.prevHP = env.underlord.health
+        env.underlord.prevEnemyHP = env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health']
 
         if env.underlord.prevGold >= 40:
             env.underlord.extraReward -= env.underlord.firstPlace * 0.1

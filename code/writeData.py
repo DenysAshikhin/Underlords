@@ -4,7 +4,7 @@ import pandas as pd
 currentGame = 'currentGame.csv'
 allGames = 'allGames.csv'
 fieldnames = ['economy', 'roundsSurvived', 'finalPosition', 'unitLevelUp',
-              'mainLevelUp', 'wins', 'lockIn', 'itemPick', 'counter', 'average']
+              'mainLevelUp', 'wins', 'losses', 'lockIn', 'itemPick', 'counter', 'average']
 
 
 def resetCurrentGame():
@@ -25,7 +25,8 @@ def writeCurrentGameToCSV(counter, rewards):
         wins = rewards['wins']
         lockIn = rewards['lockIn']
         itemPick = rewards['itemPick']
-        rewards['average'] = economy + roundSurvived + finalPosition + unitLevelUp + mainLevelUp + wins + lockIn + itemPick
+        losses = rewards['losses']
+        rewards['average'] = economy + roundSurvived + finalPosition + unitLevelUp + mainLevelUp + wins - losses - lockIn - itemPick
         rewards['counter'] = counter
 
         csv_writer.writerow(rewards)
@@ -73,7 +74,8 @@ def writeCurrentGameToHistoryCSV(rewards):
         wins = rewards['wins']
         lockIn = rewards['lockIn']
         itemPick = rewards['itemPick']
-        runningSum = economy + roundSurvived + finalPosition + unitLevelUp + mainLevelUp + wins + lockIn + itemPick
+        losses = rewards['losses']
+        runningSum = economy + roundSurvived + finalPosition + unitLevelUp + mainLevelUp + wins - losses - lockIn - itemPick
 
         runningSum = (data['average'][currentLength-1] * currentLength) + runningSum
 
@@ -97,7 +99,8 @@ def writeCurrentGameToHistoryCSV(rewards):
             wins = rewards['wins']
             lockIn = rewards['lockIn']
             itemPick = rewards['itemPick']
-            runningSum = economy + roundSurvived + finalPosition + unitLevelUp + mainLevelUp + wins + lockIn + itemPick
+            losses = rewards['losses']
+            runningSum = economy + roundSurvived + finalPosition + unitLevelUp + mainLevelUp + wins - losses - lockIn - itemPick
             rewards['average'] = runningSum
             rewards['counter'] = 0
 

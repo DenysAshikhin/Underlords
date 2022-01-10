@@ -321,12 +321,13 @@ class UnderlordInteract():
         self.losses = 0
         self.round = 0
         self.prevHP = 100
+        self.prevEnemyHP = 100
         self.prevGold = 0
         self.newRoundStarted = False
         self.firstPlace = 1
 
         self.rewardSummary = {'economy': 0, 'roundsSurvived': 0, 'finalPosition': 0, 'unitLevelUp': 0,
-                              'mainLevelUp': 0, 'wins': 0, 'lockIn': 0, 'itemPick': 0}
+                              'mainLevelUp': 0, 'wins': 0, 'losses': 0, 'lockIn': 0, 'itemPick': 0}
         self.server = True
 
         if rect is not None:
@@ -441,11 +442,13 @@ class UnderlordInteract():
         self.level = 0
         self.round = 0
         self.prevHP = 100
+        self.prevEnemyHP = 100
         self.prevGold = 0
         self.freeRerollAvailable = False
         self.lockedIn = False
         self.leveledUp = False
         self.lastLockedInRound = -1
+        self.currentOpponent = -1
 
         self.currentTime = 0
         self.elapsedTime = 0
@@ -579,7 +582,7 @@ class UnderlordInteract():
             fg="yellow",
             command=self.rerollStore
         )
-        self.rerollButton.grid(row=hudRow+1, column=3)
+        self.rerollButton.grid(row=hudRow + 1, column=3)
 
         self.buyItem1 = tkinter.Button(
             master=self.shopFrame,
@@ -749,6 +752,7 @@ class UnderlordInteract():
         self.level = 0
         self.round = 0
         self.prevHP = 100
+        self.prevEnemyHP = 100
         self.prevGold = 0
         self.freeRerollAvailable = False
         self.lockedIn = False
@@ -768,6 +772,7 @@ class UnderlordInteract():
         self.losses = 0
         self.round = 0
         self.prevHP = 100
+        self.prevEnemyHP = 100
         self.prevGold = 0
         self.newRoundStarted = False
         self.currentTime = 0
@@ -786,7 +791,7 @@ class UnderlordInteract():
         # self.pickTime = False
 
         self.rewardSummary = {'economy': 0, 'roundsSurvived': 0, 'finalPosition': 0, 'unitLevelUp': 0,
-                              'mainLevelUp': 0, 'wins': 0, 'lockIn': 0, 'itemPick': 0}
+                              'mainLevelUp': 0, 'wins': 0, 'losses': 0, 'lockIn': 0, 'itemPick': 0}
         self.otherPlayersDict = {2: {'slot': 2, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
                                  3: {'slot': 3, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
                                  4: {'slot': 4, 'health': 100, 'gold': 0, 'level': 2, 'units': []},
@@ -854,29 +859,30 @@ class UnderlordInteract():
     def testFunction(self, param1, param2):
         # print(self.HUD.getClockTimeLeft())
 
-        if self.localItemID < 4:
-            for i in range(3):
-                for j in range(4):
-                    melee = False
-                    ranged = False
-                    preventMana = False
-                    boughtItemId = 7
-                    name = 'tester item' + str(i) + str(j)
-                    self.itemObjects[i][j] = Item(name, (i, j),
-                                                  ID=2,
-                                                  melee=melee,
-                                                  ranged=ranged,
-                                                  preventMana=preventMana,
-                                                  localID=self.localItemID,
-                                                  legacyID=boughtItemId)
-                    self.localItemID += 1
-                    self.itemlabels[i][j].config(text=name)
+        # if self.localItemID < 4:
+        #     for i in range(3):
+        #         for j in range(4):
+        #             melee = False
+        #             ranged = False
+        #             preventMana = False
+        #             boughtItemId = 7
+        #             name = 'tester item' + str(i) + str(j)
+        #             self.itemObjects[i][j] = Item(name, (i, j),
+        #                                           ID=2,
+        #                                           melee=melee,
+        #                                           ranged=ranged,
+        #                                           preventMana=preventMana,
+        #                                           localID=self.localItemID,
+        #                                           legacyID=boughtItemId)
+        #             self.localItemID += 1
+        #             self.itemlabels[i][j].config(text=name)
         # print('pre')
         # time.sleep(2)
         # self.lockIn()
         # print('post')
         # keyPress('2')
         print(self.getObservation())
+        print(f"Enemy board strength: {self.calculateEnemyBoardStrength()}")
         # print(self.getGamePhase())
         # print(f"Punishment: {self.getPunishment()}")
         # self.boardUnitCount(True)
@@ -976,7 +982,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        # return True
+        return True
         thresh = 20
         if self.round < 3:  # arbitrary large number cause you have a ton more time in the beginning
             thresh = 35
@@ -1040,8 +1046,6 @@ class UnderlordInteract():
         # print("--- %s seconds to get past gamephase ---" % (time.time() - overallTime))
 
         # if phase not in ['select', 'choose']:
-
-
 
         # gamePhase = -1
         #
@@ -1381,10 +1385,29 @@ class UnderlordInteract():
         for otherPlayer in self.otherPlayersDict:
 
             otherPlayerTiers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            otherPlayerHeros = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            otherPlayerHeros = [0, 0, 0,
+                                0, 0, 0,
+                                0, 0, 0,
+                                0, 0, 0,
+                                0, 0, 0,
+                                0, 0, 0,
+                                0, 0, 0,
+                                0, 0, 0,
+                                0, 0, 0,
+                                0, 0, 0
                                 ]
+            otherPlayerCoords = [0, 0,
+                                 0, 0,
+                                 0, 0,
+                                 0, 0,
+                                 0, 0,
+                                 0, 0,
+                                 0, 0,
+                                 0, 0,
+                                 0, 0,
+                                 0, 0,
+                                 ]
+
             other = self.otherPlayersDict[otherPlayer]
             temp = [other['slot'], other['health'], other['gold'], other['level']]
 
@@ -1406,6 +1429,10 @@ class UnderlordInteract():
                 if name == 'anessix' or name == 'hobgen' or name == 'jull' or name == 'enno':
                     continue
 
+                # Ignoring units on the bench
+                if unit['position']['y'] == -1:
+                    continue
+
                 goodID = self.shop.classIDMap[name] + 1
                 # print(f"Adding {name}-{tier}-{goodID}")
                 # temp.append(goodID)
@@ -1417,6 +1444,10 @@ class UnderlordInteract():
                 otherPlayerHeros[idx * 3] = alliances[0]
                 otherPlayerHeros[(idx * 3) + 1] = alliances[1]
                 otherPlayerHeros[(idx * 3) + 2] = alliances[2]
+
+                otherPlayerCoords[idx * 2] = unit['position']['x']
+                otherPlayerCoords[(idx * 2) + 1] = 3 - unit['position']['y']
+
                 idx += 1
 
                 if other['slot'] > 8:
@@ -1439,6 +1470,7 @@ class UnderlordInteract():
             #     temp.append(0)
             temp.append(otherPlayerTiers)
             temp.append(otherPlayerHeros)
+            temp.append(otherPlayerCoords)
             otherPlayers.append(temp)
 
         # finalTime = int(self.proper_round(self.currentTime)) + 1
@@ -1490,6 +1522,7 @@ class UnderlordInteract():
             [otherPlayers[self.currentOtherPlayer][3] / 10],
             otherPlayers[self.currentOtherPlayer][4],
             otherPlayers[self.currentOtherPlayer][5],
+            otherPlayers[self.currentOtherPlayer][6],
             # otherPlayers[1][0], [otherPlayers[1][1] / 100], [otherPlayers[1][2] / 100], [otherPlayers[1][3] / 10],
             # otherPlayers[1][4], otherPlayers[1][5],
             # otherPlayers[2][0], [otherPlayers[2][1] / 100], [otherPlayers[2][2] / 100], [otherPlayers[2][3] / 10],
@@ -1518,7 +1551,6 @@ class UnderlordInteract():
         # making sure it is not time to pick an underlord or
         if self.itemPicks is None and self.underlordPicks is None:
             self.updateShop(skipCheck=True)
-
 
         return obs
 
@@ -1585,7 +1617,6 @@ class UnderlordInteract():
             reward -= self.firstPlace * 0.0005
             self.rewardSummary['lockIn'] -= self.firstPlace * 0.0005
 
-
         # if self.tinyPunish:
         #     self.tinyPunish = False
         #     reward -= self.firstPlace * 0.0001
@@ -1612,7 +1643,6 @@ class UnderlordInteract():
         #                         numHeroes += 1
         #
         #         reward -= (self.level - numHeroes) * (self.firstPlace * 0.05)
-
 
         # if action in [0, 2, 3]:
         # if action in [2, 3]:
@@ -1815,7 +1845,7 @@ class UnderlordInteract():
                 return 1
 
     def buyItem(self, selection, itemList):
-    
+
         if selection > 3:
             self.mediumPunish = True
             return -1
@@ -1885,7 +1915,7 @@ class UnderlordInteract():
                         self.itemObjects[i][j] = holderItem
                         # self.itemObjects[i][j].x = i
                         # self.itemObjects[i][j].y = j
-                        self.itemObjects[i][j].coords = (i,j)
+                        self.itemObjects[i][j].coords = (i, j)
                         self.itemlabels[i][j].config(text=holderItem.name)
                         holderItem = tempHolder
 
@@ -3150,6 +3180,79 @@ class UnderlordInteract():
                 return -1
 
         return tieredUp
+
+    def calculateEnemyBoardStrength(self):
+        units = self.otherPlayersDict[self.currentOpponent]['units']
+        strength = 0
+
+        # round damage
+        strength += math.floor(self.round / 10)
+
+        # underlord damage
+        if round > 30:
+            strength += 2
+        else:
+            strength += 1
+
+        # unit damage
+        for unit in units:
+
+            try:
+                tier = unit['rank']
+                tempID = unit['unit_id']
+                fullData = self.underlords.underlordDataID[tempID]
+                cost = fullData['goldCost']
+
+                if ('texturename' not in fullData) or ('can_be_sold' not in unit):
+                    continue
+                if not unit['can_be_sold']:
+                    continue
+
+                name = fullData['texturename']
+
+                if name == 'anessix' or name == 'hobgen' or name == 'jull' or name == 'enno':
+                    continue
+
+                # Ignoring units on the bench
+                if unit['position']['y'] == -1:
+                    continue
+
+                strength += 1 + math.floor((cost + ((2 * (tier - 1)))) / 3)
+            except:
+                randomasd = 3
+
+        return strength
+
+    def calculateBoardStrength(self):
+
+        strength = 0
+
+        # round damage
+        strength += math.floor(self.round / 10)
+
+        # underlord damage
+        if round > 30:
+            strength += 2
+        else:
+            strength += 1
+
+        for i in range(4):
+            for j in range(8):
+                tempHero = None
+
+                if self.boardHeroes[i][j] is not None:
+
+                    if self.boardHeroes[i][j].underlord:
+                        continue
+
+                tempHero = self.boardHeroes[i][j]
+
+                tier = tempHero.tier
+                cost = tempHero.gold
+
+                strength += 1 + math.floor((cost + ((2 * (tier - 1)))) / 3)
+
+        return strength
 
 
 def openVision():
