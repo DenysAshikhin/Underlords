@@ -1558,6 +1558,8 @@ class UnderlordInteract():
         elif action == 6:
             self.moveUnit(x=x, y=y)
             print('move unit7')
+        elif action == 7:
+            print('did nothing')
 
         reward = 0
 

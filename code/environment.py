@@ -205,8 +205,8 @@ class UnderlordEnv(ExternalEnv):
         self.action_space = spaces.MultiDiscrete(
             [
                 # 0 = reroll, 1 = lock in, 2 = level up, 3 = buy unit from store, 4 = sell unit, 5 = choose item/underlord,
-                # 6 = move Item/Unit
-                7,
+                # 6 = move Item/Unit, 7 = do nothing
+                8,
                 x,  # x-cordinate *
                 y  # y-cordinate *
                 # 4  # selection -> used only when having to choose an item or underlord
