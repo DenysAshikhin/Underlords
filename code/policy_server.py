@@ -335,5 +335,5 @@ print(f"Starting: {name}")
 tune.run(trainer, 
 #resume = True, 
 config=DEFAULT_CONFIG, name=name, keep_checkpoints_num = None, checkpoint_score_attr = "episode_reward_mean", max_failures = 1,
-#restore="C:\\Users\\ashyk\\ray_results\\GAE_98-Gamma_999\\PPO_RandomEnv_2f211_00000_0_2021-11-28_20-25-06\\checkpoint_000069\\checkpoint-69",
+#restore="C:\\Users\\ashyk\\ray_results\\TEST_32k-batch_512-len_32_Run-2\\PPO_RandomEnv_46610_00000_0_2021-12-31_17-30-37\\checkpoint_000027\\checkpoint-27",
 checkpoint_freq = 1, checkpoint_at_end = True)
