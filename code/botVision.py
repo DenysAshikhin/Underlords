@@ -3245,12 +3245,12 @@ class UnderlordInteract():
                     if self.boardHeroes[i][j].underlord:
                         continue
 
-                tempHero = self.boardHeroes[i][j]
+                    tempHero = self.boardHeroes[i][j]
 
-                tier = tempHero.tier
-                cost = tempHero.gold
+                    tier = tempHero.tier
+                    cost = tempHero.gold
 
-                strength += 1 + math.floor((cost + ((2 * (tier - 1)))) / 3)
+                    strength += 1 + math.floor((cost + ((2 * (tier - 1)))) / 3)
 
         return strength
 
