@@ -1585,6 +1585,7 @@ class UnderlordInteract():
             reward -= self.firstPlace * 0.0005
             self.rewardSummary['lockIn'] -= self.firstPlace * 0.0005
 
+
         # if self.tinyPunish:
         #     self.tinyPunish = False
         #     reward -= self.firstPlace * 0.0001
@@ -1612,9 +1613,6 @@ class UnderlordInteract():
         #
         #         reward -= (self.level - numHeroes) * (self.firstPlace * 0.05)
 
-        # punish for having too much gold regardless
-        if self.gold > 40:
-            reward -= self.firstPlace * 0.005
 
         # if action in [0, 2, 3]:
         # if action in [2, 3]:
@@ -1646,7 +1644,7 @@ class UnderlordInteract():
                 if unitCount > 0:
                     unitCount + 1  # adding +1 since we just leveled up, there is no way to have # units = level
                 # award = pow(self.boardUnitCount()*self.level, 1.2)/(1000/self.firstPlace)
-                award = (unitCount / self.level) * 0.1 * self.firstPlace
+                award = (unitCount / self.level) * 0.085 * self.firstPlace
                 # award = 10 + self.firstPlace * 0.00017 * (self.level ** 3) * ((self.boardUnitCount()+1) / self.level)
                 # print(f"Awarded: {award} for leveling up with: {self.boardUnitCount()} heroes!")
                 reward += award
@@ -1687,16 +1685,16 @@ class UnderlordInteract():
 
             if self.round < 10:
                 reward += self.firstPlace * 0.005 * self.round
-                self.rewardSummary['roundsSurvived'] += self.firstPlace * 0.01 * self.round
+                self.rewardSummary['roundsSurvived'] += self.firstPlace * 0.005 * self.round
             elif self.round < 18:
                 reward += self.firstPlace * 0.01 * self.round
-                self.rewardSummary['roundsSurvived'] += self.firstPlace * 0.02 * self.round
+                self.rewardSummary['roundsSurvived'] += self.firstPlace * 0.01 * self.round
             elif self.round < 26:
                 reward += self.firstPlace * 0.015 * self.round
-                self.rewardSummary['roundsSurvived'] += self.firstPlace * 0.03 * self.round
+                self.rewardSummary['roundsSurvived'] += self.firstPlace * 0.015 * self.round
             else:
                 reward += self.firstPlace * 0.015 * 25
-                self.rewardSummary['roundsSurvived'] += self.firstPlace * 0.03 * self.round
+                self.rewardSummary['roundsSurvived'] += self.firstPlace * 0.015 * 25
 
         # self.closeStore(skipCheck=True)
 
@@ -3168,4 +3166,4 @@ def openVision():
     root.mainloop()
 
 
-# openVision()
+openVision()

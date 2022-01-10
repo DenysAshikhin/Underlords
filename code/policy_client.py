@@ -33,7 +33,6 @@ parser.add_argument('-local', type=str,
 parser.add_argument('-data', type=str,
                     help='Whether or not to log data')
 
-
 args = parser.parse_args()
 
 update = 3600.0
@@ -116,8 +115,8 @@ while True:
     # Rewards to be handed out on a per round basis (currently for not loosing a round and starting gold for economy
     if env.underlord.newRoundStarted:
         if env.underlord.prevHP == env.underlord.health:
-            env.underlord.extraReward += env.underlord.firstPlace * 0.025
-            env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.025
+            env.underlord.extraReward += env.underlord.firstPlace * 0.15 * (env.underlord.round/30)
+            env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.15 * (env.underlord.round/30)
             # runningReward += env.underlord.firstPlace * 0.025
             print("It didn't loose!")
         else:
@@ -145,6 +144,7 @@ while True:
             env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.025
             # runningReward += env.underlord.firstPlace * 0.05
 
+        env.underlord.prevGold = env.underlord.gold
 
         env.underlord.newRoundStarted = False
 
@@ -251,13 +251,9 @@ while True:
         #     print(gameObservation)
         #     print("Not lined up 4")
 
+        # Update historical Data right away
         if args.data:
-
             writer.writeCurrentGameToHistoryCSV(env.underlord.rewardSummary)
-
-            writer.resetCurrentGame()
-            counter = 0
-            properCounter = 0
 
         client.end_episode(episode_id=episode_id, observation=finalObs)
         env.underlord.resetEnv()
@@ -273,8 +269,15 @@ while True:
 
         if remoteee:
             print("remote sleep")
-            time.sleep(45)
+            time.sleep(40)
             print('remote sleep done')
+
+        # After giving 45 seconds to look at charts, reset current game
+
+        if args.data:
+            writer.resetCurrentGame()
+            counter = 0
+            properCounter = 0
 
         episode_id = client.start_episode(episode_id=None)
 

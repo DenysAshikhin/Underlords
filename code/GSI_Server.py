@@ -6,7 +6,6 @@
 
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from operator import attrgetter
 from threading import Thread
 import json
 
