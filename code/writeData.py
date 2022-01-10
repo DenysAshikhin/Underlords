@@ -26,7 +26,7 @@ def writeCurrentGameToCSV(counter, rewards):
         lockIn = rewards['lockIn']
         itemPick = rewards['itemPick']
         losses = rewards['losses']
-        rewards['average'] = economy + roundSurvived + finalPosition + unitLevelUp + mainLevelUp + wins - losses - lockIn - itemPick
+        rewards['average'] = economy + roundSurvived + finalPosition + unitLevelUp + mainLevelUp + wins + losses + lockIn + itemPick
         rewards['counter'] = counter
 
         csv_writer.writerow(rewards)
@@ -75,7 +75,7 @@ def writeCurrentGameToHistoryCSV(rewards):
         lockIn = rewards['lockIn']
         itemPick = rewards['itemPick']
         losses = rewards['losses']
-        runningSum = economy + roundSurvived + finalPosition + unitLevelUp + mainLevelUp + wins - losses - lockIn - itemPick
+        runningSum = economy + roundSurvived + finalPosition + unitLevelUp + mainLevelUp + wins + losses + lockIn + itemPick
 
         runningSum = (data['average'][currentLength-1] * currentLength) + runningSum
 
@@ -100,7 +100,7 @@ def writeCurrentGameToHistoryCSV(rewards):
             lockIn = rewards['lockIn']
             itemPick = rewards['itemPick']
             losses = rewards['losses']
-            runningSum = economy + roundSurvived + finalPosition + unitLevelUp + mainLevelUp + wins - losses - lockIn - itemPick
+            runningSum = economy + roundSurvived + finalPosition + unitLevelUp + mainLevelUp + wins + losses + lockIn + itemPick
             rewards['average'] = runningSum
             rewards['counter'] = 0
 

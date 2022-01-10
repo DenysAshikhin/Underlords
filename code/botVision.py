@@ -982,7 +982,7 @@ class UnderlordInteract():
         return (self.itemPicks is not None) or (self.underlordPicks is not None)
 
     def allowMove(self):
-        return True
+        # return True
         thresh = 20
         if self.round < 3:  # arbitrary large number cause you have a ton more time in the beginning
             thresh = 35
@@ -3189,9 +3189,9 @@ class UnderlordInteract():
         strength += math.floor(self.round / 10)
 
         # underlord damage
-        if round > 30:
+        if self.round > 30:
             strength += 2
-        else:
+        elif self.round >= 10:
             strength += 1
 
         # unit damage
@@ -3231,9 +3231,9 @@ class UnderlordInteract():
         strength += math.floor(self.round / 10)
 
         # underlord damage
-        if round > 30:
+        if self.round > 30:
             strength += 2
-        else:
+        elif self.round >= 10:
             strength += 1
 
         for i in range(4):
@@ -3269,4 +3269,4 @@ def openVision():
     root.mainloop()
 
 
-openVision()
+# openVision()

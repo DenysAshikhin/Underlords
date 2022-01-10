@@ -119,18 +119,18 @@ while True:
             maxPain = env.underlord.calculateBoardStrength()
             lostHP = env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health'] - env.underlord.prevEnemyHP
             percentage = lostHP / maxPain
-            env.underlord.extraReward += env.underlord.firstPlace * 0.2 * (env.underlord.round/30) * percentage
-            env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.2 * (env.underlord.round/30) * percentage
-            print(f"Dealt {lostHP} health, {percentage}% of max damage")
+            env.underlord.extraReward += env.underlord.firstPlace * 0.15 * (env.underlord.round/30) * percentage
+            env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.15 * (env.underlord.round/30) * percentage
+            print(f"Dealt {lostHP} health, {percentage*100}% of max damage")
         else:
             maxPain = env.underlord.calculateEnemyBoardStrength()
             lostHP = env.underlord.prevHP - env.underlord.health
             percentage = lostHP / maxPain
-            print(f"Lost {lostHP} health, {percentage}% of max damage")
+            print(f"Lost {lostHP} health, {percentage*100}% of max damage")
 
             if percentage > 0.36:
-                env.underlord.extraReward -= env.underlord.firstPlace * 0.2 * (env.underlord.round / 30) * percentage
-                env.underlord.rewardSummary['losses'] += env.underlord.firstPlace * 0.2 * (env.underlord.round / 30) * percentage
+                env.underlord.extraReward -= env.underlord.firstPlace * 0.15 * (env.underlord.round / 30) * percentage
+                env.underlord.rewardSummary['losses'] -= env.underlord.firstPlace * 0.15 * (env.underlord.round / 30) * percentage
 
         env.underlord.prevHP = env.underlord.health
         env.underlord.prevEnemyHP = env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health']
