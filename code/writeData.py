@@ -109,7 +109,9 @@ def writeCurrentGameToHistoryCSV(rewards):
         csv_writer.writerow(rewards)
 
 # resetAllGames()
-# writeCurrentGameToHistoryCSV({'economy': 1, 'roundsSurvived': 2, 'finalPosition': 4, 'unitLevelUp': 0,
-#                     'mainLevelUp': 1, 'wins': 3, 'lockIn': 0, 'itemPick': -2})
-# writeCurrentGameToHistoryCSV({'economy': 1, 'roundsSurvived': 2, 'finalPosition': 4, 'unitLevelUp': 0,
-#                     'mainLevelUp': 1, 'wins': 3, 'lockIn': 0, 'itemPick': -2})
+# writeCurrentGameToHistoryCSV({'economy': 3, 'roundsSurvived': 3, 'finalPosition': 3, 'unitLevelUp': 3,
+#                     'mainLevelUp': 3, 'wins': 3, 'lockIn': 3, 'itemPick': 3})
+# writeCurrentGameToHistoryCSV({'economy': 4, 'roundsSurvived': 4, 'finalPosition': 4, 'unitLevelUp': 4,
+#                     'mainLevelUp': 4, 'wins': 4, 'lockIn': 4, 'itemPick': 4})
+# writeCurrentGameToHistoryCSV({'economy': 5, 'roundsSurvived': 5, 'finalPosition': 5, 'unitLevelUp': 5,
+#                     'mainLevelUp': 5, 'wins': 5, 'lockIn': 5, 'itemPick': 5})

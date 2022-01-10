@@ -72,7 +72,9 @@ def animate(i):
             print("Error trying to annotate")
 
         plt.title(f"Current Game Rewards - Current Reward: {sum}")
-        plt.legend(loc='upper left')
+        plt.xlabel("Actions")
+        plt.ylabel("Reward")
+        plt.legend(loc='upper left', title="Reward Sources")
         plt.tight_layout()
 
     else:
@@ -130,11 +132,13 @@ def animate(i):
         #                  xycoords=('axes fraction', 'data'), textcoords='offset points')
 
         plt.title(f"Historical Game Rewards: running average: {avg}")
-        plt.legend(loc='upper left')
+        plt.legend(loc='upper left', title="Reward Sources")
+        plt.xlabel("Games")
+        plt.ylabel("Reward")
         plt.tight_layout()
 
 
-ani = FuncAnimation(plt.gcf(), animate, interval=1000 * 10)
+ani = FuncAnimation(plt.gcf(), animate, interval=1000 * 1)
 
 plt.tight_layout()
 plt.show()
