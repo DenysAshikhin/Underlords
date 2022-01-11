@@ -117,11 +117,25 @@ while True:
 
         if env.underlord.prevHP == env.underlord.health:
             maxPain = env.underlord.calculateBoardStrength()
-            lostHP = env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health'] - env.underlord.prevEnemyHP
-            percentage = lostHP / maxPain
-            env.underlord.extraReward += env.underlord.firstPlace * 0.15 * (env.underlord.round/30) * percentage
-            env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.15 * (env.underlord.round/30) * percentage
-            print(f"Dealt {lostHP} health, {percentage*100}% of max damage")
+            lostHP = env.underlord.prevEnemyHP - env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health']
+
+            if lostHP < 0:
+                print('We won but the enemy gained hp?')
+                print(lostHP)
+                print(maxPain)
+                sys.exit()
+            else:
+                percentage = lostHP / maxPain
+                env.underlord.extraReward += env.underlord.firstPlace * 0.15 * (env.underlord.round/30) * percentage
+                env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.15 * (env.underlord.round/30) * percentage
+                print(f"Dealt {lostHP} health, {percentage*100}% of max damage")
+
+            if lostHP > 0:
+                #Winning with 9gold gives interest
+                if env.underlord.prevGold == 9:
+                    env.underlord.extraReward += env.underlord.firstPlace * 0.025
+                    env.underlord.rewardSummary['economy'] += env.underlord.firstPlace * 0.025
+
         else:
             maxPain = env.underlord.calculateEnemyBoardStrength()
             lostHP = env.underlord.prevHP - env.underlord.health
@@ -131,9 +145,6 @@ while True:
             if percentage > 0.36:
                 env.underlord.extraReward -= env.underlord.firstPlace * 0.15 * (env.underlord.round / 30) * percentage
                 env.underlord.rewardSummary['losses'] -= env.underlord.firstPlace * 0.15 * (env.underlord.round / 30) * percentage
-
-        env.underlord.prevHP = env.underlord.health
-        env.underlord.prevEnemyHP = env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health']
 
         if env.underlord.prevGold >= 40:
             env.underlord.extraReward -= env.underlord.firstPlace * 0.1
@@ -162,8 +173,12 @@ while True:
     if not env.underlord.pickTime():
         if env.underlord.combatType != 0 and env.underlord.finalPlacement == 0:
             if not closeStore:
+                #Combat JUST started now
                 env.underlord.closeStore(True)
                 closeStore = True
+                time.sleep(1)
+                env.underlord.prevHP = env.underlord.health
+                env.underlord.prevEnemyHP = env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health']
                 # print('wow1')
             # print('wow3')
             time.sleep(0.1)
