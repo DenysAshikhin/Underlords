@@ -125,7 +125,12 @@ while True:
                 print(maxPain)
                 sys.exit()
             else:
-                percentage = lostHP / maxPain
+                if maxPain > 0:
+                    percentage = lostHP / maxPain
+                else:
+                    print(f"We somehow won with no units on the board? Seems kinda sus: ")
+                    print(lostHP)
+                    sys.exit()
                 env.underlord.extraReward += env.underlord.firstPlace * 0.15 * (env.underlord.round/30) * percentage
                 env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.15 * (env.underlord.round/30) * percentage
                 print(f"Dealt {lostHP} health, {percentage*100}% of max damage")
