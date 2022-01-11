@@ -117,8 +117,8 @@ while True:
 
         if env.underlord.prevHP == env.underlord.health:
             maxPain = env.underlord.calculateBoardStrength()
-            lostHP = env.underlord.prevEnemyHP - env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health']
-
+            lostHP = env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health'] - env.underlord.prevEnemyHP
+            lostHP *= -1 #flip it from negative to positive for percentage below
             if lostHP < 0:
                 print('We won but the enemy gained hp?')
                 print(lostHP)
