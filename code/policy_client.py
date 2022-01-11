@@ -262,9 +262,10 @@ while True:
         #     print(gameObservation)
         #     print("Not lined up 4")
 
-        # Update historical Data right away
+        # Update historical Data and Current Game Data right away
         if args.data:
             writer.writeCurrentGameToHistoryCSV(env.underlord.rewardSummary)
+            writer.writeCurrentGameToCSV(properCounter, env.underlord.rewardSummary)
 
         client.end_episode(episode_id=episode_id, observation=finalObs)
         env.underlord.resetEnv()
