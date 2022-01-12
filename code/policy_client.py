@@ -130,6 +130,7 @@ while True:
                 else:
                     print(f"We somehow won with no units on the board? Seems kinda sus: ")
                     print(lostHP)
+                    print(maxPain)
                     sys.exit()
                 env.underlord.extraReward += env.underlord.firstPlace * 0.15 * (env.underlord.round/30) * percentage
                 env.underlord.rewardSummary['wins'] += env.underlord.firstPlace * 0.15 * (env.underlord.round/30) * percentage
@@ -181,9 +182,10 @@ while True:
                 #Combat JUST started now
                 env.underlord.closeStore(True)
                 closeStore = True
-                time.sleep(1)
+                time.sleep(2)
                 env.underlord.prevHP = env.underlord.health
                 env.underlord.prevEnemyHP = env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health']
+                time.sleep(1)
                 # print('wow1')
             # print('wow3')
             time.sleep(0.1)
