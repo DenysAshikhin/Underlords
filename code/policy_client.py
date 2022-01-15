@@ -182,10 +182,9 @@ while True:
                 #Combat JUST started now
                 env.underlord.closeStore(True)
                 closeStore = True
-                time.sleep(2)
                 env.underlord.prevHP = env.underlord.health
                 env.underlord.prevEnemyHP = env.underlord.otherPlayersDict[env.underlord.currentOpponent]['health']
-                time.sleep(1)
+                time.sleep(3)
                 # print('wow1')
             # print('wow3')
             time.sleep(0.1)
