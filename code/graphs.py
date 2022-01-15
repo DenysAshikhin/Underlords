@@ -84,60 +84,93 @@ def animate(i):
     else:
         data = writer.readAllGames()
         economy = data['economy']
+        ecoAvg = 0
         roundSurvived = data['roundsSurvived']
+        roundSurvAvg = 0
         finalPosition = data['finalPosition']
+        finalPosAvg = 0
         unitLevelUp = data['unitLevelUp']
+        unitLevAvg = 0
         mainLevelUp = data['mainLevelUp']
+        mainLevAvg = 0
         wins = data['wins']
+        winsAvg = 0
         losses = data['losses']
+        lossAvg = 0
         lockIn = data['lockIn']
+        lockInAvg = 0
         itemPick = data['itemPick']
+        itemPickAvg = 0
         counter = data['counter']
         average = data['average']
 
         avg = 0
 
         try:
-            avg = average.sum()/len(average)
+
+            average = average[-100:]
+            economy = economy[-100:]
+            roundSurvived = roundSurvived[-100:]
+            finalPosition = finalPosition[-100:]
+            unitLevelUp = unitLevelUp[-100:]
+            mainLevelUp = mainLevelUp[-100:]
+            wins = wins[-100:]
+            losses = losses[-100:]
+            lockIn = lockIn[-100:]
+            itemPick = itemPick[-100:]
+            counter = counter[-100:]
+
+
+            length = len(average)
+
+            avg = average.sum()/length
+            ecoAvg = economy.sum()/length
+            roundSurvAvg = roundSurvived.sum() / length
+            finalPosAvg = finalPosition.sum() / length
+            unitLevAvg= unitLevelUp.sum() / length
+            mainLevAvg = mainLevelUp.sum() / length
+            winsAvg = wins.sum() / length
+            lossAvg = losses.sum() / length
+            lockInAvg = lockIn.sum() / length
+            itemPickAvg = itemPick.sum() / length
         except Exception as e:
             print('no sum yet')
 
-
         plt.cla()
 
-        plt.plot(counter, economy, label='Economy')
-        plt.plot(counter, roundSurvived, label='round Survived')
-        plt.plot(counter, finalPosition, label='finalPosition')
-        plt.plot(counter, unitLevelUp, label='unit Level Up')
-        plt.plot(counter, mainLevelUp, label='main Level Up')
-        plt.plot(counter, wins, label='wins')
-        plt.plot(counter, losses, label='losses')
-        plt.plot(counter, lockIn, label='lock In')
-        plt.plot(counter, itemPick, label='item Pick')
+        plt.plot(counter, economy, label=f"Economy, avg: {str(round(ecoAvg, 2))}")
+        plt.plot(counter, roundSurvived, label=f"round Survived, avg: {str(round(roundSurvAvg, 2))}")
+        plt.plot(counter, finalPosition, label=f"finalPosition, avg: {str(round(finalPosAvg, 2))}")
+        plt.plot(counter, unitLevelUp, label=f"unit Level Up, avg: {str(round(unitLevAvg, 2))}")
+        plt.plot(counter, mainLevelUp, label=f"main Level Up, avg: {str(round(mainLevAvg, 2))}")
+        plt.plot(counter, wins, label=f"wins, avg: {str(round(winsAvg, 2))}")
+        plt.plot(counter, losses, label=f"losses, avg: {str(round(lossAvg, 2))}")
+        plt.plot(counter, lockIn, label=f"lock In, avg: {str(round(lockInAvg, 2))}")
+        plt.plot(counter, itemPick, label=f"item Pick, avg: {str(round(itemPickAvg, 2))}")
 
         try:
-            plt.annotate('Eco: %0.3f' % economy[len(economy) - 1], xy=(1, economy[len(economy) - 1]), xytext=(8, 0),
+            plt.annotate('Eco: %0.3f' % economy.tail(1), xy=(1, economy.tail(1)), xytext=(8, 0),
                          xycoords=('axes fraction', 'data'), textcoords='offset points')
 
-            plt.annotate('Rounds: %0.3f' % roundSurvived[len(roundSurvived) - 1],
-                         xy=(1, roundSurvived[len(roundSurvived) - 1]), xytext=(8, 0),
+            plt.annotate('Rounds: %0.3f' % roundSurvived.tail(1),
+                         xy=(1, roundSurvived.tail(1)), xytext=(8, 0),
                          xycoords=('axes fraction', 'data'), textcoords='offset points')
-            plt.annotate('Pos: %0.3f' % finalPosition[len(finalPosition) - 1],
-                         xy=(1, finalPosition[len(finalPosition) - 1]), xytext=(8, 0),
+            plt.annotate('Pos: %0.3f' % finalPosition.tail(1),
+                         xy=(1, finalPosition.tail(1)), xytext=(8, 0),
                          xycoords=('axes fraction', 'data'), textcoords='offset points')
-            plt.annotate('Tiering: %0.3f' % unitLevelUp[len(unitLevelUp) - 1],
-                         xy=(1, unitLevelUp[len(unitLevelUp) - 1]), xytext=(8, 0),
+            plt.annotate('Tiering: %0.3f' % unitLevelUp.tail(1),
+                         xy=(1, unitLevelUp.tail(1)), xytext=(8, 0),
                          xycoords=('axes fraction', 'data'), textcoords='offset points')
-            plt.annotate('Leveling: %0.3f' % mainLevelUp[len(mainLevelUp) - 1],
-                         xy=(1, mainLevelUp[len(mainLevelUp) - 1]), xytext=(8, 0),
+            plt.annotate('Leveling: %0.3f' % mainLevelUp.tail(1),
+                         xy=(1, mainLevelUp.tail(1)), xytext=(8, 0),
                          xycoords=('axes fraction', 'data'), textcoords='offset points')
-            plt.annotate('Wins: %0.3f' % wins[len(wins) - 1], xy=(1, wins[len(wins) - 1]), xytext=(8, 0),
+            plt.annotate('Wins: %0.3f' % wins.tail(1), xy=(1, wins.tail(1)), xytext=(8, 0),
                          xycoords=('axes fraction', 'data'), textcoords='offset points')
-            plt.annotate('Losses: %0.3f' % losses[len(losses) - 1], xy=(1, losses[len(losses) - 1]), xytext=(8, 0),
+            plt.annotate('Losses: %0.3f' % losses.tail(1), xy=(1, losses.tail(1)), xytext=(8, 0),
                          xycoords=('axes fraction', 'data'), textcoords='offset points')
-            plt.annotate('Locking: %0.3f' % lockIn[len(lockIn) - 1], xy=(1, lockIn[len(lockIn) - 1]), xytext=(8, 0),
+            plt.annotate('Locking: %0.3f' % lockIn.tail(1), xy=(1, lockIn.tail(1)), xytext=(8, 0),
                          xycoords=('axes fraction', 'data'), textcoords='offset points')
-            plt.annotate('Picks: %0.3f' % itemPick[len(itemPick) - 1], xy=(1, itemPick[len(itemPick) - 1]),
+            plt.annotate('Picks: %0.3f' % itemPick.tail(1), xy=(1, itemPick.tail(1)),
                          xytext=(8, 0),
                          xycoords=('axes fraction', 'data'), textcoords='offset points')
 
@@ -148,7 +181,7 @@ def animate(i):
 
 
 
-        plt.title(f"Historical Game Rewards: running average: {avg}")
+        plt.title(f"Historical Game Rewards (past 100 games): running average: {avg}")
         plt.legend(loc='upper left', title="Reward Sources")
         plt.xlabel("Games")
         plt.ylabel("Reward")
