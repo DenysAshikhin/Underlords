@@ -10,6 +10,8 @@ from gym import spaces
 import numpy as np
 import argparse
 
+# from action_environment import ActionMaskEnv
+
 parser = argparse.ArgumentParser(description='Optional app description')
 parser.add_argument('-ip', type=str, help='IP of this device')
 
@@ -290,6 +292,9 @@ DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
              ))
 DEFAULT_CONFIG["env_config"]["action_space"] = spaces.MultiDiscrete([8, 8, 5])
 
+# DEFAULT_CONFIG["env"] = ActionMaskEnv
+
+
 ray.init(log_to_driver=False)
 
 #print(f"running on: {args.ip}:44444")
@@ -330,7 +335,8 @@ trainer = PPOTrainer
 #        print("Last checkpoint", checkpoint)
 
 from ray import tune
-name = "" + args.checkpoint
+#name = "" + args.checkpoint
+name = "try"
 print(f"Starting: {name}")
 tune.run(trainer, 
 #resume = True, 
