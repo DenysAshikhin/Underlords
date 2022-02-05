@@ -85,28 +85,50 @@ def animate(i):
         data = writer.readAllGames()
         economy = data['economy']
         ecoAvg = 0
+        ecoAvgT = 0
         roundSurvived = data['roundsSurvived']
         roundSurvAvg = 0
+        roundSurvAvgT = 0
         finalPosition = data['finalPosition']
         finalPosAvg = 0
+        finalPosAvgT = 0
         unitLevelUp = data['unitLevelUp']
         unitLevAvg = 0
+        unitLevAvgT = 0
         mainLevelUp = data['mainLevelUp']
         mainLevAvg = 0
+        mainLevAvgT = 0
         wins = data['wins']
         winsAvg = 0
+        winsAvgT = 0
         losses = data['losses']
         lossAvg = 0
+        lossAvgT = 0
         lockIn = data['lockIn']
         lockInAvg = 0
+        lockInAvgT = 0
         itemPick = data['itemPick']
         itemPickAvg = 0
+        itemPickAvgT = 0
         counter = data['counter']
         average = data['average']
 
         avg = 0
 
         try:
+
+            length = len(average)
+
+            avgT = average.sum() / length
+            ecoAvgT = economy.sum() / length
+            roundSurvAvgT = roundSurvived.sum() / length
+            finalPosAvgT = finalPosition.sum() / length
+            unitLevAvgT = unitLevelUp.sum() / length
+            mainLevAvgT = mainLevelUp.sum() / length
+            winsAvgT = wins.sum() / length
+            lossAvgT = losses.sum() / length
+            lockInAvgT = lockIn.sum() / length
+            itemPickAvgT = itemPick.sum() / length
 
             average = average[-100:]
             economy = economy[-100:]
@@ -138,15 +160,15 @@ def animate(i):
 
         plt.cla()
 
-        plt.plot(counter, economy, label=f"Economy, avg: {str(round(ecoAvg, 2))}")
-        plt.plot(counter, roundSurvived, label=f"round Survived, avg: {str(round(roundSurvAvg, 2))}")
-        plt.plot(counter, finalPosition, label=f"finalPosition, avg: {str(round(finalPosAvg, 2))}")
-        plt.plot(counter, unitLevelUp, label=f"unit Level Up, avg: {str(round(unitLevAvg, 2))}")
-        plt.plot(counter, mainLevelUp, label=f"main Level Up, avg: {str(round(mainLevAvg, 2))}")
-        plt.plot(counter, wins, label=f"wins, avg: {str(round(winsAvg, 2))}")
-        plt.plot(counter, losses, label=f"losses, avg: {str(round(lossAvg, 2))}")
-        plt.plot(counter, lockIn, label=f"lock In, avg: {str(round(lockInAvg, 2))}")
-        plt.plot(counter, itemPick, label=f"item Pick, avg: {str(round(itemPickAvg, 2))}")
+        plt.plot(counter, economy, label=f"Economy, avg: {str(round(ecoAvg, 2))}, all time: {str(round(ecoAvgT, 2))}")
+        plt.plot(counter, roundSurvived, label=f"round Survived, avg: {str(round(roundSurvAvg, 2))}, all time: {str(round(roundSurvAvgT, 2))}")
+        plt.plot(counter, finalPosition, label=f"finalPosition, avg: {str(round(finalPosAvg, 2))}, all time: {str(round(finalPosAvgT, 2))}")
+        plt.plot(counter, unitLevelUp, label=f"unit Level Up, avg: {str(round(unitLevAvg, 2))}, all time: {str(round(unitLevAvgT, 2))}")
+        plt.plot(counter, mainLevelUp, label=f"main Level Up, avg: {str(round(mainLevAvg, 2))}, all time: {str(round(mainLevAvgT, 2))}")
+        plt.plot(counter, wins, label=f"wins, avg: {str(round(winsAvg, 2))}, all time: {str(round(winsAvgT, 2))}")
+        plt.plot(counter, losses, label=f"losses, avg: {str(round(lossAvg, 2))}, all time: {str(round(lossAvgT, 2))}")
+        plt.plot(counter, lockIn, label=f"lock In, avg: {str(round(lockInAvg, 2))}, all time: {str(round(lockInAvgT, 2))}")
+        plt.plot(counter, itemPick, label=f"item Pick, avg: {str(round(itemPickAvg, 2))}, all time: {str(round(itemPickAvgT, 2))}")
 
         try:
             plt.annotate('Eco: %0.3f' % economy.tail(1), xy=(1, economy.tail(1)), xytext=(8, 0),
