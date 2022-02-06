@@ -925,7 +925,6 @@ class UnderlordInteract():
         if self.server:
             return 1
 
-        # print('got to startnewGame')
         self.updateWindowCoords()
 
         mouse1.position = (self.shopX, self.shopY + 720)

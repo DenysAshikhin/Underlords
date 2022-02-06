@@ -9,8 +9,9 @@ from ray.rllib.examples.env.random_env import RandomEnv
 from gym import spaces
 import numpy as np
 import argparse
+from mask_model import ActionMaskModel
 
-# from action_environment import ActionMaskEnv
+from action_environment import ActionMaskEnv
 
 parser = argparse.ArgumentParser(description='Optional app description')
 parser.add_argument('-ip', type=str, help='IP of this device')
@@ -56,6 +57,7 @@ DEFAULT_CONFIG = with_common_config({
     "model": {
         # Share layers for value function. If you set this to True, it's
         # important to tune vf_loss_coeff.
+        "custom_model": ActionMaskModel,
         "vf_share_layers": False,
 
         "fcnet_hiddens": [1280, 1280],
@@ -85,7 +87,7 @@ DEFAULT_CONFIG = with_common_config({
     # # the default optimizer.
     "simple_optimizer": True,
     #"reuse_actors": True,
-    "num_gpus": 1,
+    "num_gpus": 0,
     # Use the connector server to generate experiences.
     "input": (
         lambda ioctx: PolicyServerInput(ioctx, args.ip, 55556)
@@ -122,10 +124,10 @@ DEFAULT_CONFIG = with_common_config({
     "create_env_on_driver": False,
     "log_sys_usage": False,
     # "normalize_actions": False,
-    "compress_observations": True
+    "compress_observations": True,
     # Whether to fake GPUs (using CPUs).
     # Set this to True for debugging on non-GPU machines (set `num_gpus` > 0).
-    #"_fake_gpus": True,
+    "_fake_gpus": True,
 })
 
 allianceId = 27
@@ -136,6 +138,7 @@ localItemId = 13
 x = 8
 y = 5
 tier = 6
+
 DEFAULT_CONFIG["env_config"]["observation_space"] = spaces.Tuple(
             (spaces.Discrete(9),  # final position * (if not 0 means game is over!)
 
@@ -302,9 +305,9 @@ ray.init(log_to_driver=False)
 # trainer = DDPPOTrainer(config=DEFAULT_CONFIG)
 
 # trainer = PPOTrainer(config=DEFAULT_CONFIG, env=RandomEnv)
-trainer = PPOTrainer
+# trainer = PPOTrainer
 
-# trainer = PPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
+trainer = PPOTrainer(config=DEFAULT_CONFIG, env= ActionMaskEnv)
 # trainer = APPOTrainer(config=DEFAULT_CONFIG, env=UnderlordEnv)
 
 # checkpoint_path = CHECKPOINT_FILE.format(args.run)
@@ -324,22 +327,21 @@ trainer = PPOTrainer
 #        print("That path does not exist!")
 
 ## Serving and training loop.
-#i = 0
-#while True:
+i = 0
+while True:
+    print(pretty_print(trainer.train()))
+    print(f"Finished train run #{i + 1}")
+    i += 1
+    # if i % 1 == 0:
+       # checkpoint = trainer.save(checkpoint_path)
+       # print("Last checkpoint", checkpoint)
 
-#   print(pretty_print(trainer.train()))
-#   print(f"Finished train run #{i + 1}")
-#    i += 1
-#    if i % 1 == 0:
-#        checkpoint = trainer.save(checkpoint_path)
-#        print("Last checkpoint", checkpoint)
-
-from ray import tune
-#name = "" + args.checkpoint
-name = "try"
-print(f"Starting: {name}")
-tune.run(trainer, 
-#resume = True, 
-config=DEFAULT_CONFIG, name=name, keep_checkpoints_num = None, checkpoint_score_attr = "episode_reward_mean", max_failures = 1,
-#restore="C:\\Users\\ashyk\\ray_results\\TEST_32k-batch_512-len_32_Run-2\\PPO_RandomEnv_46610_00000_0_2021-12-31_17-30-37\\checkpoint_000027\\checkpoint-27",
-checkpoint_freq = 1, checkpoint_at_end = True)
+# from ray import tune
+# #name = "" + args.checkpoint
+# name = "try"
+# print(f"Starting: {name}")
+# tune.run(trainer,
+# #resume = True,
+# config=DEFAULT_CONFIG, name=name, keep_checkpoints_num = None, checkpoint_score_attr = "episode_reward_mean", max_failures = 1,
+# #restore="C:\\Users\\ashyk\\ray_results\\TEST_32k-batch_512-len_32_Run-2\\PPO_RandomEnv_46610_00000_0_2021-12-31_17-30-37\\checkpoint_000027\\checkpoint-27",
+# checkpoint_freq = 1, checkpoint_at_end = True)
