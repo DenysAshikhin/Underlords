@@ -153,9 +153,10 @@ while True:
                 env.underlord.rewardSummary['losses'] -= env.underlord.firstPlace * 0.15 * (env.underlord.round / 30) * percentage
 
         if env.underlord.prevGold >= 40:
-            env.underlord.extraReward -= env.underlord.firstPlace * 0.1
-            env.underlord.rewardSummary['economy'] -= env.underlord.firstPlace * 0.1
-            # runningReward += env.underlord.firstPlace * 0.1
+            if env.underlord.level != 10:
+                env.underlord.extraReward -= env.underlord.firstPlace * 0.1
+                env.underlord.rewardSummary['economy'] -= env.underlord.firstPlace * 0.1
+                # runningReward += env.underlord.firstPlace * 0.1
 
         elif env.underlord.prevGold >= 30:
             env.underlord.extraReward += env.underlord.firstPlace * 0.1
